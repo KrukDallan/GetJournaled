@@ -19,7 +19,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ThemeMode _themeMode = ThemeMode.system;
+  //final ThemeMode _themeMode = ThemeMode.system;
+  final ThemeMode _themeMode = ThemeMode.light;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class _MyAppState extends State<MyApp> {
               useMaterial3: true,
               colorScheme: const ColorScheme(
                   brightness: Brightness.light,
-                  primary: Color.fromARGB(255, 154, 237, 243),
+                  primary: Color.fromARGB(255, 33, 195, 236),
                   onPrimary: Colors.black,
                   secondary: Colors.white,
                   onSecondary: Colors.black,
@@ -116,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     switch (selectedIndex) {
       case 0:
-        page = WelcomePage();
+        page = const WelcomePage();
       default:
         page = Text('UnimplementedError(no widget for $selectedIndex)');
     }
@@ -147,13 +148,13 @@ class _MyHomePageState extends State<MyHomePage> {
                             Icons.access_time_filled,
                             color: colorScheme.onPrimary,
                           ),
-                          label: 'Annotate',
+                          label: 'Home page',
                         ),
                         const BottomNavigationBarItem(
                           icon: Icon(
                             Icons.article,
                           ),
-                          label: 'History',
+                          label: 'Drawer',
                         ),
                         const BottomNavigationBarItem(
                           icon: Icon(
@@ -183,13 +184,13 @@ class _MyHomePageState extends State<MyHomePage> {
                         icon: Icon(Icons.access_time_filled,
                             color: colorScheme.onSecondary),
                         label: Text(
-                          'Annotate',
+                          'Home page',
                           style: TextStyle(color: colorScheme.onSecondary),
                         ),
                       ),
                       NavigationRailDestination(
                         icon: const Icon(Icons.article),
-                        label: Text('History',
+                        label: Text('Drawer',
                             style: TextStyle(color: colorScheme.onSecondary)),
                       ),
                       NavigationRailDestination(
