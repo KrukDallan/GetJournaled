@@ -1,39 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+  
+  @override
+  State<MyApp> createState() => _MyAppState(); 
 
-  // This widget is the root of your application.
+  // Needed for light/dark theme
+  static _MyAppState of(BuildContext context) =>
+      context.findAncestorStateOfType<_MyAppState>()!;
+}
+
+class _MyAppState extends State<MyApp> {
+  ThemeMode _themeMode = ThemeMode.system;
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+    return ChangeNotifierProvider(
+        create: (context) => MyAppState(),
+        child: MaterialApp(
+          title: 'GetClocked',
+          theme: ThemeData(
+              useMaterial3: true,
+              colorScheme: const ColorScheme(
+                  brightness: Brightness.light,
+                  primary: Color.fromARGB(255, 154, 237, 243),
+                  onPrimary: Colors.black,
+                  secondary: Colors.white,
+                  onSecondary: Colors.black,
+                  tertiary: Colors.blue,
+                  onTertiary: Colors.white,
+                  error: Colors.black,
+                  onError: Colors.red,
+                  background: Colors.white,
+                  onBackground: Colors.black,
+                  surface: Colors.white,
+                  onSurface: Colors.black)),
+          darkTheme: ThemeData(
+              useMaterial3: true,
+              colorScheme: const ColorScheme(
+                  brightness: Brightness.dark,
+                  primary: Colors.black,
+                  onPrimary: Colors.white,
+                  secondary: Color.fromARGB(255, 29, 28, 28),
+                  onSecondary: Colors.white,
+                  tertiary: Color.fromARGB(255, 29, 28, 28),
+                  onTertiary: Colors.white,
+                  error: Color.fromARGB(255, 29, 28, 28),
+                  onError: Colors.red,
+                  background: Colors.black,
+                  onBackground: Colors.white,
+                  surface: Color.fromARGB(255, 53, 51, 55),
+                  onSurface: Colors.white)),
+          themeMode: _themeMode,
+          home: const MyHomePage(title: 'GetClocked'),
+        ));
   }
+}
+
+class MyAppState extends ChangeNotifier {
+  
 }
 
 class MyHomePage extends StatefulWidget {
@@ -78,9 +109,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
