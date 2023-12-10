@@ -17,14 +17,19 @@ class _Drawer extends State<Drawer> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(padding: customTopPadding(0.1)),
-              const Text('Your drawer'),
+              const Text('Your drawer',
+              style: TextStyle(
+                fontFamily: 'Rubik',
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+              ),),
               Padding(padding: customTopPadding(0.1)),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    DrawerCard(title: 'title'),
+                    DrawerCard(title: 'Title'),
                     DrawerCard(title: 'title'),
                   ],
                 ),
@@ -44,6 +49,7 @@ class DrawerCard extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _DrawerCardState();
+
 }
 
 class _DrawerCardState extends State<DrawerCard> {
@@ -52,9 +58,7 @@ class _DrawerCardState extends State<DrawerCard> {
     return Card(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20))),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
+      child: 
           SizedBox(
             width: 280,
             height: 200,
@@ -70,13 +74,17 @@ class _DrawerCardState extends State<DrawerCard> {
               end: Alignment.centerLeft,
             ),
               ),
-              child: Center(
-                child: Text('sample')
-                )
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(padding: customTopPadding(0.02)),
+                  Center(
+                    child: Text(widget.title)
+                    ),
+                ],
+              )
               ),
           ),
-        ],
-      ),
     );
   }
 }
