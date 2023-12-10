@@ -31,6 +31,7 @@ class _MyAppState extends State<MyApp> {
           title: 'GetClocked',
           theme: ThemeData(
               useMaterial3: true,
+              fontFamily: 'Rubik',
               colorScheme: const ColorScheme(
                   brightness: Brightness.light,
                   primary: Color.fromARGB(255, 33, 195, 236),

@@ -21,21 +21,48 @@ class WelcomePage extends StatelessWidget {
         )
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const Padding(padding: topPadding),
+          Padding(padding: customTopPadding(0.25)),
           Center(
             child: Text(
               'Welcome!',
               style: TextStyle(
                 color: colorScheme.onPrimary,
-                fontSize: 20,
+                fontSize: 30,
+                fontFamily: 'Lobster',
               ),
             ),
-            
           ),
-          const Expanded(child: Text('')),
-
+          Padding(padding: customTopPadding(0.1)),
+          Container(
+          height: 50,
+          width: 150,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            gradient: LinearGradient(
+              colors: [
+            Colors.blue.shade100,
+            Colors.purple.shade100,
+              ],
+              begin: Alignment.centerRight,
+              end: Alignment.centerLeft,
+            ),
+          ),
+          child: TextButton(
+            style: ButtonStyle(
+              fixedSize: MaterialStateProperty.resolveWith((states) => const Size(180, 50)),
+            ),
+            onPressed: () {}, 
+            child: Text(
+                  'New journal',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: colorScheme.onPrimary,
+                  ),
+                ),
+              ),
+      ),
         ],
       ),
     ));

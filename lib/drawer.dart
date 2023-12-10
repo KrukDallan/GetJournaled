@@ -19,43 +19,63 @@ class _Drawer extends State<Drawer> {
               Padding(padding: customTopPadding(0.1)),
               const Text('Your drawer'),
               Padding(padding: customTopPadding(0.1)),
-              const SingleChildScrollView(
+              SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Card(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 280,
-                            height: 200,
-                            child: Center(child: Text('sample')),
-                            ),
-                        ],
-                      ),
-                  ),
-                  Card(
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 280,
-                            height: 200,
-                            child: Center(child: Text('sample')),
-                            ),
-                        ],
-                      ),
-                  ),
+                    DrawerCard(title: 'title'),
+                    DrawerCard(title: 'title'),
                   ],
                 ),
               )
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class DrawerCard extends StatefulWidget {
+  late String title;
+
+  DrawerCard({super.key, required this.title});
+
+  @override
+  State<StatefulWidget> createState() => _DrawerCardState();
+}
+
+class _DrawerCardState extends State<DrawerCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(20))),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 280,
+            height: 200,
+            child: Container(
+              decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+                gradient: LinearGradient(
+              colors: [
+            Colors.amber.shade50,
+            Colors.orange.shade50,
+              ],
+              begin: Alignment.centerRight,
+              end: Alignment.centerLeft,
+            ),
+              ),
+              child: Center(
+                child: Text('sample')
+                )
+              ),
+          ),
+        ],
       ),
     );
   }
