@@ -30,7 +30,7 @@ class _Drawer extends State<Drawer> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     DrawerCard(title: 'Title'),
-                    DrawerCard(title: 'title'),
+                    DrawerCard(title: 'Title2'),
                   ],
                 ),
               )
