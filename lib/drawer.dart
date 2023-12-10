@@ -19,9 +19,9 @@ class _Drawer extends State<Drawer> {
               Padding(padding: customTopPadding(0.1)),
               const Text('Your drawer',
               style: TextStyle(
-                fontFamily: 'Rubik',
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
+                fontFamily: 'Roboto',
+                fontSize: 24,
+                fontWeight: FontWeight.w700 ,
               ),),
               Padding(padding: customTopPadding(0.1)),
               SingleChildScrollView(
@@ -79,7 +79,13 @@ class _DrawerCardState extends State<DrawerCard> {
                 children: [
                   Padding(padding: customTopPadding(0.02)),
                   Center(
-                    child: Text(widget.title)
+                    child: Text(
+                      widget.title,
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 16,
+                      ),
+                    )
                     ),
                 ],
               )

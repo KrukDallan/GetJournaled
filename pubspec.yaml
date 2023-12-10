@@ -73,9 +73,18 @@ flutter:
     - family: Rubik
       fonts:
         - asset: resources/fonts/Rubik-VariableFont_wght.ttf
-        - asset: resource/fonts/Rubik-Italic-VariableFont_wght.ttf
+        - asset: resources/fonts/Rubik-Italic-VariableFont_wght.ttf
           style: italic
-
+    - family: RobotoM
+      fonts:
+        - asset: resources/fonts/Roboto-Medium.ttf
+        - asset: resources/fonts/Roboto-MediumItalic.ttf
+          style: italic
+    - family: Roboto
+      fonts:
+        - asset: resources/fonts/Roboto-Regular.ttf
+        - asset: resources/fonts/Roboto-Italic.ttf
+          style: italic
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
