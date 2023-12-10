@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:getjournaled/shared.dart';
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -22,6 +23,7 @@ class WelcomePage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const Padding(padding: topPadding),
           Center(
             child: Text(
               'Welcome!',
@@ -30,7 +32,10 @@ class WelcomePage extends StatelessWidget {
                 fontSize: 20,
               ),
             ),
+            
           ),
+          const Expanded(child: Text('')),
+
         ],
       ),
     ));

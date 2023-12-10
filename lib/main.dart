@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:getjournaled/welcome.dart';
+import 'package:getjournaled/drawer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -118,6 +119,8 @@ class _MyHomePageState extends State<MyHomePage> {
     switch (selectedIndex) {
       case 0:
         page = const WelcomePage();
+      case 1:
+        page = DrawerPage();
       default:
         page = Text('UnimplementedError(no widget for $selectedIndex)');
     }
