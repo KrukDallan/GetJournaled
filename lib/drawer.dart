@@ -16,8 +16,8 @@ class _Drawer extends State<Drawer> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Padding(padding: customTopPadding(0.1)),
-              const Text('Your drawer',
+              Padding(padding: customTopPadding(0.025)),
+              const Text('Your journals',
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 24,
@@ -56,7 +56,7 @@ class _DrawerCardState extends State<DrawerCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(20))),
       child: 
           SizedBox(
@@ -64,7 +64,7 @@ class _DrawerCardState extends State<DrawerCard> {
             height: 200,
             child: Container(
               decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
                 gradient: LinearGradient(
               colors: [
             Colors.amber.shade50,
@@ -81,7 +81,7 @@ class _DrawerCardState extends State<DrawerCard> {
                   Center(
                     child: Text(
                       widget.title,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 16,
                       ),
@@ -107,8 +107,8 @@ class DrawerPage extends StatelessWidget {
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
               colors: [
-            Colors.blue[200]!,
-            Colors.purple[200]!,
+            Colors.blue.shade200,
+            Colors.purple.shade100,
           ])),
       child: Drawer(),
     ));

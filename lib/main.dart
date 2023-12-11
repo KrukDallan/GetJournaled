@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:getjournaled/welcome.dart';
 import 'package:getjournaled/drawer.dart';
+import 'package:getjournaled/notes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -122,6 +123,8 @@ class _MyHomePageState extends State<MyHomePage> {
         page = const WelcomePage();
       case 1:
         page = DrawerPage();
+      case 2:
+        page = NotesPage();
       default:
         page = Text('UnimplementedError(no widget for $selectedIndex)');
     }
@@ -162,6 +165,12 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         const BottomNavigationBarItem(
                           icon: Icon(
+                            Icons.note_alt_outlined,
+                          ),
+                          label: 'Notes',
+                        ),
+                        const BottomNavigationBarItem(
+                          icon: Icon(
                             Icons.settings,
                           ),
                           label: 'Settings',
@@ -195,6 +204,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       NavigationRailDestination(
                         icon: const Icon(Icons.article),
                         label: Text('Drawer',
+                            style: TextStyle(color: colorScheme.onSecondary)),
+                      ),
+                      NavigationRailDestination(
+                        icon: const Icon(Icons.note_alt_outlined),
+                        label: Text('Notes',
                             style: TextStyle(color: colorScheme.onSecondary)),
                       ),
                       NavigationRailDestination(
