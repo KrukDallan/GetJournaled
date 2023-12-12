@@ -10,6 +10,19 @@ EdgeInsets customBottomPadding(double factor){
   return EdgeInsets.only(bottom: 800*0.5*factor);
 }
 
+EdgeInsets customLeftPadding(double factor){
+  return EdgeInsets.only(left: 480*0.5*factor);
+}
+
+EdgeInsets customRightPadding(double factor){
+  return EdgeInsets.only(right: 480*0.5*factor);
+}
+
+
+
+
+
+
 class CustomTextButton extends StatelessWidget{
   late Color color1;
   late Color color2;

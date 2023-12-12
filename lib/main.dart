@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:getjournaled/welcome.dart';
 import 'package:getjournaled/drawer.dart';
 import 'package:getjournaled/notes.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
 }
 
@@ -35,7 +36,7 @@ class _MyAppState extends State<MyApp> {
               fontFamily: 'Roboto',
               colorScheme: const ColorScheme(
                   brightness: Brightness.light,
-                  primary: Color.fromARGB(255, 33, 195, 236),
+                  primary: Color.fromARGB(255, 227, 247, 252),
                   onPrimary: Colors.black,
                   secondary: Colors.white,
                   onSecondary: Colors.black,
