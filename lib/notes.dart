@@ -97,8 +97,8 @@ class _NoteCardState extends State<NoteCard> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    SingleNotePage(title: widget.title, body: '')));
+                builder: (context) => TestWidget()));
+                    //SingleNotePage(title: widget.title, body: '')));
       },
       child: Card(
         shape: const RoundedRectangleBorder(
@@ -148,9 +148,10 @@ class _SingleNotePage extends State<SingleNotePage> {
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
     var appState = context.watch<MyAppState>();
+
     return SafeArea(
         child: Container(
-          color: colorScheme.primary,
+      color: colorScheme.primary,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,6 +175,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                 fontFamily: 'Roboto',
                 fontSize: 24,
                 fontWeight: FontWeight.w600,
+                color: colorScheme.onPrimary,
               ),
             ),
           ),
@@ -182,7 +184,24 @@ class _SingleNotePage extends State<SingleNotePage> {
             indent: 20,
             endIndent: 40,
           ),
-          GestureDetector(
+          Stack(
+            fit: StackFit.expand,
+            children: [
+              EditableText(
+                controller: TextEditingController(text: ''),
+                focusNode: FocusNode(),
+                style: TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: 16,
+                  color: colorScheme.onPrimary,
+                ),
+                maxLines: 100,
+                cursorColor: colorScheme.onPrimary,
+                backgroundCursorColor: Color.fromARGB(255, 68, 67, 67),
+              ),
+            ],
+          ),
+          /* GestureDetector(
             onTap: () {},
             child: Expanded(
               child: Padding(
@@ -197,10 +216,11 @@ class _SingleNotePage extends State<SingleNotePage> {
                     ),
                     maxLines: null,
                     cursorColor: colorScheme.onPrimary,
-                    backgroundCursorColor: Color.fromARGB(255, 68, 67, 67)),
+                    backgroundCursorColor: Color.fromARGB(255, 68, 67, 67),
+                    ),
               ),
             ),
-          )
+          ), */
         ],
       ),
     )
@@ -290,5 +310,65 @@ class NotesPage extends StatelessWidget {
           ])),
       child: Notes(),
     ));
+  }
+}
+
+class TestWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+      ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [ Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+                      Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.arrow_back)),
+            ],
+          ),
+          Padding(
+            padding:
+                EdgeInsets.only(left: 480 * 0.5 * 0.08, top: 800 * 0.5 * 0.02),
+            child: Text(
+              'Lol',
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          Divider(
+            thickness: 1.0,
+            indent: 20,
+            endIndent: 40,
+          ),
+          EditableText(
+            controller: TextEditingController(text: ''),
+            focusNode: FocusNode(),
+            style: TextStyle(
+              fontFamily: 'Roboto',
+              fontSize: 16,
+              color: Colors.black,
+            ),
+            maxLines: null,
+            cursorColor: Colors.black,
+            backgroundCursorColor: Color.fromARGB(255, 68, 67, 67),
+          ),
+          ],
+        ),
+        ],
+      ),
+    );
   }
 }
