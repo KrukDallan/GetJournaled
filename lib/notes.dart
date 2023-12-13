@@ -146,6 +146,7 @@ class _SingleNotePage extends State<SingleNotePage> {
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
     var oldBody = widget.body;
+    title = widget.title;
     return Container(
       decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -175,8 +176,8 @@ class _SingleNotePage extends State<SingleNotePage> {
                 child: OutlinedButton(
                   onPressed: () {
                     // check if the note is already present in the map
-                    if ( (hiveNotesIdMap.isNotEmpty) &&(hiveNotesIdMap.containsKey(this.id))) {
-                      hiveNotesMap.update(this.title, (value) => this.body);
+                    if ( (hiveNotesIdMap.isNotEmpty) &&(hiveNotesIdMap.containsKey(widget.id))) {
+                      hiveNotesMap.update(title, (value) => body);
                       HiveNotes hn =
                           HiveNotes(title: title, body: body, id: id);
 
@@ -196,8 +197,8 @@ class _SingleNotePage extends State<SingleNotePage> {
                       boxSingleNotes.add(hn);
                     }
 
-                    var mySnackBar = customSnackBar('Note saved!');
-                    ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
+                    //var mySnackBar = customSnackBar('Note saved!');
+                    //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
                   },
                   child: Text(
                     'Save',
