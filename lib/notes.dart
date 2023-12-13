@@ -53,7 +53,7 @@ class _Notes extends State<Notes> {
                       child: NoteCard(
                         title: entry.key,
                         body: entry.value,
-                        id: entry.id,
+                        id: hiveNotesIdMap.entries.firstWhere((element) => element.value==entry.key).key,
                       ),
                     ),
                 ],
@@ -71,7 +71,8 @@ class NoteCard extends StatefulWidget {
   late String body;
   late int id;
 
-  NoteCard({super.key, required this.title, required this.body, required this.id});
+  NoteCard(
+      {super.key, required this.title, required this.body, required this.id});
 
   @override
   State<StatefulWidget> createState() => _NoteCardState();
@@ -85,8 +86,8 @@ class _NoteCardState extends State<NoteCard> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) =>
-                    SingleNotePage(title: widget.title, body: widget.body, id: widget.id)));
+                builder: (context) => SingleNotePage(
+                    title: widget.title, body: widget.body, id: widget.id)));
       },
       child: Card(
         shape: const RoundedRectangleBorder(
@@ -126,7 +127,8 @@ class SingleNotePage extends StatefulWidget {
   late String body;
   late int id;
 
-  SingleNotePage({super.key, required this.title, required this.body, required this.id});
+  SingleNotePage(
+      {super.key, required this.title, required this.body, required this.id});
 
   @override
   State<StatefulWidget> createState() => _SingleNotePage();
@@ -168,28 +170,23 @@ class _SingleNotePage extends State<SingleNotePage> {
                 padding: const EdgeInsets.only(top: 4.0, right: 10.0),
                 child: OutlinedButton(
                   onPressed: () {
-                    bool isPresent = false;
-                      if(hiveNotesIdMap.containsKey(this.id)){
-                        hiveNotesMap.update(this.title, (value) => this.body);
-                        HiveNotes hn = HiveNotes(title: title, body: body, id: id);
-                        for (int i = 0; i < boxSingleNotes.length; i++) {
-                        HiveNotes tmp = boxSingleNotes.getAt(i);
-                        if(tmp.id == hn.id){
-                          
-                        }
-                      }
-                      }
-                    
-
-                    if (hiveNotesIdMap.containsKey(this.title)) {
+                    // check if the note is already present in the map
+                    if (hiveNotesIdMap.containsKey(this.id)) {
                       hiveNotesMap.update(this.title, (value) => this.body);
+                      HiveNotes hn =
+                          HiveNotes(title: title, body: body, id: id);
+
+                      // update the corresponding entry in the box
                       for (int i = 0; i < boxSingleNotes.length; i++) {
                         HiveNotes tmp = boxSingleNotes.getAt(i);
-                        if(tmp.id == hn.id){
-
+                        if (tmp.id == hn.id) {
+                          boxSingleNotes.putAt(i, hn);
+                          break;
                         }
                       }
                     } else {
+                      HiveNotes hn =
+                          HiveNotes(title: title, body: body, id: id);
                       hiveNotesMap.putIfAbsent(hn.title, () => hn.body);
                       boxSingleNotes.add(hn);
                     }

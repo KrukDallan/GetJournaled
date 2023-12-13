@@ -90,6 +90,7 @@ class WelcomePage extends StatelessWidget {
                         builder: (context) => SingleNotePage(
                               title: 'Title',
                               body: '',
+                              id: unique_id++,
                             )));
               },
               child: Text(
