@@ -191,8 +191,8 @@ class _SingleNotePage extends State<SingleNotePage> {
                       }
                     } else {
                       HiveNotes hn =
-                          HiveNotes(title: title, body: body, id: unique_id++);
-                      hiveNotesMap.putIfAbsent(hn.title, () => hn.body);
+                          HiveNotes(title: title, body: body, id: widget.id);
+                      var oldtitle = hiveNotesMap.putIfAbsent(hn.title, () => hn.body);
                       hiveNotesIdMap.putIfAbsent(unique_id-1, () => hn.title);
                       boxSingleNotes.add(hn);
                     }
