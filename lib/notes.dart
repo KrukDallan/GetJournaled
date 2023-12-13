@@ -7,7 +7,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:getjournaled/hive_notes.dart';
 
-int unique_id = 0;
+int unique_id = (boxSingleNotes.length > 0)? hiveNotesIdMap.keys.last : 0;
 
 class Notes extends StatefulWidget {
   @override
@@ -89,6 +89,9 @@ class _NoteCardState extends State<NoteCard> {
                 builder: (context) => SingleNotePage(
                     title: widget.title, body: widget.body, id: widget.id)));
       },
+      onLongPress: () {
+
+      },
       child: Card(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20))),
@@ -135,13 +138,14 @@ class SingleNotePage extends StatefulWidget {
 }
 
 class _SingleNotePage extends State<SingleNotePage> {
-  String title = '';
+  String title = 'Title';
   String body = '';
-  late int id;
+  late int id = widget.id;
 
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
+    var oldBody = widget.body;
     return Container(
       decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -171,7 +175,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                 child: OutlinedButton(
                   onPressed: () {
                     // check if the note is already present in the map
-                    if (hiveNotesIdMap.containsKey(this.id)) {
+                    if ( (hiveNotesIdMap.isNotEmpty) &&(hiveNotesIdMap.containsKey(this.id))) {
                       hiveNotesMap.update(this.title, (value) => this.body);
                       HiveNotes hn =
                           HiveNotes(title: title, body: body, id: id);
@@ -186,10 +190,14 @@ class _SingleNotePage extends State<SingleNotePage> {
                       }
                     } else {
                       HiveNotes hn =
-                          HiveNotes(title: title, body: body, id: id);
+                          HiveNotes(title: title, body: body, id: unique_id++);
                       hiveNotesMap.putIfAbsent(hn.title, () => hn.body);
+                      hiveNotesIdMap.putIfAbsent(unique_id-1, () => hn.title);
                       boxSingleNotes.add(hn);
                     }
+
+                    var mySnackBar = customSnackBar('Note saved!');
+                    ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
                   },
                   child: Text(
                     'Save',

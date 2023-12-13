@@ -18,7 +18,14 @@ EdgeInsets customRightPadding(double factor){
   return EdgeInsets.only(right: 480*0.5*factor);
 }
 
+SnackBar customSnackBar(String text){
+  return SnackBar(
+    content: Text(text),
+    behavior: SnackBarBehavior.floating,
+    margin: const EdgeInsets.only(bottom: 45),
 
+    );
+}
 
 
 
