@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:getjournaled/boxes.dart';
 import 'package:getjournaled/main.dart';
 import 'package:getjournaled/shared.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:getjournaled/hive_notes.dart';
+
+int unique_id = 0;
 
 class Notes extends StatefulWidget {
   @override
@@ -10,6 +15,10 @@ class Notes extends StatefulWidget {
 }
 
 class _Notes extends State<Notes> {
+  void updateNoteView() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -38,38 +47,15 @@ class _Notes extends State<Notes> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 6),
-                    child: NoteCard(title: 'Title'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 6),
-                    child: NoteCard(title: 'Title'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 6),
-                    child: NoteCard(title: 'Title'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 6),
-                    child: NoteCard(title: 'Title'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 6),
-                    child: NoteCard(title: 'Title'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 6),
-                    child: NoteCard(title: 'Title'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 6),
-                    child: NoteCard(title: 'Title'),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 6),
-                    child: NoteCard(title: 'Title'),
-                  ),
+                  for (var entry in hiveNotesMap.entries)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 6),
+                      child: NoteCard(
+                        title: entry.key,
+                        body: entry.value,
+                        id: entry.id,
+                      ),
+                    ),
                 ],
               ),
             ],
@@ -82,8 +68,10 @@ class _Notes extends State<Notes> {
 
 class NoteCard extends StatefulWidget {
   late String title;
+  late String body;
+  late int id;
 
-  NoteCard({super.key, required this.title});
+  NoteCard({super.key, required this.title, required this.body, required this.id});
 
   @override
   State<StatefulWidget> createState() => _NoteCardState();
@@ -97,8 +85,8 @@ class _NoteCardState extends State<NoteCard> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => TestWidget()));
-                    //SingleNotePage(title: widget.title, body: '')));
+                builder: (context) =>
+                    SingleNotePage(title: widget.title, body: widget.body, id: widget.id)));
       },
       child: Card(
         shape: const RoundedRectangleBorder(
@@ -136,22 +124,30 @@ class _NoteCardState extends State<NoteCard> {
 class SingleNotePage extends StatefulWidget {
   late String title;
   late String body;
+  late int id;
 
-  SingleNotePage({super.key, required this.title, required this.body});
+  SingleNotePage({super.key, required this.title, required this.body, required this.id});
 
   @override
   State<StatefulWidget> createState() => _SingleNotePage();
 }
 
 class _SingleNotePage extends State<SingleNotePage> {
+  String title = '';
+  String body = '';
+  late int id;
+
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
-    var appState = context.watch<MyAppState>();
-
-    return SafeArea(
-        child: Container(
-      color: colorScheme.primary,
+    return Container(
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+        colors: [
+          Colors.amber.shade50,
+          Colors.orange.shade50,
+        ],
+      )),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,137 +155,106 @@ class _SingleNotePage extends State<SingleNotePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              IconButton(
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0, left: 4.0),
+                child: IconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.arrow_back)),
+              ),
+              const Expanded(child: Text('')),
+              Padding(
+                padding: const EdgeInsets.only(top: 4.0, right: 10.0),
+                child: OutlinedButton(
                   onPressed: () {
-                    Navigator.pop(context);
+                    bool isPresent = false;
+                      if(hiveNotesIdMap.containsKey(this.id)){
+                        hiveNotesMap.update(this.title, (value) => this.body);
+                        HiveNotes hn = HiveNotes(title: title, body: body, id: id);
+                        for (int i = 0; i < boxSingleNotes.length; i++) {
+                        HiveNotes tmp = boxSingleNotes.getAt(i);
+                        if(tmp.id == hn.id){
+                          
+                        }
+                      }
+                      }
+                    
+
+                    if (hiveNotesIdMap.containsKey(this.title)) {
+                      hiveNotesMap.update(this.title, (value) => this.body);
+                      for (int i = 0; i < boxSingleNotes.length; i++) {
+                        HiveNotes tmp = boxSingleNotes.getAt(i);
+                        if(tmp.id == hn.id){
+
+                        }
+                      }
+                    } else {
+                      hiveNotesMap.putIfAbsent(hn.title, () => hn.body);
+                      boxSingleNotes.add(hn);
+                    }
                   },
-                  icon: const Icon(Icons.arrow_back)),
-            ],
-          ),
-          Padding(
-            padding:
-                EdgeInsets.only(left: 480 * 0.5 * 0.08, top: 800 * 0.5 * 0.02),
-            child: Text(
-              widget.title,
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onPrimary,
-              ),
-            ),
-          ),
-          Divider(
-            thickness: 1.0,
-            indent: 20,
-            endIndent: 40,
-          ),
-          Stack(
-            fit: StackFit.expand,
-            children: [
-              EditableText(
-                controller: TextEditingController(text: ''),
-                focusNode: FocusNode(),
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 16,
-                  color: colorScheme.onPrimary,
-                ),
-                maxLines: 100,
-                cursorColor: colorScheme.onPrimary,
-                backgroundCursorColor: Color.fromARGB(255, 68, 67, 67),
-              ),
-            ],
-          ),
-          /* GestureDetector(
-            onTap: () {},
-            child: Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(top: 10, left: 20, right: 10),
-                child: EditableText(
-                    controller: TextEditingController(text: ''),
-                    focusNode: FocusNode(),
+                  child: Text(
+                    'Save',
                     style: TextStyle(
-                      fontFamily: 'Roboto',
-                      fontSize: 16,
                       color: colorScheme.onPrimary,
                     ),
-                    maxLines: null,
-                    cursorColor: colorScheme.onPrimary,
-                    backgroundCursorColor: Color.fromARGB(255, 68, 67, 67),
-                    ),
+                  ),
+                ),
               ),
-            ),
-          ), */
-        ],
-      ),
-    )
-
-        /* Scaffold(
-      backgroundColor: colorScheme.primary,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.arrow_back)),
             ],
           ),
           Padding(
-            padding:
-                EdgeInsets.only(left: 480 * 0.5 * 0.08, top: 800 * 0.5 * 0.02),
-            child: Text(
-              widget.title,
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
+            padding: const EdgeInsets.only(
+                left: 480 * 0.5 * 0.08, top: 800 * 0.5 * 0.02),
+            child: Material(
+              type: MaterialType.transparency,
+              child: EditableText(
+                controller: TextEditingController(
+                  text: widget.title,
+                ),
+                focusNode: FocusNode(),
+                style: const TextStyle(
+                  fontFamily: 'Roboto',
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                ),
+                cursorColor: Colors.black,
+                backgroundCursorColor: Colors.black,
+                onChanged: (String value) {
+                  title = value;
+                },
               ),
             ),
           ),
-          Divider(
+          const Divider(
             thickness: 1.0,
             indent: 20,
             endIndent: 40,
           ),
-          SingleChildScrollView(
-            child: GestureDetector(
-            onTap: () { },
-            child:
-                LayoutBuilder(builder: (context, BoxConstraints constraints) {
-              return Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height*0.9,
-                  child: Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 10, left: 20, right: 10),
-                      child: EditableText(
-                          controller: TextEditingController(text: ''),
-                          focusNode: FocusNode(),
-                          style: TextStyle(
-                            fontFamily: 'Roboto',
-                            fontSize: 16,
-                            color: colorScheme.onPrimary,
-                          ),
-                          maxLines: null,
-                          cursorColor: colorScheme.onPrimary,
-                          backgroundCursorColor: Color.fromARGB(255, 68, 67, 67)),
-                    ),
-                  ),
-                );
-            }),
-          ),
-          ),
+          Expanded(
+              child: Padding(
+            padding: const EdgeInsets.only(left: 20.0, top: 10.0),
+            child: EditableText(
+              controller: TextEditingController(text: widget.body),
+              focusNode: FocusNode(),
+              style: const TextStyle(
+                fontFamily: 'Roboto',
+                fontSize: 16,
+                color: Colors.black,
+              ),
+              maxLines: null,
+              cursorColor: Colors.black,
+              backgroundCursorColor: const Color.fromARGB(255, 68, 67, 67),
+              onChanged: (value) {
+                body = value;
+              },
+            ),
+          ))
         ],
       ),
-    )*/
-        );
+    );
   }
 }
 
@@ -310,65 +275,5 @@ class NotesPage extends StatelessWidget {
           ])),
       child: Notes(),
     ));
-  }
-}
-
-class TestWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-      ),
-      child: Stack(
-        fit: StackFit.expand,
-        children: [ Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-                      Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.arrow_back)),
-            ],
-          ),
-          Padding(
-            padding:
-                EdgeInsets.only(left: 480 * 0.5 * 0.08, top: 800 * 0.5 * 0.02),
-            child: Text(
-              'Lol',
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          Divider(
-            thickness: 1.0,
-            indent: 20,
-            endIndent: 40,
-          ),
-          EditableText(
-            controller: TextEditingController(text: ''),
-            focusNode: FocusNode(),
-            style: TextStyle(
-              fontFamily: 'Roboto',
-              fontSize: 16,
-              color: Colors.black,
-            ),
-            maxLines: null,
-            cursorColor: Colors.black,
-            backgroundCursorColor: Color.fromARGB(255, 68, 67, 67),
-          ),
-          ],
-        ),
-        ],
-      ),
-    );
   }
 }

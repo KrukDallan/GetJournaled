@@ -5,8 +5,27 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:getjournaled/welcome.dart';
 import 'package:getjournaled/drawer.dart';
 import 'package:getjournaled/notes.dart';
+import 'package:getjournaled/hive_notes.dart';
+import 'package:getjournaled/boxes.dart';
+
+
+var hiveNotesMap = <String, String>{};
+var hiveNotesIdMap = <int,String>{};
 
 void main() async {
+   WidgetsFlutterBinding.ensureInitialized();
+   await Hive.initFlutter();
+   Hive.registerAdapter(HiveNotesAdapter());
+   boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes');
+
+   if (boxSingleNotes.length > 0){
+    for(int i = 0; i < boxSingleNotes.length; i++){
+      HiveNotes hn = boxSingleNotes.getAt(i);
+    hiveNotesMap.putIfAbsent(hn.title, () => hn.body);
+    hiveNotesIdMap.putIfAbsent(hn.id, () => hn.title);
+    print(hn.title);
+    }
+   }
   runApp(const MyApp());
 }
 
@@ -153,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         BottomNavigationBarItem(
                           backgroundColor: colorScheme.secondary,
                           icon: Icon(
-                            Icons.access_time_filled,
+                            Icons.home,
                             color: colorScheme.onPrimary,
                           ),
                           label: 'Home page',
@@ -166,7 +185,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         const BottomNavigationBarItem(
                           icon: Icon(
-                            Icons.note_alt_outlined,
+                            Icons.note_alt_rounded,
                           ),
                           label: 'Notes',
                         ),
