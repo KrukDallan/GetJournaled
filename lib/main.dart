@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:getjournaled/db/bindings.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -9,12 +12,14 @@ import 'package:getjournaled/hive_notes.dart';
 import 'package:getjournaled/boxes.dart';
 
 
-var hiveNotesMap = <String, String>{};
+/* var hiveNotesMap = <String, String>{};
 var hiveNotesIdMap = <int,String>{};
+var map = Map<int, Map<String, dynamic>>.identity(); */
 
 void main() async {
    WidgetsFlutterBinding.ensureInitialized();
-   await Hive.initFlutter();
+   
+/*    await Hive.initFlutter();
    Hive.registerAdapter(HiveNotesAdapter());
    boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes');
 
@@ -25,7 +30,10 @@ void main() async {
     hiveNotesIdMap.putIfAbsent(hn.id, () => hn.title);
     print(hn.title);
     }
-   }
+   } */
+
+   // 
+   await bindDependencies();
   runApp(const MyApp());
 }
 
@@ -254,3 +262,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+
+
