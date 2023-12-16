@@ -1,9 +1,12 @@
 import 'dart:async';
 
-abstract class NoteMapsService{
-final StreamController<Map<int,Map<String,dynamic>>> _streamNoteController = StreamController.broadcast();
+import 'package:flutter/material.dart';
 
-Stream<Map<int, Map<String, dynamic>>> get stream => _streamNoteController.stream;
+abstract class NoteMapsService{
+  @protected
+final StreamController<Map<int,Map<String,dynamic>>> streamNoteController = StreamController.broadcast();
+
+Stream<Map<int, Map<String, dynamic>>> get stream => streamNoteController.stream;
 
 Future<void> add(int id, Map<String,dynamic> map);
 
@@ -17,7 +20,7 @@ Future<Map<int, Map<String, dynamic>>> getAllNotes();
 Future<void> open();
 
 Future<void> dispose() async {
- _streamNoteController.close();
+ streamNoteController.close();
 }
 
 }
