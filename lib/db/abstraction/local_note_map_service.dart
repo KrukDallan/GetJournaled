@@ -47,16 +47,19 @@ class LocalNoteMapService extends NoteMapsService{
   }
 
   @override
-  Future<bool> remove(int id) {
-    // TODO: implement remove
-    throw UnimplementedError();
+  Future<bool> remove(int id) async{
+    if(cacheMap.containsKey(id)){
+      cacheMap.remove(id);
+      boxSingleNotes.deleteAt(id);
+      return true;
+    }
+    else{
+      return false;
+    }
   }
-
 
   @override
-  Future<Map<int, Map<String, dynamic>>> getAllNotes() {
-    // TODO: implement getAllNotes
-    throw UnimplementedError();
+  Future<Map<int, Map<String, dynamic>>> getAllNotes() async{
+    return cacheMap;
   }
-
 }

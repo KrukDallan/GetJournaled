@@ -11,7 +11,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:getjournaled/hive_notes.dart';
 
-int unique_id = (boxSingleNotes.length > 0) ? hiveNotesIdMap.keys.last : 0;
+int unique_id = (boxSingleNotes.length > 0) ? boxSingleNotes.keys.last : 0;
 
 class Notes extends StatefulWidget {
   @override
