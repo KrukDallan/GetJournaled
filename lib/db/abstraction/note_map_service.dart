@@ -12,7 +12,7 @@ Future<void> add(int id, Map<String,dynamic> map);
 
 Future<bool> remove(int id);
 
-Future<Map<String,dynamic>> get(int id);
+Future<Map<String,dynamic>?> get(int id);
 
 Future<Map<int, Map<String, dynamic>>> getAllNotes();
 
