@@ -1,18 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
-import 'package:getjournaled/main.dart';
 import 'package:getjournaled/shared.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:provider/provider.dart';
-import 'package:getjournaled/hive_notes.dart';
 
-int unique_id = 0;
+int localUniqueId = 0;
 
 class Notes extends StatefulWidget {
+  const Notes({super.key});
+
   @override
   State<Notes> createState() => _Notes();
 }
@@ -33,7 +30,7 @@ class _Notes extends State<Notes> {
   @override
   void initState() {
     super.initState();
-    unique_id = (_notesMap.isNotEmpty) ? _notesMap.keys.last : 0;
+    localUniqueId = (_notesMap.isNotEmpty) ? (_notesMap.keys.last +1) : 0;
 
     _notesService.getAllNotes().then((value) => setState(() {
           _notesMap = value;
@@ -172,13 +169,15 @@ class SingleNotePage extends StatefulWidget {
 class _SingleNotePage extends State<SingleNotePage> {
   String title = 'Title';
   String body = '';
-  late int id = widget.id;
+  int id = 0;
 
   final NoteMapsService _notesService = GetIt.I<NoteMapsService>();
 
   Map<int, Map<String, dynamic>> _notesMap = {};
 
   StreamSubscription? _notesSub;
+
+
 
   @override
   void dispose() {
@@ -189,6 +188,8 @@ class _SingleNotePage extends State<SingleNotePage> {
   @override
   void initState() {
     super.initState();
+    id = _notesService.getUniqueId();
+  
 
     _notesService.getAllNotes().then((value) => setState(() {
           _notesMap = value;
@@ -231,11 +232,11 @@ class _SingleNotePage extends State<SingleNotePage> {
                   onPressed: () {
                     // check if the note is already present in the map
                     if ((_notesMap.isNotEmpty) &&
-                        (_notesMap.containsKey(widget.id))) {
+                        (_notesMap.containsKey(id))) {
                       Map<String, dynamic> tmp = {title: body};
                       _notesMap.update(id, (value) => tmp);
                       _notesService.update(id, tmp);
-                      this.title = title;
+                      title = title;
 
                     } else {
                       Map<String, dynamic> tmp = {title: body};
@@ -331,7 +332,7 @@ class NotesPage extends StatelessWidget {
             Colors.teal.shade200,
             Colors.purple[100]!,
           ])),
-      child: Notes(),
+      child: const Notes(),
     ));
   }
 }

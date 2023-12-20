@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:getjournaled/shared.dart';
 
 class Drawer extends StatefulWidget {
+  const Drawer({super.key});
+
   @override
   State<Drawer> createState() => _Drawer();
 }
@@ -110,7 +112,7 @@ class DrawerPage extends StatelessWidget {
             Colors.blue.shade200,
             Colors.purple.shade100,
           ])),
-      child: Drawer(),
+      child: const Drawer(),
     ));
   }
 }

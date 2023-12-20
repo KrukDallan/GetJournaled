@@ -1,16 +1,13 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
 import 'package:getjournaled/db/bindings.dart';
 import 'package:provider/provider.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:getjournaled/welcome.dart';
 import 'package:getjournaled/drawer.dart';
 import 'package:getjournaled/notes.dart';
-import 'package:getjournaled/hive_notes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -132,9 +129,9 @@ class _MyHomePageState extends State<MyHomePage> {
       case 0:
         page = const WelcomePage();
       case 1:
-        page = DrawerPage();
+        page = const DrawerPage();
       case 2:
-        page = NotesPage();
+        page = const NotesPage();
       default:
         page = Text('UnimplementedError(no widget for $selectedIndex)');
     }
