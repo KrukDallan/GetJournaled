@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:getjournaled/db/abstraction/note_map_service.dart';
 import 'package:getjournaled/db/bindings.dart';
 import 'package:provider/provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -9,39 +11,20 @@ import 'package:getjournaled/welcome.dart';
 import 'package:getjournaled/drawer.dart';
 import 'package:getjournaled/notes.dart';
 import 'package:getjournaled/hive_notes.dart';
-import 'package:getjournaled/boxes.dart';
-
-
-/* var hiveNotesMap = <String, String>{};
-var hiveNotesIdMap = <int,String>{};
-var map = Map<int, Map<String, dynamic>>.identity(); */
 
 void main() async {
-   WidgetsFlutterBinding.ensureInitialized();
-   
-/*    await Hive.initFlutter();
-   Hive.registerAdapter(HiveNotesAdapter());
-   boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes');
+  WidgetsFlutterBinding.ensureInitialized();
 
-   if (boxSingleNotes.length > 0){
-    for(int i = 0; i < boxSingleNotes.length; i++){
-      HiveNotes hn = boxSingleNotes.getAt(i);
-    hiveNotesMap.putIfAbsent(hn.title, () => hn.body);
-    hiveNotesIdMap.putIfAbsent(hn.id, () => hn.title);
-    print(hn.title);
-    }
-   } */
-
-   // 
-   await bindDependencies();
+  await bindDependencies();
+  await GetIt.I<NoteMapsService>().open();
   runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
-  
+
   @override
-  State<MyApp> createState() => _MyAppState(); 
+  State<MyApp> createState() => _MyAppState();
 
   // Needed for light/dark theme
   static _MyAppState of(BuildContext context) =>
@@ -97,9 +80,7 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class MyAppState extends ChangeNotifier {
-  
-}
+class MyAppState extends ChangeNotifier {}
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -132,13 +113,14 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
   }
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    var selectedIndex = 0;
+
+  // This method is rerun every time setState is called, for instance as done
+  // by the _incrementCounter method above.
+  //
+  // The Flutter framework has been optimized to make rerunning build methods
+  // fast, so that you can just rebuild anything that needs updating rather
+  // than having to individually change instances of widgets.
+  var selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -172,44 +154,44 @@ class _MyHomePageState extends State<MyHomePage> {
             return Column(
               children: [
                 Expanded(child: mainArea),
-                 BottomNavigationBar(
-                      unselectedItemColor: colorScheme.onPrimary,
-                      selectedItemColor: colorScheme.onPrimary,
-                      backgroundColor: colorScheme.secondary,
-                      items: [
-                        BottomNavigationBarItem(
-                          backgroundColor: colorScheme.secondary,
-                          icon: Icon(
-                            Icons.home,
-                            color: colorScheme.onPrimary,
-                          ),
-                          label: 'Home page',
+                BottomNavigationBar(
+                    unselectedItemColor: colorScheme.onPrimary,
+                    selectedItemColor: colorScheme.onPrimary,
+                    backgroundColor: colorScheme.secondary,
+                    items: [
+                      BottomNavigationBarItem(
+                        backgroundColor: colorScheme.secondary,
+                        icon: Icon(
+                          Icons.home,
+                          color: colorScheme.onPrimary,
                         ),
-                        const BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.article,
-                          ),
-                          label: 'Drawer',
+                        label: 'Home page',
+                      ),
+                      const BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.article,
                         ),
-                        const BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.note_alt_rounded,
-                          ),
-                          label: 'Notes',
+                        label: 'Drawer',
+                      ),
+                      const BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.note_alt_rounded,
                         ),
-                        const BottomNavigationBarItem(
-                          icon: Icon(
-                            Icons.settings,
-                          ),
-                          label: 'Settings',
+                        label: 'Notes',
+                      ),
+                      const BottomNavigationBarItem(
+                        icon: Icon(
+                          Icons.settings,
                         ),
-                      ],
-                      currentIndex: selectedIndex,
-                      onTap: (value) {
-                        setState(() {
-                          selectedIndex = value;
-                        });
-                      }),
+                        label: 'Settings',
+                      ),
+                    ],
+                    currentIndex: selectedIndex,
+                    onTap: (value) {
+                      setState(() {
+                        selectedIndex = value;
+                      });
+                    }),
               ],
             );
           } else {
@@ -262,6 +244,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-
-

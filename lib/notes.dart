@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:get_it/get_it.dart';
-import 'package:getjournaled/boxes.dart';
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
 import 'package:getjournaled/main.dart';
 import 'package:getjournaled/shared.dart';
@@ -11,7 +10,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:getjournaled/hive_notes.dart';
 
-int unique_id = (boxSingleNotes.length > 0) ? boxSingleNotes.keys.last : 0;
+int unique_id = 0;
 
 class Notes extends StatefulWidget {
   @override
@@ -34,6 +33,7 @@ class _Notes extends State<Notes> {
   @override
   void initState() {
     super.initState();
+    unique_id = (_notesMap.isNotEmpty) ? _notesMap.keys.last : 0;
 
     _notesService.getAllNotes().then((value) => setState(() {
           _notesMap = value;
@@ -71,17 +71,15 @@ class _Notes extends State<Notes> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  for (var entry in hiveNotesMap.entries) ...[
+                  for (var entry in _notesMap.entries) ...[
                     Padding(
                       padding: (leftPadding++ % 2 == 0)
                           ? const EdgeInsets.only(left: 6)
                           : const EdgeInsets.only(right: 6),
                       child: NoteCard(
-                        title: entry.key,
-                        body: entry.value,
-                        id: hiveNotesIdMap.entries
-                            .firstWhere((element) => element.value == entry.key)
-                            .key,
+                        title: entry.value.keys.first,
+                        body: entry.value.values.firstOrNull,
+                        id: entry.key,
                       ),
                     ),
                   ]
@@ -176,6 +174,28 @@ class _SingleNotePage extends State<SingleNotePage> {
   String body = '';
   late int id = widget.id;
 
+  final NoteMapsService _notesService = GetIt.I<NoteMapsService>();
+
+  Map<int, Map<String, dynamic>> _notesMap = {};
+
+  StreamSubscription? _notesSub;
+
+  @override
+  void dispose() {
+    _notesSub?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _notesService.getAllNotes().then((value) => setState(() {
+          _notesMap = value;
+        }));
+    _notesSub = _notesService.stream.listen(_onNotesUpdate);
+  }
+
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
@@ -210,30 +230,18 @@ class _SingleNotePage extends State<SingleNotePage> {
                 child: OutlinedButton(
                   onPressed: () {
                     // check if the note is already present in the map
-                    if ((hiveNotesIdMap.isNotEmpty) &&
-                        (hiveNotesIdMap.containsKey(widget.id))) {
-                      hiveNotesMap.update(title, (value) => body);
-                      HiveNotes hn =
-                          HiveNotes(title: title, body: body, id: id);
+                    if ((_notesMap.isNotEmpty) &&
+                        (_notesMap.containsKey(widget.id))) {
+                      Map<String, dynamic> tmp = {title: body};
+                      _notesMap.update(id, (value) => tmp);
+                      _notesService.update(id, tmp);
+                      this.title = title;
 
-                      // update the corresponding entry in the box
-                      for (int i = 0; i < boxSingleNotes.length; i++) {
-                        HiveNotes tmp = boxSingleNotes.getAt(i);
-                        if (tmp.id == hn.id) {
-                          boxSingleNotes.putAt(i, hn);
-                          break;
-                        }
-                      }
                     } else {
-                      HiveNotes hn =
-                          HiveNotes(title: title, body: body, id: widget.id);
-                      // check if title has changed?
-                      var oldtitle =
-                          hiveNotesMap.putIfAbsent(hn.title, () => hn.body);
-                      hiveNotesIdMap.putIfAbsent(unique_id - 1, () => hn.title);
-                      boxSingleNotes.add(hn);
+                      Map<String, dynamic> tmp = {title: body};
+                      _notesMap.putIfAbsent(id, () => tmp);
+                      _notesService.add(id, tmp);
                     }
-
                     //var mySnackBar = customSnackBar('Note saved!');
                     //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
                   },
@@ -298,6 +306,13 @@ class _SingleNotePage extends State<SingleNotePage> {
         ],
       ),
     );
+  }
+
+  // business logic
+  void _onNotesUpdate(Map<int, Map<String, dynamic>> event) {
+    setState(() {
+      _notesMap = event;
+    });
   }
 }
 
