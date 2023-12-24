@@ -25,5 +25,8 @@ Future<void> open();
 
 Future<bool> remove(int id);
 
-Future<void> update(int id, Map<String,dynamic> map);
+Future<void> removeAll();
+
+Future<void> update(int id,  Map<String,dynamic> map);
+
 }

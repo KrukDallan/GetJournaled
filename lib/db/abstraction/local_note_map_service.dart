@@ -11,23 +11,38 @@ class LocalNoteMapService extends NoteMapsService {
   late Box _boxUniqueId;
   late int _uniqueId;
 
-  
   @override
   Future<void> add(int id, Map<String, dynamic> map) async {
-    for(var i in _cacheMap.values){
-      print(i.keys.first);
-    }
+    print('ID IS: ${id}');
+    // insert map in stream controller
     Map<int, Map<String, dynamic>> tmp = {_uniqueId: map};
     streamNoteController.add(tmp);
-    _cacheMap[_uniqueId] = map;
-    HiveNotes hv =
-        HiveNotes(title: map.keys.first, body: map.values.firstOrNull as String, id: _uniqueId);
-    _boxSingleNotes.add(hv);
-    _uniqueId +=1;
-        for(var i in _cacheMap.values){
-      print(i.keys.first);
+
+    // check presence
+    if (_cacheMap.containsKey(id)) {
+      _cacheMap[id] = map;
+      print('KEY ALREADY PRESENT');
+    } else {
+      _cacheMap.putIfAbsent(id, () => map);
     }
-    _boxUniqueId.putAt(0, _uniqueId+1);
+
+    // insert in hive box
+    HiveNotes hv = HiveNotes(
+        title: map.keys.first,
+        body: map.values.firstOrNull as String,
+        id: _uniqueId);
+    _boxSingleNotes.put(_uniqueId, hv);
+
+    // update the id
+    _uniqueId += 1;
+
+    // put the unique id always in the same position in the hive box
+    HiveUniqueId hui = HiveUniqueId(id: _uniqueId);
+    _boxUniqueId.put(0, hui);
+
+    for (var i in _cacheMap.keys) {
+      print(i);
+    }
     return Future(() => null);
   }
 
@@ -39,7 +54,7 @@ class LocalNoteMapService extends NoteMapsService {
     return null;
   }
 
-    @override
+  @override
   Future<Map<int, Map<String, dynamic>>> getAllNotes() async {
     return _cacheMap;
   }
@@ -54,8 +69,8 @@ class LocalNoteMapService extends NoteMapsService {
     await Hive.initFlutter();
     Hive.registerAdapter(HiveNotesAdapter());
     Hive.registerAdapter(HiveUniqueIdAdapter());
-    _boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes1');
-    _boxUniqueId = await Hive.openBox<HiveUniqueId>('UniqeId');
+    _boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes4');
+    _boxUniqueId = await Hive.openBox<HiveUniqueId>('UniqeId4');
     loadCacheMap();
     _uniqueId = loadUniqueId();
   }
@@ -64,7 +79,7 @@ class LocalNoteMapService extends NoteMapsService {
   Future<bool> remove(int id) async {
     if (_cacheMap.containsKey(id)) {
       _cacheMap.remove(id);
-      _boxSingleNotes.deleteAt(id);
+      _boxSingleNotes.delete(id);
       return true;
     } else {
       return false;
@@ -72,39 +87,60 @@ class LocalNoteMapService extends NoteMapsService {
   }
 
   @override
-  Future<void> update(int id, Map<String, dynamic> map) async{
-    _cacheMap[id] = map;
-    Map<int, Map<String, dynamic>> tmp = {id: map};
-    streamNoteController.add(tmp);
-    HiveNotes hv =
-        HiveNotes(title: map.keys.first, body: map.values.firstOrNull, id: id);
-    _boxSingleNotes.putAt(id, hv);
+  Future<void> removeAll() {
+    // doesn't work; 'concurrent modification during iteration'
+    var list = _cacheMap.keys;
+    for (var i in list) {
+      _cacheMap.remove(i);
+    }
+    _boxSingleNotes.clear();
+    _uniqueId = 0;
+    _boxUniqueId.put(0, HiveUniqueId(id: 0));
+
+    return Future(() => null);
   }
 
+  @override
+  Future<void> update(int id, Map<String, dynamic> map) {
+    print('ID TO UPDATE: ${id}');
+    Map<int, Map<String, dynamic>> tmp = {_uniqueId: map};
+    streamNoteController.add(tmp);
+
+    // check presence
+    if (_cacheMap.containsKey(id)) {
+      _cacheMap[id] = map;
+    }
+    // insert in hive box
+    HiveNotes hv = HiveNotes(
+        title: map.keys.first,
+        body: map.values.first as String,
+        id: _uniqueId);
+    _boxSingleNotes.put(_uniqueId, hv);
+
+
+    return Future(() => null);
+  }
+
+  //
   // utility functions
-  //        |
+  //        |0.................0.
   //        ∨
 
   void loadCacheMap() {
     if (_boxSingleNotes.length > 0) {
-      for (int i = 0; i < _boxSingleNotes.length; i++) {
-        HiveNotes hn = _boxSingleNotes.getAt(i);
+      for (var k in _boxSingleNotes.keys) {
+        HiveNotes hn = _boxSingleNotes.get(k);
         Map<String, dynamic> tmp = {hn.title: hn.body};
         _cacheMap.putIfAbsent(hn.id, () => tmp);
-        //print('Id: ${hn.id}, ${hn.title}');
-      }
-      for(var j in _boxSingleNotes.keys){
-        //print('box key: ${j}');
       }
     }
   }
 
   int loadUniqueId() {
-    if(_boxUniqueId.length > 0){
+    if (_boxUniqueId.length > 0) {
       HiveUniqueId tmp = _boxUniqueId.getAt(0);
       return tmp.id;
-    }
-    else{
+    } else {
       return 0;
     }
   }

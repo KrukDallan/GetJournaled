@@ -1,9 +1,44 @@
-import 'package:flutter/material.dart';
-import 'package:getjournaled/shared.dart';
-import 'package:getjournaled/notes.dart';
+import 'dart:async';
 
-class WelcomePage extends StatelessWidget {
-  const WelcomePage({super.key});
+import 'package:flutter/material.dart';
+import 'package:getjournaled/notes/new_note_page.dart';
+import 'package:getjournaled/notes/note_view.dart';
+import 'package:getjournaled/shared.dart';
+import 'package:get_it/get_it.dart';
+import 'package:getjournaled/db/abstraction/note_map_service.dart';
+
+
+class WelcomePage extends StatefulWidget{
+    const WelcomePage(
+      {super.key,});
+
+  @override
+  State<StatefulWidget> createState() => _WelcomePage();
+}
+
+class _WelcomePage extends State<WelcomePage> {
+    final NoteMapsService _notesService = GetIt.I<NoteMapsService>();
+
+  Map<int, Map<String, dynamic>> _notesMap = {};
+
+  StreamSubscription? _notesSub;
+
+  @override
+  void dispose() {
+    _notesSub?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    localUniqueId = (_notesMap.isNotEmpty) ? (_notesMap.keys.last +1) : 0;
+
+    _notesService.getAllNotes().then((value) => setState(() {
+          _notesMap = value;
+        }));
+    _notesSub = _notesService.stream.listen(_onNotesUpdate);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,10 +121,10 @@ class WelcomePage extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => SingleNotePage(
+                        builder: (context) => NewSingleNotePage(
                               title: 'Title',
                               body: '',
-                              id: 0,
+                              id: _notesService.getUniqueId(),
                             )));
               },
               child: Text(
@@ -104,5 +139,11 @@ class WelcomePage extends StatelessWidget {
         ],
       ),
     ));
+  }
+    // business logic
+  void _onNotesUpdate(Map<int, Map<String, dynamic>> event) {
+    setState(() {
+      _notesMap = event;
+    });
   }
 }
