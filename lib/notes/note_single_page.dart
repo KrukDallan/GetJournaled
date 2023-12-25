@@ -75,6 +75,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                 child: IconButton(
                     onPressed: () {
                       Navigator.pop(context);
+
                       
                       /* Navigator.push(context,  MaterialPageRoute(
                 builder: (context) => const MyHomePage(title: 'GetClocked', page: NotesPage(),))); */
@@ -121,9 +122,9 @@ class _SingleNotePage extends State<SingleNotePage> {
                 ),
                 focusNode: FocusNode(),
                 style: const TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Roboto-Medium',
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
                   color: Colors.black,
                 ),
                 cursorColor: Colors.black,

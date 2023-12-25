@@ -32,12 +32,18 @@ class _Notes extends State<Notes> {
   @override
   void initState() {
     super.initState();
-    localUniqueId = (_notesMap.isNotEmpty) ? (_notesMap.keys.last + 1) : 0;
+    localUniqueId = (_notesMap.isNotEmpty) ? (_notesMap.keys.last) : 0;
 
     _notesService.getAllNotes().then((value) => setState(() {
           _notesMap = value;
+          
+    for(var i in _notesMap.keys){
+        print("Id is: ${i}");
+      }
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
+
+
   }
 
   int leftPadding = 2;
@@ -103,6 +109,9 @@ class _Notes extends State<Notes> {
   void _onNotesUpdate(Map<int, Map<String, dynamic>> event) {
     setState(() {
       _notesMap = event;
+      for(var i in _notesMap.keys){
+        print("Id is: ${i}");
+      }
     });
   }
 }

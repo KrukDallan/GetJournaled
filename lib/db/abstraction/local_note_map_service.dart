@@ -40,9 +40,6 @@ class LocalNoteMapService extends NoteMapsService {
     HiveUniqueId hui = HiveUniqueId(id: _uniqueId);
     _boxUniqueId.put(0, hui);
 
-    for (var i in _cacheMap.keys) {
-      print(i);
-    }
     return Future(() => null);
   }
 
@@ -102,13 +99,12 @@ class LocalNoteMapService extends NoteMapsService {
 
   @override
   Future<void> update(int id, Map<String, dynamic> map) {
-    print('ID TO UPDATE: ${id}');
-    Map<int, Map<String, dynamic>> tmp = {_uniqueId: map};
-    streamNoteController.add(tmp);
+    //print('ID TO UPDATE: ${id}');
 
     // check presence
     if (_cacheMap.containsKey(id)) {
       _cacheMap[id] = map;
+      streamNoteController.add(_cacheMap);
     }
     // insert in hive box
     HiveNotes hv = HiveNotes(
@@ -116,7 +112,6 @@ class LocalNoteMapService extends NoteMapsService {
         body: map.values.first as String,
         id: _uniqueId);
     _boxSingleNotes.put(_uniqueId, hv);
-
 
     return Future(() => null);
   }
