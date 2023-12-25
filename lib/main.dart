@@ -4,6 +4,8 @@ import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
 import 'package:getjournaled/db/bindings.dart';
 import 'package:getjournaled/notes/note_main_page.dart';
+import 'package:getjournaled/notes/note_single_page.dart';
+import 'package:getjournaled/notes/note_view.dart';
 import 'package:provider/provider.dart';
 
 import 'package:getjournaled/welcome.dart';
@@ -37,9 +39,13 @@ class _MyAppState extends State<MyApp> {
     return ChangeNotifierProvider(
         create: (context) => MyAppState(),
         child: MaterialApp(
+          routes: {
+            'NotesPage': (context) => const NotesPage()
+          },
           title: 'GetClocked',
           theme: ThemeData(
               useMaterial3: true,
+              
               fontFamily: 'Roboto',
               colorScheme: const ColorScheme(
                   brightness: Brightness.light,
@@ -82,7 +88,7 @@ class MyAppState extends ChangeNotifier {}
 class MyHomePage extends StatefulWidget {
   final String title;
   final Widget page;
-  const MyHomePage({super.key, required this.title, required this.page});
+  const MyHomePage({super.key, required this.title, required this.page,});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -138,49 +144,86 @@ class _MyHomePageState extends State<MyHomePage> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxWidth < 700) {
-            return Column(
-              children: [
-                Expanded(child: mainArea),
-                BottomNavigationBar(
-                    unselectedItemColor: colorScheme.onPrimary,
-                    selectedItemColor: colorScheme.onPrimary,
+            return Scaffold(
+              bottomNavigationBar: NavigationBar(
+                  selectedIndex: selectedIndex,
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      selectedIndex = index;
+                    });
+                  },
+                    indicatorColor: colorScheme.primary,
                     backgroundColor: colorScheme.secondary,
-                    items: [
-                      BottomNavigationBarItem(
-                        backgroundColor: colorScheme.secondary,
+                    destinations: const [
+                      NavigationDestination(
                         icon: Icon(
-                          Icons.home,
-                          color: colorScheme.onPrimary,
+                          Icons.home_filled,
                         ),
                         label: 'Home page',
                       ),
-                      const BottomNavigationBarItem(
+                      NavigationDestination(
                         icon: Icon(
                           Icons.article,
                         ),
                         label: 'Drawer',
                       ),
-                      const BottomNavigationBarItem(
+                      NavigationDestination(
                         icon: Icon(
                           Icons.note_alt_rounded,
                         ),
                         label: 'Notes',
                       ),
-                      const BottomNavigationBarItem(
+                      NavigationDestination(
                         icon: Icon(
                           Icons.settings,
                         ),
                         label: 'Settings',
                       ),
                     ],
-                    currentIndex: selectedIndex,
-                    onTap: (value) {
-                      setState(() {
-                        selectedIndex = value;
-                      });
-                    }),
-              ],
+                    ),
+                    body: page,
             );
+           /*  return Column(
+              children: [
+                Expanded(child: mainArea),
+                NavigationBar(
+                  selectedIndex: selectedIndex,
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      selectedIndex = index;
+                    });
+                  },
+                    indicatorColor: colorScheme.primary,
+                    backgroundColor: colorScheme.secondary,
+                    destinations: const [
+                      NavigationDestination(
+                        icon: Icon(
+                          Icons.home_filled,
+                        ),
+                        label: 'Home page',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(
+                          Icons.article,
+                        ),
+                        label: 'Drawer',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(
+                          Icons.note_alt_rounded,
+                        ),
+                        label: 'Notes',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(
+                          Icons.settings,
+                        ),
+                        label: 'Settings',
+                      ),
+                    ],
+                    ),
+              ],
+            ); */
           } else {
             return Row(
               children: [

@@ -24,7 +24,7 @@ class _NoteCardState extends State<NoteCard> {
             context,
             MaterialPageRoute(
                 builder: (context) => SingleNotePage(
-                    title: widget.title, body: widget.body, id: widget.id)));
+                    title: widget.title, body: widget.body, id: widget.id))).then((value) => setState((){ }));
       },
       child: Card(
         shape: const RoundedRectangleBorder(

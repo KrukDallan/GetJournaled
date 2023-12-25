@@ -122,7 +122,7 @@ class _WelcomePage extends State<WelcomePage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => NewSingleNotePage(
-                              title: 'Title',
+                              title: '',
                               body: '',
                               id: _notesService.getUniqueId(),
                             )));

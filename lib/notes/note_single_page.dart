@@ -75,8 +75,9 @@ class _SingleNotePage extends State<SingleNotePage> {
                 child: IconButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      /*Navigator.push(context,  MaterialPageRoute(
-                builder: (context) => const MyHomePage(title: 'GetClocked', page: NotesPage(),)));*/
+                      
+                      /* Navigator.push(context,  MaterialPageRoute(
+                builder: (context) => const MyHomePage(title: 'GetClocked', page: NotesPage(),))); */
                     },
                     icon: const Icon(Icons.arrow_back)),
               ),
