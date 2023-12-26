@@ -19,6 +19,7 @@ class LocalNoteMapService extends NoteMapsService {
     streamNoteController.add(tmp);
 
     // check presence
+    // TODO: change how to manage this case
     if (_cacheMap.containsKey(id)) {
       _cacheMap[id] = map;
       print('KEY ALREADY PRESENT');
@@ -87,9 +88,7 @@ class LocalNoteMapService extends NoteMapsService {
   Future<void> removeAll() {
     // doesn't work; 'concurrent modification during iteration'
     var list = _cacheMap.keys;
-    for (var i in list) {
-      _cacheMap.remove(i);
-    }
+    _cacheMap.clear();
     _boxSingleNotes.clear();
     _uniqueId = 0;
     _boxUniqueId.put(0, HiveUniqueId(id: 0));
@@ -99,7 +98,7 @@ class LocalNoteMapService extends NoteMapsService {
 
   @override
   Future<void> update(int id, Map<String, dynamic> map) {
-    //print('ID TO UPDATE: ${id}');
+    print('ID TO UPDATE: ${id}');
 
     // check presence
     if (_cacheMap.containsKey(id)) {
@@ -111,8 +110,17 @@ class LocalNoteMapService extends NoteMapsService {
         title: map.keys.first,
         body: map.values.first as String,
         id: _uniqueId);
-    _boxSingleNotes.put(_uniqueId, hv);
-
+    _boxSingleNotes.put(id, hv);
+    print('Ids in map:');
+    for(var i in _cacheMap.keys){
+      print(i);
+    }
+    print('');
+    print('Ids in box:');
+    for(var i in _boxSingleNotes.keys){
+      print(i);
+    }
+    print('');
     return Future(() => null);
   }
 

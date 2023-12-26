@@ -36,10 +36,6 @@ class _Notes extends State<Notes> {
 
     _notesService.getAllNotes().then((value) => setState(() {
           _notesMap = value;
-          
-    for(var i in _notesMap.keys){
-        print("Id is: ${i}");
-      }
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
 
@@ -58,13 +54,22 @@ class _Notes extends State<Notes> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(padding: customTopPadding(0.025)),
-              const Text(
-                'Your notes',
-                style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                ),
+               const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Your notes',
+                    style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  /* levatedButton(
+                    onPressed: () => _notesService.removeAll(), 
+                    child: const Icon(Icons.delete_forever)
+                    ), */
+                ],
               ),
               Padding(padding: customTopPadding(0.1)),
               GridView(
@@ -109,9 +114,6 @@ class _Notes extends State<Notes> {
   void _onNotesUpdate(Map<int, Map<String, dynamic>> event) {
     setState(() {
       _notesMap = event;
-      for(var i in _notesMap.keys){
-        print("Id is: ${i}");
-      }
     });
   }
 }
