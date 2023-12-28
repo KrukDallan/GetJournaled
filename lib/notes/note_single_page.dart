@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
 
+// TODO: insert date below note title
+//       plus, save the date of creation and the last edit
 
 class SingleNotePage extends StatefulWidget {
   late String title;
@@ -18,7 +20,7 @@ class SingleNotePage extends StatefulWidget {
 }
 
 class _SingleNotePage extends State<SingleNotePage> {
-  String _title = 'Title';
+  String _title = '';
   String _body = '';
   int _id = -1;
 
@@ -69,40 +71,59 @@ class _SingleNotePage extends State<SingleNotePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 4.0, left: 4.0),
-                child: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-
-                      
-                      /* Navigator.push(context,  MaterialPageRoute(
-                builder: (context) => const MyHomePage(title: 'GetClocked', page: NotesPage(),))); */
-                    },
-                    icon: const Icon(Icons.arrow_back)),
+                padding:  const EdgeInsets.only(top: 4.0, left: 12.0),
+                child: Container(
+                  decoration:  BoxDecoration(
+                    color: Colors.grey.shade800,
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
+                  child: SizedBox(
+                    width: 35,
+                    height: 35,
+                    child: IconButton(
+                      iconSize: 15.0,
+                      padding: const EdgeInsets.only(bottom: 1.0),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(
+                          Icons.arrow_back_ios_rounded,
+                          color: Colors.white,
+                          )
+                          ),
+                  ),
+                ),
               ),
               const Expanded(child: Text('')),
               Padding(
-                padding: const EdgeInsets.only(top: 4.0, right: 10.0),
-                child: OutlinedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith((states) => Colors.deepOrange.shade200),
+                padding: const EdgeInsets.only(top: 4.0, right: 15.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade800,
+                    borderRadius: const BorderRadius.all(Radius.circular(10))
                   ),
-                  onPressed: () {
-                    Map<String, dynamic> tmp = {_title: _body};
-                    _notesService.update(_id, tmp);
-                    // check if the note is already present in the map
-                    if ((_notesMap.isNotEmpty) && (_notesMap.containsKey(_id))) {
-                      _notesMap.update(_id, (value) => tmp);
-                    } else {
-                      _notesMap.putIfAbsent(_id, () => tmp);
-                    }
-                    //var mySnackBar = customSnackBar('Note saved!');
-                    //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
-                  },
-                  child: Text(
-                    'Save',
-                    style: TextStyle(
-                      color: colorScheme.onPrimary,
+                  child: SizedBox(
+                    width: 35,
+                    height: 35,
+                    child: IconButton(
+                      padding: const EdgeInsets.only(bottom: 0.0),
+                      onPressed: () {
+                        Map<String, dynamic> tmp = {_title: _body};
+                        _notesService.update(_id, tmp);
+                        // check if the note is already present in the map
+                        if ((_notesMap.isNotEmpty) && (_notesMap.containsKey(_id))) {
+                          _notesMap.update(_id, (value) => tmp);
+                        } else {
+                          _notesMap.putIfAbsent(_id, () => tmp);
+                        }
+                        //var mySnackBar = customSnackBar('Note saved!');
+                        //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
+                      },
+                      icon: const Icon(
+                        Icons.edit_document,
+                        size: 18.0,
+                        color: Colors.white,
+                        ),
                     ),
                   ),
                 ),

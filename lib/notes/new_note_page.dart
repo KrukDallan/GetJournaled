@@ -13,10 +13,10 @@ class NewSingleNotePage extends StatefulWidget {
       {super.key, required this.title, required this.body, required this.id});
 
   @override
-  State<StatefulWidget> createState() => _SingleNotePage();
+  State<StatefulWidget> createState() => _NewSingleNotePage();
 }
 
-class _SingleNotePage extends State<NewSingleNotePage> {
+class _NewSingleNotePage extends State<NewSingleNotePage> {
   String _title = 'Title';
   String _body = '';
   int _id = 0;
@@ -36,7 +36,7 @@ class _SingleNotePage extends State<NewSingleNotePage> {
   @override
   void initState() {
     super.initState();
-    _id = _notesService.getUniqueId();
+   _id = widget.id;
 
     _notesService.getAllNotes().then((value) => setState(() {
           _notesMap = value;

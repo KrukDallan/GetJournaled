@@ -31,7 +31,10 @@ class LocalNoteMapService extends NoteMapsService {
     HiveNotes hv = HiveNotes(
         title: map.keys.first,
         body: map.values.firstOrNull as String,
-        id: _uniqueId);
+        id: _uniqueId,
+        dateOfCreation: DateTime(0),
+        dateOfLastEdit: DateTime(0),
+        );
     _boxSingleNotes.put(_uniqueId, hv);
 
     // update the id
@@ -106,7 +109,10 @@ class LocalNoteMapService extends NoteMapsService {
     HiveNotes hv = HiveNotes(
         title: map.keys.first,
         body: map.values.first as String,
-        id: _uniqueId);
+        id: _uniqueId,
+        dateOfCreation: DateTime(0),
+        dateOfLastEdit: DateTime(0),
+        );
     _boxSingleNotes.put(id, hv);
     return Future(() => null);
   }
@@ -129,7 +135,7 @@ class LocalNoteMapService extends NoteMapsService {
   int loadUniqueId() {
     if (_boxUniqueId.length > 0) {
       HiveUniqueId tmp = _boxUniqueId.getAt(0);
-      return tmp.id;
+      return tmp.id + 1;
     } else {
       return 0;
     }

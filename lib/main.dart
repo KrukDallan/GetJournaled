@@ -30,6 +30,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   //final ThemeMode _themeMode = ThemeMode.system;
+  // TODO: fix dark mode colors
   final ThemeMode _themeMode = ThemeMode.light;
 
   @override
