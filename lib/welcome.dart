@@ -118,6 +118,7 @@ class _WelcomePage extends State<WelcomePage> {
                     (states) => const Size(180, 50)),
               ),
               onPressed: () {
+                DateTime now = DateTime.now();
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -125,6 +126,7 @@ class _WelcomePage extends State<WelcomePage> {
                               title: '',
                               body: '',
                               id: _notesService.getUniqueId(),
+                              lDateOfCreation: DateTime(now.year, now.month, now.day)
                             )));
               },
               child: Text(

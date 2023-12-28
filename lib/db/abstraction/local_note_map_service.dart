@@ -70,8 +70,8 @@ class LocalNoteMapService extends NoteMapsService {
     await Hive.initFlutter();
     Hive.registerAdapter(HiveNotesAdapter());
     Hive.registerAdapter(HiveUniqueIdAdapter());
-    _boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes4');
-    _boxUniqueId = await Hive.openBox<HiveUniqueId>('UniqeId4');
+    _boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes5');
+    _boxUniqueId = await Hive.openBox<HiveUniqueId>('UniqeId5');
     loadCacheMap();
     _uniqueId = loadUniqueId();
   }

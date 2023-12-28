@@ -8,9 +8,10 @@ class NewSingleNotePage extends StatefulWidget {
   late String title;
   late String body;
   late int id;
+  late DateTime lDateOfCreation;
 
   NewSingleNotePage(
-      {super.key, required this.title, required this.body, required this.id});
+      {super.key, required this.title, required this.body, required this.id, required this.lDateOfCreation});
 
   @override
   State<StatefulWidget> createState() => _NewSingleNotePage();
@@ -20,6 +21,7 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
   String _title = 'Title';
   String _body = '';
   int _id = 0;
+  DateTime _lDateOfCreation = DateTime(0);
 
   final NoteMapsService _notesService = GetIt.I<NoteMapsService>();
 
@@ -80,6 +82,9 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
                   ),
                   onPressed: () {
                     Map<String, dynamic> tmp = {_title: _body};
+                    //
+                    // TODO: find a way to pass the date info. Maybe should create a 'NoteObject' class?
+                    //
                     _notesService.add(_id, tmp);
                     // check if the note is already present in the map
                     if ((_notesMap.isNotEmpty) && (_notesMap.containsKey(_id))) {
