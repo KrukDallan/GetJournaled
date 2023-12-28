@@ -4,9 +4,11 @@ import 'package:getjournaled/db/abstraction/note_map_service.dart';
 import 'package:getjournaled/hive/hive_unique_id.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:getjournaled/hive/hive_notes.dart';
+import 'package:getjournaled/notes/note_object_class.dart';
 
 class LocalNoteMapService extends NoteMapsService {
   final Map<int, Map<String, dynamic>> _cacheMap = {};
+  var setNotesObjects = <NoteObject>{};
   late Box _boxSingleNotes;
   late Box _boxUniqueId;
   late int _uniqueId;

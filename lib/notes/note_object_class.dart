@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+
 
 class NoteObject {
   late int _id;
@@ -18,4 +18,48 @@ class NoteObject {
         _body = body,
         _dateOfCreation = dateOfCreation,
         _dateOfLastEdit = dateOfLastEdit;
+
+  int getId() {
+    return _id;
+  }
+
+  int setId(int newId) {
+    int prev = _id;
+    _id = newId;
+    return prev;
+  }
+
+  String getTitle() {
+    return _title;
+  }
+
+  String setTitle(String newTitle) {
+    String prev = _title;
+    _title = newTitle;
+    return prev;
+  }
+
+  dynamic getBody() {
+    return _body;
+  }
+
+  dynamic setBody(dynamic newBody) {
+    dynamic prev = _body;
+    _body = newBody;
+    return prev;
+  }
+
+  DateTime getDateOfCreation() {
+    return _dateOfCreation;
+  }
+
+  DateTime getDateOfLastEdit() {
+    return _dateOfLastEdit;
+  }
+
+  DateTime setDateOfLastEdit(DateTime newDate){
+    DateTime prev = _dateOfLastEdit;
+    _dateOfLastEdit = newDate;
+    return prev;
+  }
 }
