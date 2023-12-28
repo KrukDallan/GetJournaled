@@ -4,8 +4,6 @@ import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
 import 'package:getjournaled/db/bindings.dart';
 import 'package:getjournaled/notes/note_main_page.dart';
-import 'package:getjournaled/notes/note_single_page.dart';
-import 'package:getjournaled/notes/note_view.dart';
 import 'package:provider/provider.dart';
 
 import 'package:getjournaled/welcome.dart';

@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
-import 'package:getjournaled/main.dart';
-import 'package:getjournaled/notes/note_main_page.dart';
-import 'package:getjournaled/shared.dart';
+
 
 class SingleNotePage extends StatefulWidget {
   late String title;
