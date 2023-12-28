@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
+import 'package:getjournaled/notes/note_object_class.dart';
 
 class NewSingleNotePage extends StatefulWidget {
   late String title;
@@ -11,7 +12,11 @@ class NewSingleNotePage extends StatefulWidget {
   late DateTime lDateOfCreation;
 
   NewSingleNotePage(
-      {super.key, required this.title, required this.body, required this.id, required this.lDateOfCreation});
+      {super.key,
+      required this.title,
+      required this.body,
+      required this.id,
+      required this.lDateOfCreation});
 
   @override
   State<StatefulWidget> createState() => _NewSingleNotePage();
@@ -23,9 +28,9 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
   int _id = 0;
   DateTime _lDateOfCreation = DateTime(0);
 
-  final NoteMapsService _notesService = GetIt.I<NoteMapsService>();
+  final NoteService _notesService = GetIt.I<NoteService>();
 
-  Map<int, Map<String, dynamic>> _notesMap = {};
+  Set<NoteObject> _notesSet = {};
 
   StreamSubscription? _notesSub;
 
@@ -38,10 +43,11 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
   @override
   void initState() {
     super.initState();
-   _id = widget.id;
+    _id = widget.id;
+    _lDateOfCreation = widget.lDateOfCreation;
 
     _notesService.getAllNotes().then((value) => setState(() {
-          _notesMap = value;
+          _notesSet = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
   }
@@ -78,22 +84,16 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
                 padding: const EdgeInsets.only(top: 4.0, right: 10.0),
                 child: OutlinedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith((states) => Colors.deepOrange.shade200),
+                    backgroundColor: MaterialStateProperty.resolveWith(
+                        (states) => Colors.deepOrange.shade200),
                   ),
                   onPressed: () {
-                    Map<String, dynamic> tmp = {_title: _body};
-                    //
-                    // TODO: find a way to pass the date info. Maybe should create a 'NoteObject' class?
-                    //
-                    _notesService.add(_id, tmp);
-                    // check if the note is already present in the map
-                    if ((_notesMap.isNotEmpty) && (_notesMap.containsKey(_id))) {
-                      _notesMap.update(_id, (value) => tmp);
-                    } else {
-                      _notesMap.putIfAbsent(_id, () => tmp);
-                    }
+                    DateTime now = DateTime.now();
+                    NoteObject noteObject = NoteObject(id: _id, title: _title, body: _body, dateOfCreation: _lDateOfCreation, dateOfLastEdit: _lDateOfCreation);
+                    _notesSet.add(noteObject);
+                    _notesService.add(noteObject);
                     _id = _notesService.getUniqueId();
-                    
+
                     //var mySnackBar = customSnackBar('Note saved!');
                     //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
                   },
@@ -163,9 +163,9 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
   }
 
   // business logic
-  void _onNotesUpdate(Map<int, Map<String, dynamic>> event) {
+  void _onNotesUpdate(Set<NoteObject> event) {
     setState(() {
-      _notesMap = event;
+      _notesSet= event;
     });
   }
 }

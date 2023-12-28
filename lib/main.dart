@@ -13,7 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await bindDependencies();
-  await GetIt.I<NoteMapsService>().open();
+  await GetIt.I<NoteService>().open();
   runApp(const MyApp());
 }
 
@@ -233,7 +233,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     indicatorColor: colorScheme.primary,
                     destinations: [
                       NavigationRailDestination(
-                        icon: Icon(Icons.access_time_filled,
+                        icon: Icon(Icons.home_filled,
                             color: colorScheme.onSecondary),
                         label: Text(
                           'Home page',

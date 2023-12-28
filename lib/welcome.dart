@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:getjournaled/notes/new_note_page.dart';
+import 'package:getjournaled/notes/note_object_class.dart';
 import 'package:getjournaled/notes/note_view.dart';
 import 'package:getjournaled/shared.dart';
 import 'package:get_it/get_it.dart';
@@ -17,9 +18,9 @@ class WelcomePage extends StatefulWidget{
 }
 
 class _WelcomePage extends State<WelcomePage> {
-    final NoteMapsService _notesService = GetIt.I<NoteMapsService>();
+    final NoteService _notesService = GetIt.I<NoteService>();
 
-  Map<int, Map<String, dynamic>> _notesMap = {};
+  Set<NoteObject> _notesSet = {};
 
   StreamSubscription? _notesSub;
 
@@ -32,10 +33,10 @@ class _WelcomePage extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
-    localUniqueId = (_notesMap.isNotEmpty) ? (_notesMap.keys.last +1) : 0;
+    localUniqueId = (_notesSet.isNotEmpty) ? (_notesSet.last.getId() +1) : 0;
 
     _notesService.getAllNotes().then((value) => setState(() {
-          _notesMap = value;
+          _notesSet = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
   }
@@ -143,9 +144,9 @@ class _WelcomePage extends State<WelcomePage> {
     ));
   }
     // business logic
-  void _onNotesUpdate(Map<int, Map<String, dynamic>> event) {
+  void _onNotesUpdate(Set<NoteObject> event) {
     setState(() {
-      _notesMap = event;
+      _notesSet = event;
     });
   }
 }

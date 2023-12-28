@@ -7,9 +7,10 @@ class NoteCard extends StatefulWidget {
   late String title;
   late String body;
   late int id;
+  late DateTime dateOfCreation;
 
   NoteCard(
-      {super.key, required this.title, required this.body, required this.id});
+      {super.key, required this.title, required this.body, required this.id, required this.dateOfCreation});
 
   @override
   State<StatefulWidget> createState() => _NoteCardState();
@@ -24,7 +25,7 @@ class _NoteCardState extends State<NoteCard> {
             context,
             MaterialPageRoute(
                 builder: (context) => SingleNotePage(
-                    title: widget.title, body: widget.body, id: widget.id)));
+                    title: widget.title, body: widget.body, id: widget.id, dateOfCreation: widget.dateOfCreation,)));
       },
       child: Card(
         shape: const RoundedRectangleBorder(

@@ -7,7 +7,7 @@ import 'package:getjournaled/db/abstraction/note_map_service.dart';
 Future<void> bindDependencies() async{
   // If you want to change the 'database', just change "LocalNoteMapService"
   // synchronous
-  GetIt.I.registerSingleton<NoteMapsService>(LocalNoteMapService());
+  GetIt.I.registerSingleton<NoteService>(LocalNoteMapService());
 
 /* // "transparent" activation
   GetIt.I.registerSingletonAsync(() async {

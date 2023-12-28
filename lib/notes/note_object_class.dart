@@ -1,6 +1,6 @@
 
 
-class NoteObject {
+class NoteObject extends Object{
   late int _id;
   late String _title;
   late dynamic _body;
@@ -62,4 +62,11 @@ class NoteObject {
     _dateOfLastEdit = newDate;
     return prev;
   }
+
+  @override
+  operator ==(Object other) => other is NoteObject && other.runtimeType == runtimeType && other._id==_id && other._title == _title && (!other._dateOfCreation.isAfter(_dateOfCreation) && !other._dateOfCreation.isBefore(_dateOfCreation));
+  
+  @override
+  int get hashCode => (_id.hashCode + _title.hashCode + _body.hashCode + _dateOfCreation.hashCode + _dateOfLastEdit.hashCode);
+  
 }

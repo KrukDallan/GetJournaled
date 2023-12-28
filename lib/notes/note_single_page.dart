@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
+import 'package:getjournaled/notes/note_object_class.dart';
 
 // TODO: insert date below note title
 //       plus, save the date of creation and the last edit
@@ -11,9 +12,10 @@ class SingleNotePage extends StatefulWidget {
   late String title;
   late String body;
   late int id;
+  late DateTime dateOfCreation;
 
   SingleNotePage(
-      {super.key, required this.title, required this.body, required this.id});
+      {super.key, required this.title, required this.body, required this.id, required this.dateOfCreation});
 
   @override
   State<StatefulWidget> createState() => _SingleNotePage();
@@ -23,10 +25,11 @@ class _SingleNotePage extends State<SingleNotePage> {
   String _title = '';
   String _body = '';
   int _id = -1;
+  DateTime _lDateOfCreation = DateTime(0);
 
-  final NoteMapsService _notesService = GetIt.I<NoteMapsService>();
+  final NoteService _notesService = GetIt.I<NoteService>();
 
-  Map<int, Map<String, dynamic>> _notesMap = {};
+  Set<NoteObject> _notesSet = {};
 
   StreamSubscription? _notesSub;
 
@@ -43,10 +46,11 @@ class _SingleNotePage extends State<SingleNotePage> {
      _id = widget.id;
      _title = widget.title;
      _body = widget.body;
+     _lDateOfCreation = widget.dateOfCreation;
    }
 
     _notesService.getAllNotes().then((value) => setState(() {
-          _notesMap = value;
+          _notesSet = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
   }
@@ -107,15 +111,19 @@ class _SingleNotePage extends State<SingleNotePage> {
                     height: 35,
                     child: IconButton(
                       padding: const EdgeInsets.only(bottom: 0.0),
-                      onPressed: () {
-                        Map<String, dynamic> tmp = {_title: _body};
-                        _notesService.update(_id, tmp);
+                      onPressed: () async{
+                        DateTime now = DateTime.now();
+                        NoteObject noteObject = NoteObject(id: _id, title: _title, body: _body, dateOfCreation: _lDateOfCreation, dateOfLastEdit: DateTime(now.year, now.month, now.day));
+                        // res==true? -> object updated, else object added (it was not present, shouldn't happen)
+                        bool res = await _notesService.update(noteObject);
                         // check if the note is already present in the map
-                        if ((_notesMap.isNotEmpty) && (_notesMap.containsKey(_id))) {
-                          _notesMap.update(_id, (value) => tmp);
+                        if ((_notesSet.isNotEmpty) && (res)) {
+                          _notesSet.remove(noteObject);
+                          _notesSet.add(noteObject);
                         } else {
-                          _notesMap.putIfAbsent(_id, () => tmp);
+                          _notesSet.add(noteObject);
                         }
+                        
                         //var mySnackBar = customSnackBar('Note saved!');
                         //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
                       },
@@ -186,9 +194,9 @@ class _SingleNotePage extends State<SingleNotePage> {
   }
 
   // business logic
-  void _onNotesUpdate(Map<int, Map<String, dynamic>> event) {
+  void _onNotesUpdate(Set<NoteObject> event) {
     setState(() {
-      _notesMap = event;
+      _notesSet = event;
     });
   }
 }

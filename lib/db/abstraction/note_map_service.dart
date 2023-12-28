@@ -1,22 +1,23 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:getjournaled/notes/note_object_class.dart';
 
-abstract class NoteMapsService{
+abstract class NoteService{
   @protected
-final StreamController<Map<int,Map<String,dynamic>>> streamNoteController = StreamController.broadcast();
+final StreamController<Set<NoteObject>> streamNoteController = StreamController.broadcast();
 
-Stream<Map<int, Map<String, dynamic>>> get stream => streamNoteController.stream;
+Stream<Set<NoteObject>> get stream => streamNoteController.stream;
 
-Future<void> add(int id, Map<String,dynamic> map);
+Future<void> add(NoteObject noteObject);
 
 Future<void> dispose() async {
  streamNoteController.close();
 }
 
-Future<Map<String,dynamic>?> get(int id);
+Future<NoteObject?> get(int id);
 
-Future<Map<int, Map<String, dynamic>>> getAllNotes();
+Future<Set<NoteObject>> getAllNotes();
 
 int getUniqueId();
 
@@ -27,6 +28,6 @@ Future<bool> remove(int id);
 
 Future<void> removeAll();
 
-Future<void> update(int id,  Map<String,dynamic> map);
+Future<bool> update(NoteObject noteObject);
 
 }

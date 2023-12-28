@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
+import 'package:getjournaled/notes/note_object_class.dart';
 import 'package:getjournaled/shared.dart';
 
 import 'package:getjournaled/notes/note_card.dart';
@@ -17,9 +18,9 @@ class Notes extends StatefulWidget {
 }
 
 class _Notes extends State<Notes> {
-  final NoteMapsService _notesService = GetIt.I<NoteMapsService>();
+  final NoteService _notesService = GetIt.I<NoteService>();
 
-  Map<int, Map<String, dynamic>> _notesMap = {};
+  Set<NoteObject> _notesSet = {};
 
   StreamSubscription? _notesSub;
 
@@ -32,10 +33,10 @@ class _Notes extends State<Notes> {
   @override
   void initState() {
     super.initState();
-    localUniqueId = (_notesMap.isNotEmpty) ? (_notesMap.keys.last) : 0;
+    localUniqueId = (_notesSet.isNotEmpty) ? (_notesService.getUniqueId()) : 0;
 
     _notesService.getAllNotes().then((value) => setState(() {
-          _notesMap = value;
+          _notesSet = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
 
@@ -81,11 +82,11 @@ class _Notes extends State<Notes> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  for (var entry in _notesMap.entries) ...[
+                  for (var entry in _notesSet) ...[
                     GestureDetector(
                       onDoubleTap: () {
                         setState(() {
-                          _notesService.remove(entry.key);
+                          _notesService.remove(entry.getId());
                           leftPadding = 2;
                         });
                       },
@@ -94,9 +95,10 @@ class _Notes extends State<Notes> {
                             ? const EdgeInsets.only(left: 10)
                             : const EdgeInsets.only(right: 10),
                         child: NoteCard(
-                          title: entry.value.keys.first,
-                          body: entry.value.values.firstOrNull,
-                          id: entry.key,
+                          title: entry.getTitle(),
+                          body: entry.getBody(),
+                          id: entry.getId(),
+                          dateOfCreation: entry.getDateOfCreation(),
                         ),
                       ),
                     ),
@@ -111,9 +113,9 @@ class _Notes extends State<Notes> {
   }
 
   // business logic
-  void _onNotesUpdate(Map<int, Map<String, dynamic>> event) {
+  void _onNotesUpdate(Set<NoteObject> event) {
     setState(() {
-      _notesMap = event;
+      _notesSet = event;
     });
   }
 }
