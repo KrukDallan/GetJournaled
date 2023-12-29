@@ -121,7 +121,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                             id: _id,
                             title: _title,
                             body: _body,
-                            dateOfCreation: _lDateOfCreation,
+                            dateOfCreation: widget.dateOfCreation,
                             dateOfLastEdit:
                                 DateTime(now.year, now.month, now.day));
                         // res==true? -> object updated, else object added (it was not present, shouldn't happen)
@@ -183,7 +183,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                   fontSize: 12,
                   color: Colors.grey,
                 ),
-                child: Text('Created: ${_lDateOfCreation.toString().replaceAll('00:00:00.000', '')}'),),
+                child: Text('Created: ${widget.dateOfCreation.toString().replaceAll('00:00:00.000', '')}'),),
               ),
               const Padding(
                 padding: EdgeInsets.only(left: 4.0, top: 8.0),
@@ -201,7 +201,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                   fontSize: 12,
                   color: Colors.grey,
                 ),
-                child: Text('Last edit: ${_lDateOfLastEdit.toString().replaceAll('00:00:00.000', '')}',),),
+                child: Text('Last edit: ${widget.dateOfLastEdit.toString().replaceAll('00:00:00.000', '')}',),),
               )
             ],
           ),
