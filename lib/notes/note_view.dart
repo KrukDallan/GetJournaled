@@ -39,8 +39,6 @@ class _Notes extends State<Notes> {
           _notesSet = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
-
-
   }
 
   int leftPadding = 2;
@@ -55,29 +53,56 @@ class _Notes extends State<Notes> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(padding: customTopPadding(0.025)),
-               const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    'Your notes',
-                    style: TextStyle(
-                      fontFamily: 'Roboto',
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
+                   Padding(
+                    padding: const EdgeInsets.only(left: 18.0, top: 4),
+                    child: Text(
+                      'Notes',
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.amber.shade50,
+                      ),
                     ),
                   ),
-                  /* levatedButton(
+                  /* ElevatedButton(
                     onPressed: () => _notesService.removeAll(), 
                     child: const Icon(Icons.delete_forever)
                     ), */
+                  const Expanded(child: Text('')),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0, right: 15.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.grey.shade800,
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10))),
+                      child: SizedBox(
+                        width: 35,
+                        height: 35,
+                        child: IconButton(
+                          padding: const EdgeInsets.only(bottom: 0.0),
+                          onPressed: () async {},
+                          icon: const Icon(
+                            Icons.search,
+                            size: 22.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
-              Padding(padding: customTopPadding(0.1)),
+              Padding(padding: customTopPadding(0.05)),
               GridView(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  mainAxisSpacing: 4.0,
-                  crossAxisSpacing: 10.0,
+                  mainAxisSpacing: 1.0,
+                  crossAxisSpacing: 2.0,
                 ),
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),

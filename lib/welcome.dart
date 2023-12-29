@@ -46,14 +46,9 @@ class _WelcomePage extends State<WelcomePage> {
     var colorScheme = Theme.of(context).colorScheme;
     return SafeArea(
         child: Container(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [
-            Colors.amberAccent[200]!,
-            Colors.purple[200]!,
-          ])),
+      decoration:  const BoxDecoration(
+          color: Colors.black,
+          ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -62,7 +57,7 @@ class _WelcomePage extends State<WelcomePage> {
             child: Text(
               'Welcome!',
               style: TextStyle(
-                color: colorScheme.onPrimary,
+                color: Colors.amber.shade50,
                 fontSize: 45,
                 fontFamily: 'Lobster',
               ),
@@ -72,16 +67,9 @@ class _WelcomePage extends State<WelcomePage> {
           Container(
             height: 50,
             width: 200,
-            decoration: BoxDecoration(
+            decoration:  BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
-              gradient: LinearGradient(
-                colors: [
-                  Colors.blue.shade100,
-                  Colors.purple.shade100,
-                ],
-                begin: Alignment.centerRight,
-                end: Alignment.centerLeft,
-              ),
+              color: Colors.amber.shade50,
             ),
             child: TextButton(
               style: ButtonStyle(
@@ -93,7 +81,7 @@ class _WelcomePage extends State<WelcomePage> {
                 'New journal',
                 style: TextStyle(
                   fontSize: 18,
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.primary,
                 ),
               ),
             ),
@@ -104,14 +92,7 @@ class _WelcomePage extends State<WelcomePage> {
             width: 200,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
-              gradient: LinearGradient(
-                colors: [
-                  Colors.blue.shade100,
-                  Colors.purple.shade100,
-                ],
-                begin: Alignment.centerRight,
-                end: Alignment.centerLeft,
-              ),
+              color: Colors.amber.shade50,
             ),
             child: TextButton(
               style: ButtonStyle(
@@ -134,7 +115,7 @@ class _WelcomePage extends State<WelcomePage> {
                 'New note',
                 style: TextStyle(
                   fontSize: 18,
-                  color: colorScheme.onPrimary,
+                  color: colorScheme.primary,
                 ),
               ),
             ),

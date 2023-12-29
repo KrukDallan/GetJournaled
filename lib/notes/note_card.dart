@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'package:getjournaled/notes/note_single_page.dart';
@@ -17,8 +19,12 @@ class NoteCard extends StatefulWidget {
 }
 
 class _NoteCardState extends State<NoteCard> {
+
+  Set<Color> colorsList = {Colors.green.shade200, Colors.lightBlue.shade100, Colors.deepOrange.shade200, Colors.teal.shade100, Colors.deepPurple.shade100};
+
   @override
   Widget build(BuildContext context) {
+  var colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -29,26 +35,20 @@ class _NoteCardState extends State<NoteCard> {
       },
       child: Card(
         shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20))),
+            borderRadius: BorderRadius.all(Radius.circular(10))),
         child: SizedBox(
           width: 280,
           height: 200,
           child: Container(
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(20)),
-              gradient: LinearGradient(
-                colors: [
-                  Colors.amber.shade50,
-                  Colors.orange.shade50,
-                ],
-                begin: Alignment.centerRight,
-                end: Alignment.centerLeft,
+              color: colorsList.elementAt(Random().nextInt(5)),
               ),
-            ),
             child: Center(
                 child: Text(
               widget.title,
-              style: const TextStyle(
+              style: TextStyle(
+                color: colorScheme.primary,
                 fontFamily: 'Roboto',
                 fontSize: 16,
               ),

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
@@ -31,20 +30,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   //final ThemeMode _themeMode = ThemeMode.system;
   // TODO: fix dark mode colors
-  final ThemeMode _themeMode = ThemeMode.light;
+  final ThemeMode _themeMode = ThemeMode.dark;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
         create: (context) => MyAppState(),
         child: MaterialApp(
-          routes: {
-            'NotesPage': (context) => const NotesPage()
-          },
+          routes: {'NotesPage': (context) => const NotesPage()},
           title: 'GetClocked',
           theme: ThemeData(
               useMaterial3: true,
-              
               fontFamily: 'Roboto',
               colorScheme: const ColorScheme(
                   brightness: Brightness.light,
@@ -77,7 +73,10 @@ class _MyAppState extends State<MyApp> {
                   surface: Color.fromARGB(255, 53, 51, 55),
                   onSurface: Colors.white)),
           themeMode: _themeMode,
-          home: const MyHomePage(title: 'GetClocked', page: WelcomePage(),),
+          home: const MyHomePage(
+            title: 'GetClocked',
+            page: WelcomePage(),
+          ),
         ));
   }
 }
@@ -87,7 +86,11 @@ class MyAppState extends ChangeNotifier {}
 class MyHomePage extends StatefulWidget {
   final String title;
   final Widget page;
-  const MyHomePage({super.key, required this.title, required this.page,});
+  const MyHomePage({
+    super.key,
+    required this.title,
+    required this.page,
+  });
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -97,8 +100,6 @@ class MyHomePage extends StatefulWidget {
   // case the title) provided by the parent (in this case the App widget) and
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
-
-
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -112,13 +113,12 @@ class _MyHomePageState extends State<MyHomePage> {
   // fast, so that you can just rebuild anything that needs updating rather
   // than having to individually change instances of widgets.
 
-      var selectedIndex = 0;
+  var selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
 
     Widget page = widget.page;
-
 
     switch (selectedIndex) {
       case 0:
@@ -145,44 +145,56 @@ class _MyHomePageState extends State<MyHomePage> {
           if (constraints.maxWidth < 700) {
             return Scaffold(
               bottomNavigationBar: NavigationBar(
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (int index) {
-                    setState(() {
-                      selectedIndex = index;
-                    });
-                  },
-                    indicatorColor: colorScheme.primary,
-                    backgroundColor: colorScheme.secondary,
-                    destinations: const [
-                      NavigationDestination(
-                        icon: Icon(
-                          Icons.home_filled,
-                        ),
-                        label: 'Home page',
-                      ),
-                      NavigationDestination(
-                        icon: Icon(
-                          Icons.article,
-                        ),
-                        label: 'Drawer',
-                      ),
-                      NavigationDestination(
-                        icon: Icon(
-                          Icons.note_alt_rounded,
-                        ),
-                        label: 'Notes',
-                      ),
-                      NavigationDestination(
-                        icon: Icon(
-                          Icons.settings,
-                        ),
-                        label: 'Settings',
-                      ),
-                    ],
+                labelBehavior:
+                    NavigationDestinationLabelBehavior.onlyShowSelected,
+                selectedIndex: selectedIndex,
+                onDestinationSelected: (int index) {
+                  setState(() {
+                    selectedIndex = index;
+                  });
+                },
+                indicatorColor: Colors.transparent,
+                backgroundColor: Colors.grey.shade800,
+                indicatorShape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.elliptical(0, 0))),
+                destinations: [
+                  NavigationDestination(
+                    icon: const Icon(
+                      Icons.home_filled,
+                      color: Colors.white,
                     ),
-                    body: page,
+                    label: Text(
+                      'Home Page',
+                      style: TextStyle(
+                        color: (selectedIndex == 0)
+                            ? Colors.cyanAccent.shade100
+                            : Colors.white,
+                      ),
+                    ).data!,
+                  ),
+                  NavigationDestination(
+                    icon: Icon(
+                      Icons.article,
+                    ),
+                    label: 'Drawer',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(
+                      Icons.note_alt_rounded,
+                    ),
+                    label: 'Notes',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(
+                      Icons.settings,
+                    ),
+                    label: 'Settings',
+                  ),
+                ],
+              ),
+              body: page,
             );
-           /*  return Column(
+            /*  return Column(
               children: [
                 Expanded(child: mainArea),
                 NavigationBar(

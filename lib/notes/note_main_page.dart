@@ -12,14 +12,9 @@ class NotesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Container(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [
-            Colors.teal.shade200,
-            Colors.purple[100]!,
-          ])),
+      decoration: const BoxDecoration(
+        color: Colors.black,
+          ),
       child: const Notes(),
     ));
   }
