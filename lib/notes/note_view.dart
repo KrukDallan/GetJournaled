@@ -20,7 +20,7 @@ class Notes extends StatefulWidget {
 class _Notes extends State<Notes> {
   final NoteService _notesService = GetIt.I<NoteService>();
 
-  Set<NoteObject> _notesSet = {};
+  Map<int,NoteObject> _notesMap = {};
 
   StreamSubscription? _notesSub;
 
@@ -33,10 +33,10 @@ class _Notes extends State<Notes> {
   @override
   void initState() {
     super.initState();
-    localUniqueId = (_notesSet.isNotEmpty) ? (_notesService.getUniqueId()) : 0;
+    localUniqueId = (_notesMap.isNotEmpty) ? (_notesService.getUniqueId()) : 0;
 
     _notesService.getAllNotes().then((value) => setState(() {
-          _notesSet = value;
+          _notesMap = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
   }
@@ -109,11 +109,11 @@ class _Notes extends State<Notes> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 children: [
-                  for (var entry in _notesSet) ...[
+                  for (var entry in _notesMap.entries) ...[
                     GestureDetector(
                       onDoubleTap: () {
                         setState(() {
-                          _notesService.remove(entry.getId());
+                          _notesService.remove(entry.key);
                           leftPadding = 2;
                         });
                       },
@@ -122,11 +122,11 @@ class _Notes extends State<Notes> {
                             ? const EdgeInsets.only(left: 10)
                             : const EdgeInsets.only(right: 10),
                         child: NoteCard(
-                          title: entry.getTitle(),
-                          body: entry.getBody(),
-                          id: entry.getId(),
-                          dateOfCreation: entry.getDateOfCreation(),
-                          dateOfLastEdit: entry.getDateOfLastEdit(),
+                          title: entry.value.getTitle(),
+                          body: entry.value.getBody(),
+                          id: entry.value.getId(),
+                          dateOfCreation: entry.value.getDateOfCreation(),
+                          dateOfLastEdit: entry.value.getDateOfLastEdit(),
                         ),
                       ),
                     ),
@@ -141,9 +141,9 @@ class _Notes extends State<Notes> {
   }
 
   // business logic
-  void _onNotesUpdate(Set<NoteObject> event) {
+  void _onNotesUpdate(Map<int,NoteObject> event) {
     setState(() {
-      _notesSet = event;
+      _notesMap = event;
     });
   }
 }

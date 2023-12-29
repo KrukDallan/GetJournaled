@@ -20,7 +20,7 @@ class WelcomePage extends StatefulWidget{
 class _WelcomePage extends State<WelcomePage> {
     final NoteService _notesService = GetIt.I<NoteService>();
 
-  Set<NoteObject> _notesSet = {};
+  Map<int, NoteObject> _notesMap = {};
 
   StreamSubscription? _notesSub;
 
@@ -33,10 +33,10 @@ class _WelcomePage extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
-    localUniqueId = (_notesSet.isNotEmpty) ? (_notesSet.last.getId() +1) : 0;
+    localUniqueId = (_notesMap.isNotEmpty) ? (_notesService.getUniqueId()) : 0;
 
     _notesService.getAllNotes().then((value) => setState(() {
-          _notesSet = value;
+          _notesMap = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
   }
@@ -125,9 +125,9 @@ class _WelcomePage extends State<WelcomePage> {
     ));
   }
     // business logic
-  void _onNotesUpdate(Set<NoteObject> event) {
+  void _onNotesUpdate(Map<int,NoteObject> event) {
     setState(() {
-      _notesSet = event;
+      _notesMap = event;
     });
   }
 }

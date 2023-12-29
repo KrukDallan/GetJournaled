@@ -30,7 +30,7 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
 
   final NoteService _notesService = GetIt.I<NoteService>();
 
-  Set<NoteObject> _notesSet = {};
+  Map<int,NoteObject> _notesMap = {};
 
   StreamSubscription? _notesSub;
 
@@ -47,7 +47,7 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
     _lDateOfCreation = widget.lDateOfCreation;
 
     _notesService.getAllNotes().then((value) => setState(() {
-          _notesSet = value;
+          _notesMap = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
   }
@@ -116,9 +116,8 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
                             body: _body,
                             dateOfCreation: DateTime(now.year, now.month, now.day),
                             dateOfLastEdit: DateTime(now.year, now.month, now.day));
-                        _notesSet.add(noteObject);
+                        _notesMap.addAll({widget.id:noteObject});
                         _notesService.add(noteObject);
-                        _id = _notesService.getUniqueId();
                     
                         //var mySnackBar = customSnackBar('Note saved!');
                         //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
@@ -220,9 +219,9 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
   }
 
   // business logic
-  void _onNotesUpdate(Set<NoteObject> event) {
+  void _onNotesUpdate(Map<int,NoteObject> event) {
     setState(() {
-      _notesSet = event;
+      _notesMap = event;
     });
   }
 }

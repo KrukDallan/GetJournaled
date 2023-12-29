@@ -1,5 +1,6 @@
 import 'dart:async';
 
+
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
 import 'package:getjournaled/hive/hive_unique_id.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -7,8 +8,7 @@ import 'package:getjournaled/hive/hive_notes.dart';
 import 'package:getjournaled/notes/note_object_class.dart';
 
 class LocalNoteMapService extends NoteService {
-  Set<NoteObject> _cacheSet = {};
-  Set<int> _ids = {};
+  Map<int, NoteObject> _cacheMap = {};
   late Box _boxSingleNotes;
   late Box _boxUniqueId;
   late int _uniqueId;
@@ -16,15 +16,17 @@ class LocalNoteMapService extends NoteService {
   @override
   Future<void> add(NoteObject noteObject) async {
     print('ID IS: ${noteObject.getId()}');
+    print('');
+    for(var i in _cacheMap.keys){
+      print(i);
+    }
+
     // check presence
-    if (_ids.contains(noteObject.getId())) {
+    if (_cacheMap.keys.contains(noteObject.getId())) {
       update(noteObject);
     } else {
-      _cacheSet.add(noteObject);
-      _ids.add(noteObject.getId());
-      streamNoteController.add(_cacheSet);
-
-      // insert in hive box
+      _cacheMap.addAll({noteObject.getId(): noteObject});
+      streamNoteController.add(_cacheMap);
       HiveNotes hv = HiveNotes(
         title: noteObject.getTitle(),
         body: noteObject.getBody(),
@@ -41,20 +43,22 @@ class LocalNoteMapService extends NoteService {
       _boxUniqueId.put(0, hui);
     }
 
+    print('uniqueid is: ${_uniqueId}');
+
     return Future(() => null);
   }
 
   @override
   Future<NoteObject?> get(int id) async {
-    if (_ids.contains(id)) {
-      return _cacheSet.firstWhere((element) => element.getId() == id);
+    if (_cacheMap.keys.contains(id)) {
+      return _cacheMap[id];
     }
     return null;
   }
 
   @override
-  Future<Set<NoteObject>> getAllNotes() async {
-    return _cacheSet;
+  Future<Map<int, NoteObject>> getAllNotes() async {
+    return _cacheMap;
   }
 
   @override
@@ -67,24 +71,20 @@ class LocalNoteMapService extends NoteService {
     await Hive.initFlutter();
     Hive.registerAdapter(HiveNotesAdapter());
     Hive.registerAdapter(HiveUniqueIdAdapter());
-    _boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes5');
-    _boxUniqueId = await Hive.openBox<HiveUniqueId>('UniqeId5');
-    loadCacheSet();
-    for(var i in _cacheSet){
-      _ids.add(i.getId());
-    }
+    _boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes6');
+    _boxUniqueId = await Hive.openBox<HiveUniqueId>('UniqeId6');
+    loadCacheMap();
     _uniqueId = loadUniqueId();
   }
 
   @override
   Future<bool> remove(int id) async {
     print('ID to delete: $id');
-    if (_ids.contains(id)) {
+    if (_cacheMap.keys.contains(id)) {
       print('deleting');
-      _cacheSet.removeWhere((element) => element.getId() == id);
+      _cacheMap.remove(id);
       _boxSingleNotes.delete(id);
-      _ids.remove(id);
-      streamNoteController.add(_cacheSet);
+      streamNoteController.add(_cacheMap);
       return true;
     } else {
       return false;
@@ -94,25 +94,21 @@ class LocalNoteMapService extends NoteService {
   @override
   Future<void> removeAll() {
     // doesn't work; 'concurrent modification during iteration'
-    _cacheSet.clear();
+    _cacheMap.clear();
     _boxSingleNotes.clear();
     _uniqueId = 0;
     _boxUniqueId.put(0, HiveUniqueId(id: 0));
-    streamNoteController.add(_cacheSet);
+    streamNoteController.add(_cacheMap);
 
     return Future(() => null);
   }
 
   @override
   Future<bool> update(NoteObject noteObject) async {
-    for(var i in _ids){
-      print(i);
-    }
     // check presence
-    if (_ids.contains(noteObject.getId())) {
-      _cacheSet.removeWhere((element) => element.getId() == noteObject.getId());
-      _cacheSet.add(noteObject);
-      streamNoteController.add(_cacheSet);
+    if (_cacheMap.keys.contains(noteObject.getId())) {
+      _cacheMap.addAll({noteObject.getId(): noteObject});
+      streamNoteController.add(_cacheMap);
       // update in hive box
       HiveNotes hv = HiveNotes(
         title: noteObject.getTitle(),
@@ -134,8 +130,9 @@ class LocalNoteMapService extends NoteService {
   //        |
   //        ∨
 
-  void loadCacheSet() {
+  void loadCacheMap() {
     if (_boxSingleNotes.length > 0) {
+      print('box not empty');
       for (var k in _boxSingleNotes.keys) {
         HiveNotes hn = _boxSingleNotes.get(k);
         NoteObject noteObject = NoteObject(
@@ -144,7 +141,7 @@ class LocalNoteMapService extends NoteService {
             body: hn.body,
             dateOfCreation: hn.dateOfCreation,
             dateOfLastEdit: hn.dateOfLastEdit);
-        _cacheSet.add(noteObject);
+        _cacheMap.addAll({hn.id: noteObject});
       }
     }
   }

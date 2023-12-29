@@ -39,7 +39,7 @@ class _SingleNotePage extends State<SingleNotePage> {
 
   final NoteService _notesService = GetIt.I<NoteService>();
 
-  Set<NoteObject> _notesSet = {};
+  Map<int,NoteObject> _notesMap = {};
 
   StreamSubscription? _notesSub;
 
@@ -62,7 +62,7 @@ class _SingleNotePage extends State<SingleNotePage> {
     }
 
     _notesService.getAllNotes().then((value) => setState(() {
-          _notesSet = value;
+          _notesMap = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
   }
@@ -134,13 +134,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                         // res==true? -> object updated, else object added (it was not present, shouldn't happen)
                         bool res = await _notesService.update(noteObject);
                         // check if the note is already present in the map
-                        if ((_notesSet.isNotEmpty) && (res)) {
-                          _notesSet.remove(noteObject);
-                          _notesSet.add(noteObject);
-                        } else {
-                          _notesSet.add(noteObject);
-                        }
-                        
+                          _notesMap.addAll({widget.id:noteObject});
                       },
                       icon: const Icon(
                         Icons.save_sharp,
@@ -247,9 +241,9 @@ class _SingleNotePage extends State<SingleNotePage> {
   }
 
   // business logic
-  void _onNotesUpdate(Set<NoteObject> event) {
+  void _onNotesUpdate(Map<int,NoteObject> event) {
     setState(() {
-      _notesSet = event;
+      _notesMap = event;
     });
   }
 }

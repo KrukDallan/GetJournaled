@@ -5,9 +5,9 @@ import 'package:getjournaled/notes/note_object_class.dart';
 
 abstract class NoteService{
   @protected
-final StreamController<Set<NoteObject>> streamNoteController = StreamController.broadcast();
+final StreamController<Map<int,NoteObject>> streamNoteController = StreamController.broadcast();
 
-Stream<Set<NoteObject>> get stream => streamNoteController.stream;
+Stream<Map<int, NoteObject>> get stream => streamNoteController.stream;
 
 Future<void> add(NoteObject noteObject);
 
@@ -17,7 +17,7 @@ Future<void> dispose() async {
 
 Future<NoteObject?> get(int id);
 
-Future<Set<NoteObject>> getAllNotes();
+Future<Map<int,NoteObject>> getAllNotes();
 
 int getUniqueId();
 
