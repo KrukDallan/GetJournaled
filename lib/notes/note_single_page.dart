@@ -11,7 +11,7 @@ import 'package:getjournaled/shared.dart';
 
 class SingleNotePage extends StatefulWidget {
   late String title;
-  late String body;
+  late dynamic body;
   late int id;
   late DateTime dateOfCreation;
   late DateTime dateOfLastEdit;
@@ -30,10 +30,12 @@ class SingleNotePage extends StatefulWidget {
 
 class _SingleNotePage extends State<SingleNotePage> {
   String _title = '';
-  String _body = '';
+  dynamic _body = '';
   int _id = 0;
   DateTime _lDateOfCreation = DateTime(0);
   DateTime _lDateOfLastEdit = DateTime(0);
+  var mySnackBar = customSnackBar('Note saved!');
+  dynamic _oldBody;
 
   final NoteService _notesService = GetIt.I<NoteService>();
 
@@ -56,6 +58,7 @@ class _SingleNotePage extends State<SingleNotePage> {
       _body = widget.body;
       _lDateOfCreation = widget.dateOfCreation;
       _lDateOfLastEdit = widget.dateOfLastEdit;
+      _oldBody = _body;
     }
 
     _notesService.getAllNotes().then((value) => setState(() {
@@ -103,6 +106,9 @@ class _SingleNotePage extends State<SingleNotePage> {
                 ),
               ),
               const Expanded(child: Text('')),
+              //
+              // Save button
+              //
               Padding(
                 padding: const EdgeInsets.only(top: 4.0, right: 15.0),
                 child: Container(
@@ -133,13 +139,11 @@ class _SingleNotePage extends State<SingleNotePage> {
                         } else {
                           _notesSet.add(noteObject);
                         }
-
-                        //var mySnackBar = customSnackBar('Note saved!');
-                        //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
+                        _oldBody = _body;
                       },
-                      icon: const Icon(
-                        Icons.edit_document,
-                        size: 18.0,
+                      icon: Icon(
+                        (_oldBody.hashCode == _body.hashCode)? Icons.save_sharp : Icons.edit_note_sharp,
+                        size: 20.0,
                         color: Colors.white,
                       ),
                     ),
@@ -148,6 +152,9 @@ class _SingleNotePage extends State<SingleNotePage> {
               ),
             ],
           ),
+          //
+          // Title
+          //
           Padding(
             padding: const EdgeInsets.only(
                 left: 480 * 0.5 * 0.09, top: 800 * 0.5 * 0.02),
@@ -177,37 +184,45 @@ class _SingleNotePage extends State<SingleNotePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.only(top: 8.0, left: 20.0),
+                padding: const EdgeInsets.only(top: 8.0, left: 22.0),
                 child: DefaultTextStyle(
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                  child: Text(
+                      'Created: ${widget.dateOfCreation.toString().replaceAll('00:00:00.000', '')}'),
                 ),
-                child: Text('Created: ${widget.dateOfCreation.toString().replaceAll('00:00:00.000', '')}'),),
               ),
               const Padding(
                 padding: EdgeInsets.only(left: 4.0, top: 8.0),
                 child: DefaultTextStyle(
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                  child: Text(
+                    '-',
+                  ),
                 ),
-                child: Text('-',),),
               ),
               Padding(
-                padding:const EdgeInsets.only(left: 8.0, top: 8.0),
+                padding: const EdgeInsets.only(left: 8.0, top: 8.0),
                 child: DefaultTextStyle(
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                  child: Text(
+                    'Last edit: ${widget.dateOfLastEdit.toString().replaceAll('00:00:00.000', '')}',
+                  ),
                 ),
-                child: Text('Last edit: ${widget.dateOfLastEdit.toString().replaceAll('00:00:00.000', '')}',),),
               )
             ],
           ),
           Expanded(
               child: Padding(
-            padding: const EdgeInsets.only(left: 480 * 0.5 * 0.09, top: 10.0),
+            padding: const EdgeInsets.only(left: 480 * 0.5 * 0.1, top: 10.0),
             child: EditableText(
               controller: TextEditingController(text: widget.body),
               focusNode: FocusNode(),

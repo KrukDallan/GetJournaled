@@ -91,6 +91,9 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
                 ),
               ),
               const Expanded(child: Text('')),
+              //
+              // Save button
+              //
               Padding(
                 padding: const EdgeInsets.only(top: 4.0, right: 15.0),
                 child: Container(
@@ -119,7 +122,7 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
                         //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
                       },
                       icon: const Icon(
-                        Icons.edit_document,
+                        Icons.save_sharp,
                         size: 18.0,
                         color: Colors.white,
                       ),
@@ -129,6 +132,9 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
               ),
             ],
           ),
+          //
+          // Title
+          //
           Padding(
             padding: const EdgeInsets.only(
                 left: 480 * 0.5 * 0.09, top: 800 * 0.5 * 0.02),
@@ -158,7 +164,7 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.only(top: 8.0, left: 20.0),
+                padding: const EdgeInsets.only(top: 8.0, left: 22.0),
                 child: DefaultTextStyle(
                 style: const TextStyle(
                   fontSize: 12,
@@ -188,7 +194,7 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
           ),
           Expanded(
               child: Padding(
-            padding: const EdgeInsets.only(left: 480 * 0.5 * 0.09, top: 10.0),
+            padding: const EdgeInsets.only(left: 480 * 0.5 * 0.1, top: 10.0),
             child: EditableText(
               controller: TextEditingController(text: widget.body),
               focusNode: FocusNode(),

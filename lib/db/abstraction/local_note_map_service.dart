@@ -70,14 +70,17 @@ class LocalNoteMapService extends NoteService {
     _boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes5');
     _boxUniqueId = await Hive.openBox<HiveUniqueId>('UniqeId5');
     loadCacheSet();
+    for(var i in _cacheSet){
+      _ids.add(i.getId());
+    }
     _uniqueId = loadUniqueId();
   }
 
   @override
   Future<bool> remove(int id) async {
-  
+    print('ID to delete: $id');
     if (_ids.contains(id)) {
-        print('ID to delete: $id');
+      print('deleting');
       _cacheSet.removeWhere((element) => element.getId() == id);
       _boxSingleNotes.delete(id);
       _ids.remove(id);
@@ -146,7 +149,7 @@ class LocalNoteMapService extends NoteService {
   int loadUniqueId() {
     if (_boxUniqueId.length > 0) {
       HiveUniqueId tmp = _boxUniqueId.getAt(0);
-      return tmp.id ;
+      return tmp.id;
     } else {
       return 0;
     }
