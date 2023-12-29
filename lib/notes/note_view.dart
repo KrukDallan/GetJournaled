@@ -57,12 +57,12 @@ class _Notes extends State<Notes> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                    Padding(
-                    padding: const EdgeInsets.only(left: 18.0, top: 4),
+                    padding: const EdgeInsets.only(left: 18.0, top: 8.0),
                     child: Text(
                       'Notes',
                       style: TextStyle(
                         fontFamily: 'Roboto',
-                        fontSize: 24,
+                        fontSize: 30,
                         fontWeight: FontWeight.w700,
                         color: Colors.amber.shade50,
                       ),
