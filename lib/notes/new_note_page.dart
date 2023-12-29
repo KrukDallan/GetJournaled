@@ -30,7 +30,7 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
 
   final NoteService _notesService = GetIt.I<NoteService>();
 
-  Map<int,NoteObject> _notesMap = {};
+  Map<int, NoteObject> _notesMap = {};
 
   StreamSubscription? _notesSub;
 
@@ -114,11 +114,13 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
                             id: widget.id,
                             title: _title,
                             body: _body,
-                            dateOfCreation: DateTime(now.year, now.month, now.day),
-                            dateOfLastEdit: DateTime(now.year, now.month, now.day));
-                        _notesMap.addAll({widget.id:noteObject});
+                            dateOfCreation:
+                                DateTime(now.year, now.month, now.day),
+                            dateOfLastEdit:
+                                DateTime(now.year, now.month, now.day));
                         _notesService.add(noteObject);
-                    
+                        _notesMap.addAll({widget.id: noteObject});
+
                         //var mySnackBar = customSnackBar('Note saved!');
                         //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
                       },
@@ -147,11 +149,10 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
                 ),
                 focusNode: FocusNode(),
                 style: TextStyle(
-                  fontFamily: 'Roboto',
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onPrimary
-                ),
+                    fontFamily: 'Roboto',
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onPrimary),
                 cursorColor: Colors.black,
                 backgroundCursorColor: Colors.black,
                 onChanged: (String value) {
@@ -161,35 +162,43 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
               ),
             ),
           ),
-                    Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, left: 22.0),
                 child: DefaultTextStyle(
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                  child: Text(
+                      'Created: ${_lDateOfCreation.toString().replaceAll('00:00:00.000', '')}'),
                 ),
-                child: Text('Created: ${_lDateOfCreation.toString().replaceAll('00:00:00.000', '')}'),),
               ),
               const Padding(
                 padding: EdgeInsets.only(left: 4.0, top: 8.0),
                 child: DefaultTextStyle(
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                  child: Text(
+                    '-',
+                  ),
                 ),
-                child: Text('-',),),
               ),
               Padding(
-                padding:const EdgeInsets.only(left: 8.0, top: 8.0),
+                padding: const EdgeInsets.only(left: 8.0, top: 8.0),
                 child: DefaultTextStyle(
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                  child: Text(
+                    'Last edit: ${_lDateOfCreation.toString().replaceAll('00:00:00.000', '')}',
+                  ),
                 ),
-                child: Text('Last edit: ${_lDateOfCreation.toString().replaceAll('00:00:00.000', '')}',),),
               )
             ],
           ),
@@ -199,7 +208,7 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
             child: EditableText(
               controller: TextEditingController(text: widget.body),
               focusNode: FocusNode(),
-              style:  TextStyle(
+              style: TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 16,
                 color: colorScheme.onPrimary,
@@ -219,7 +228,7 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
   }
 
   // business logic
-  void _onNotesUpdate(Map<int,NoteObject> event) {
+  void _onNotesUpdate(Map<int, NoteObject> event) {
     setState(() {
       _notesMap = event;
     });

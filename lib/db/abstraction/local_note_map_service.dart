@@ -16,10 +16,6 @@ class LocalNoteMapService extends NoteService {
   @override
   Future<void> add(NoteObject noteObject) async {
     print('ID IS: ${noteObject.getId()}');
-    print('');
-    for(var i in _cacheMap.keys){
-      print(i);
-    }
 
     // check presence
     if (_cacheMap.keys.contains(noteObject.getId())) {
@@ -71,8 +67,8 @@ class LocalNoteMapService extends NoteService {
     await Hive.initFlutter();
     Hive.registerAdapter(HiveNotesAdapter());
     Hive.registerAdapter(HiveUniqueIdAdapter());
-    _boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes6');
-    _boxUniqueId = await Hive.openBox<HiveUniqueId>('UniqeId6');
+    _boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes7');
+    _boxUniqueId = await Hive.openBox<HiveUniqueId>('UniqeId7');
     loadCacheMap();
     _uniqueId = loadUniqueId();
   }
@@ -132,7 +128,6 @@ class LocalNoteMapService extends NoteService {
 
   void loadCacheMap() {
     if (_boxSingleNotes.length > 0) {
-      print('box not empty');
       for (var k in _boxSingleNotes.keys) {
         HiveNotes hn = _boxSingleNotes.get(k);
         NoteObject noteObject = NoteObject(

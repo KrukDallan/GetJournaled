@@ -144,6 +144,7 @@ class _Notes extends State<Notes> {
   void _onNotesUpdate(Map<int,NoteObject> event) {
     setState(() {
       _notesMap = event;
+      leftPadding = 2;
     });
   }
 }
