@@ -58,7 +58,7 @@ class _SingleNotePage extends State<SingleNotePage> {
       _body = widget.body;
       _lDateOfCreation = widget.dateOfCreation;
       _lDateOfLastEdit = widget.dateOfLastEdit;
-      _oldBody = _body;
+      _oldBody = widget.body;
     }
 
     _notesService.getAllNotes().then((value) => setState(() {
@@ -121,12 +121,13 @@ class _SingleNotePage extends State<SingleNotePage> {
                     height: 35,
                     child: IconButton(
                       padding: const EdgeInsets.only(bottom: 0.0),
+                      highlightColor: Colors.teal.shade200,
                       onPressed: () async {
                         DateTime now = DateTime.now();
                         NoteObject noteObject = NoteObject(
-                            id: _id,
+                            id: widget.id,
                             title: _title,
-                            body: _body,
+                            body: widget.body,
                             dateOfCreation: widget.dateOfCreation,
                             dateOfLastEdit:
                                 DateTime(now.year, now.month, now.day));
@@ -139,10 +140,10 @@ class _SingleNotePage extends State<SingleNotePage> {
                         } else {
                           _notesSet.add(noteObject);
                         }
-                        _oldBody = _body;
+                        
                       },
-                      icon: Icon(
-                        (_oldBody.hashCode == _body.hashCode)? Icons.save_sharp : Icons.edit_note_sharp,
+                      icon: const Icon(
+                        Icons.save_sharp,
                         size: 20.0,
                         color: Colors.white,
                       ),

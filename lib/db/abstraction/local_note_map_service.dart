@@ -105,6 +105,9 @@ class LocalNoteMapService extends NoteService {
 
   @override
   Future<bool> update(NoteObject noteObject) async {
+    for(var i in _ids){
+      print(i);
+    }
     // check presence
     if (_ids.contains(noteObject.getId())) {
       _cacheSet.removeWhere((element) => element.getId() == noteObject.getId());

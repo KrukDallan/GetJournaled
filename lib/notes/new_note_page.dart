@@ -25,7 +25,7 @@ class NewSingleNotePage extends StatefulWidget {
 class _NewSingleNotePage extends State<NewSingleNotePage> {
   String _title = '';
   String _body = '';
-  int _id = 0;
+  late int _id;
   DateTime _lDateOfCreation = DateTime(0);
 
   final NoteService _notesService = GetIt.I<NoteService>();
@@ -56,6 +56,7 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
     _title = widget.title;
+    _body = widget.body;
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.primary,
@@ -106,10 +107,11 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
                     height: 35,
                     child: IconButton(
                       padding: const EdgeInsets.only(bottom: 0.0),
+                      highlightColor: Colors.teal.shade200,
                       onPressed: () {
                         DateTime now = DateTime.now();
                         NoteObject noteObject = NoteObject(
-                            id: _id,
+                            id: widget.id,
                             title: _title,
                             body: _body,
                             dateOfCreation: DateTime(now.year, now.month, now.day),
