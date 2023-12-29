@@ -172,19 +172,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ).data!,
                   ),
-                  NavigationDestination(
+                  const NavigationDestination(
                     icon: Icon(
                       Icons.article,
                     ),
                     label: 'Drawer',
                   ),
-                  NavigationDestination(
+                  const NavigationDestination(
                     icon: Icon(
                       Icons.note_alt_rounded,
                     ),
                     label: 'Notes',
                   ),
-                  NavigationDestination(
+                  const NavigationDestination(
                     icon: Icon(
                       Icons.settings,
                     ),

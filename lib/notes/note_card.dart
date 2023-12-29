@@ -32,6 +32,9 @@ class _NoteCardState extends State<NoteCard> {
     Colors.deepPurple.shade100
   };
 
+//
+// TODO: onLongPress: show menu to change colors
+
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
@@ -47,6 +50,9 @@ class _NoteCardState extends State<NoteCard> {
                       dateOfCreation: widget.dateOfCreation,
                       dateOfLastEdit: widget.dateOfLastEdit,
                     )));
+      },
+      onLongPress: () {
+
       },
       child: Card(
         shape: const RoundedRectangleBorder(
@@ -70,9 +76,9 @@ class _NoteCardState extends State<NoteCard> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 10, bottom: 10),
+                padding: const EdgeInsets.only(top: 20, bottom: 10),
                 child: Text(
-                    '${widget.dateOfLastEdit.toString().replaceAll('00:00:00.000', '')}',
+                    widget.dateOfLastEdit.toString().replaceAll('00:00:00.000', ''),
                     style:  TextStyle(
                       color: Colors.grey.shade800,
                       fontSize: 12.0,

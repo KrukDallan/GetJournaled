@@ -8,7 +8,7 @@ import 'package:getjournaled/hive/hive_notes.dart';
 import 'package:getjournaled/notes/note_object_class.dart';
 
 class LocalNoteMapService extends NoteService {
-  Map<int, NoteObject> _cacheMap = {};
+  final Map<int, NoteObject> _cacheMap = {};
   late Box _boxSingleNotes;
   late Box _boxUniqueId;
   late int _uniqueId;
@@ -39,7 +39,7 @@ class LocalNoteMapService extends NoteService {
       _boxUniqueId.put(0, hui);
     }
 
-    print('uniqueid is: ${_uniqueId}');
+    print('uniqueid is: $_uniqueId');
 
     return Future(() => null);
   }

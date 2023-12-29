@@ -4,7 +4,7 @@ class NoteObject extends Object{
   late int _id;
   late String _title;
   late dynamic _body;
-  late DateTime _dateOfCreation;
+  late final DateTime _dateOfCreation;
   late DateTime _dateOfLastEdit;
 
   NoteObject(
