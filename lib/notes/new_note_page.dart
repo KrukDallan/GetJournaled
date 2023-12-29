@@ -23,7 +23,7 @@ class NewSingleNotePage extends StatefulWidget {
 }
 
 class _NewSingleNotePage extends State<NewSingleNotePage> {
-  String _title = 'Title';
+  String _title = '';
   String _body = '';
   int _id = 0;
   DateTime _lDateOfCreation = DateTime(0);
@@ -58,12 +58,8 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
     _title = widget.title;
     return Container(
       decoration: BoxDecoration(
-          gradient: LinearGradient(
-        colors: [
-          Colors.amber.shade50,
-          Colors.orange.shade50,
-        ],
-      )),
+        color: colorScheme.primary,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,35 +68,61 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 4.0, left: 4.0),
-                child: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(Icons.arrow_back)),
+                padding: const EdgeInsets.only(top: 4.0, left: 12.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade800,
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                  ),
+                  child: SizedBox(
+                    width: 35,
+                    height: 35,
+                    child: IconButton(
+                        iconSize: 15.0,
+                        padding: const EdgeInsets.only(bottom: 1.0),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: const Icon(
+                          Icons.arrow_back_ios_rounded,
+                          color: Colors.white,
+                        )),
+                  ),
+                ),
               ),
               const Expanded(child: Text('')),
               Padding(
-                padding: const EdgeInsets.only(top: 4.0, right: 10.0),
-                child: OutlinedButton(
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.resolveWith(
-                        (states) => Colors.deepOrange.shade200),
+                padding: const EdgeInsets.only(top: 4.0, right: 15.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade800,
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
                   ),
-                  onPressed: () {
-                    DateTime now = DateTime.now();
-                    NoteObject noteObject = NoteObject(id: _id, title: _title, body: _body, dateOfCreation: _lDateOfCreation, dateOfLastEdit: _lDateOfCreation);
-                    _notesSet.add(noteObject);
-                    _notesService.add(noteObject);
-                    _id = _notesService.getUniqueId();
-
-                    //var mySnackBar = customSnackBar('Note saved!');
-                    //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
-                  },
-                  child: Text(
-                    'Save',
-                    style: TextStyle(
-                      color: colorScheme.onPrimary,
+                  child: SizedBox(
+                    width: 35,
+                    height: 35,
+                    child: IconButton(
+                      padding: const EdgeInsets.only(bottom: 0.0),
+                      onPressed: () {
+                        DateTime now = DateTime.now();
+                        NoteObject noteObject = NoteObject(
+                            id: _id,
+                            title: _title,
+                            body: _body,
+                            dateOfCreation: DateTime(now.year, now.month, now.day),
+                            dateOfLastEdit: DateTime(now.year, now.month, now.day));
+                        _notesSet.add(noteObject);
+                        _notesService.add(noteObject);
+                        _id = _notesService.getUniqueId();
+                    
+                        //var mySnackBar = customSnackBar('Note saved!');
+                        //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
+                      },
+                      icon: const Icon(
+                        Icons.edit_document,
+                        size: 18.0,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -117,11 +139,11 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
                   text: widget.title,
                 ),
                 focusNode: FocusNode(),
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'Roboto',
                   fontSize: 22,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black,
+                  color: colorScheme.onPrimary
                 ),
                 cursorColor: Colors.black,
                 backgroundCursorColor: Colors.black,
@@ -132,10 +154,37 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
               ),
             ),
           ),
-          const Divider(
-            thickness: 1.0,
-            indent: 17,
-            endIndent: 80,
+                    Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 8.0, left: 20.0),
+                child: DefaultTextStyle(
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+                child: Text('Created: ${_lDateOfCreation.toString().replaceAll('00:00:00.000', '')}'),),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(left: 4.0, top: 8.0),
+                child: DefaultTextStyle(
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+                child: Text('-',),),
+              ),
+              Padding(
+                padding:const EdgeInsets.only(left: 8.0, top: 8.0),
+                child: DefaultTextStyle(
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+                child: Text('Last edit: ${_lDateOfCreation.toString().replaceAll('00:00:00.000', '')}',),),
+              )
+            ],
           ),
           Expanded(
               child: Padding(
@@ -143,10 +192,10 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
             child: EditableText(
               controller: TextEditingController(text: widget.body),
               focusNode: FocusNode(),
-              style: const TextStyle(
+              style:  TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 16,
-                color: Colors.black,
+                color: colorScheme.onPrimary,
               ),
               maxLines: null,
               cursorColor: Colors.black,
@@ -165,7 +214,7 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
   // business logic
   void _onNotesUpdate(Set<NoteObject> event) {
     setState(() {
-      _notesSet= event;
+      _notesSet = event;
     });
   }
 }

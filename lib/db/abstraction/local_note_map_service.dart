@@ -21,7 +21,7 @@ class LocalNoteMapService extends NoteService {
       update(noteObject);
     } else {
       _cacheSet.add(noteObject);
-      _ids.add(_uniqueId);
+      _ids.add(noteObject.getId());
       streamNoteController.add(_cacheSet);
 
       // insert in hive box
@@ -75,10 +75,13 @@ class LocalNoteMapService extends NoteService {
 
   @override
   Future<bool> remove(int id) async {
+  
     if (_ids.contains(id)) {
+        print('ID to delete: $id');
       _cacheSet.removeWhere((element) => element.getId() == id);
       _boxSingleNotes.delete(id);
       _ids.remove(id);
+      streamNoteController.add(_cacheSet);
       return true;
     } else {
       return false;
@@ -92,6 +95,7 @@ class LocalNoteMapService extends NoteService {
     _boxSingleNotes.clear();
     _uniqueId = 0;
     _boxUniqueId.put(0, HiveUniqueId(id: 0));
+    streamNoteController.add(_cacheSet);
 
     return Future(() => null);
   }
@@ -142,7 +146,7 @@ class LocalNoteMapService extends NoteService {
   int loadUniqueId() {
     if (_boxUniqueId.length > 0) {
       HiveUniqueId tmp = _boxUniqueId.getAt(0);
-      return tmp.id + 1;
+      return tmp.id ;
     } else {
       return 0;
     }

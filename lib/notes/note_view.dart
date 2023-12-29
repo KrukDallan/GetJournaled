@@ -85,7 +85,9 @@ class _Notes extends State<Notes> {
                         height: 35,
                         child: IconButton(
                           padding: const EdgeInsets.only(bottom: 0.0),
-                          onPressed: () async {},
+                          onPressed: () async {
+                            _notesService.removeAll();
+                          },
                           icon: const Icon(
                             Icons.search,
                             size: 22.0,
@@ -124,6 +126,7 @@ class _Notes extends State<Notes> {
                           body: entry.getBody(),
                           id: entry.getId(),
                           dateOfCreation: entry.getDateOfCreation(),
+                          dateOfLastEdit: entry.getDateOfLastEdit(),
                         ),
                       ),
                     ),
