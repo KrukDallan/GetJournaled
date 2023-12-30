@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-
+import 'package:flutter/material.dart';
 
 part 'hive_notes.g.dart';
 
@@ -24,17 +24,30 @@ class HiveNotes extends HiveObject {
   @HiveField(4)
   late DateTime dateOfLastEdit;
 
-  HiveNotes({required this.title, required this.body, required this.id, required this.dateOfCreation, required this.dateOfLastEdit});
+  @HiveField(5)
+  late int cardColorIntValue;
 
-  String getTitle(){
+  HiveNotes(
+      {required this.title,
+      required this.body,
+      required this.id,
+      required this.dateOfCreation,
+      required this.dateOfLastEdit,
+      required this.cardColorIntValue});
+
+  String getTitle() {
     return title;
   }
 
-  String getBody(){
+  String getBody() {
     return body;
   }
 
-  int getId(){
+  int getId() {
     return id;
+  }
+
+  int getCardColor(){
+    return cardColorIntValue;
   }
 }

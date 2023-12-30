@@ -10,13 +10,15 @@ class NewSingleNotePage extends StatefulWidget {
   late String body;
   late int id;
   late DateTime lDateOfCreation;
+  late Color cardColor;
 
   NewSingleNotePage(
       {super.key,
       required this.title,
       required this.body,
       required this.id,
-      required this.lDateOfCreation});
+      required this.lDateOfCreation,
+      required this.cardColor,});
 
   @override
   State<StatefulWidget> createState() => _NewSingleNotePage();
@@ -117,7 +119,8 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
                             dateOfCreation:
                                 DateTime(now.year, now.month, now.day),
                             dateOfLastEdit:
-                                DateTime(now.year, now.month, now.day));
+                                DateTime(now.year, now.month, now.day),
+                                 cardColor: widget.cardColor);
                         _notesService.add(noteObject);
                         _notesMap.addAll({widget.id: noteObject});
 

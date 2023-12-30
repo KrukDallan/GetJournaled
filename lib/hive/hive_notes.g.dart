@@ -22,13 +22,14 @@ class HiveNotesAdapter extends TypeAdapter<HiveNotes> {
       id: fields[2] as int,
       dateOfCreation: fields[3] as DateTime,
       dateOfLastEdit: fields[4] as DateTime,
+      cardColorIntValue: fields[5] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, HiveNotes obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.title)
       ..writeByte(1)
@@ -38,7 +39,9 @@ class HiveNotesAdapter extends TypeAdapter<HiveNotes> {
       ..writeByte(3)
       ..write(obj.dateOfCreation)
       ..writeByte(4)
-      ..write(obj.dateOfLastEdit);
+      ..write(obj.dateOfLastEdit)
+      ..writeByte(5)
+      ..write(obj.cardColorIntValue);
   }
 
   @override

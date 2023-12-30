@@ -1,4 +1,4 @@
-
+import 'package:flutter/material.dart';
 
 class NoteObject extends Object{
   late int _id;
@@ -6,18 +6,21 @@ class NoteObject extends Object{
   late dynamic _body;
   late final DateTime _dateOfCreation;
   late DateTime _dateOfLastEdit;
+  late Color _cardColor;
 
   NoteObject(
       {required int id,
       required String title,
       required dynamic body,
       required DateTime dateOfCreation,
-      required DateTime dateOfLastEdit})
+      required DateTime dateOfLastEdit,
+      required Color cardColor,})
       : _id = id,
         _title = title,
         _body = body,
         _dateOfCreation = dateOfCreation,
-        _dateOfLastEdit = dateOfLastEdit;
+        _dateOfLastEdit = dateOfLastEdit,
+        _cardColor = cardColor;
 
   int getId() {
     return _id;
@@ -61,6 +64,16 @@ class NoteObject extends Object{
     DateTime prev = _dateOfLastEdit;
     _dateOfLastEdit = newDate;
     return prev;
+  }
+
+  Color getCardColor(){
+    return _cardColor;
+  }
+
+  Color setCardColor(Color newCardColor) {
+    Color tmp = _cardColor;
+    _cardColor = newCardColor;
+    return tmp;
   }
 
   @override

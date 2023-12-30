@@ -1,6 +1,7 @@
 import 'dart:async';
 
 
+import 'package:flutter/material.dart';
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
 import 'package:getjournaled/hive/hive_unique_id.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -28,7 +29,8 @@ class LocalNoteMapService extends NoteService {
         body: noteObject.getBody(),
         id: _uniqueId,
         dateOfCreation: noteObject.getDateOfCreation(),
-        dateOfLastEdit: noteObject.getDateOfCreation(),
+        dateOfLastEdit: noteObject.getDateOfCreation(), 
+        cardColorIntValue: noteObject.getCardColor().value,
       );
       _boxSingleNotes.put(_uniqueId, hv);
       // update the id
@@ -67,8 +69,8 @@ class LocalNoteMapService extends NoteService {
     await Hive.initFlutter();
     Hive.registerAdapter(HiveNotesAdapter());
     Hive.registerAdapter(HiveUniqueIdAdapter());
-    _boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes7');
-    _boxUniqueId = await Hive.openBox<HiveUniqueId>('UniqeId7');
+    _boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes8');
+    _boxUniqueId = await Hive.openBox<HiveUniqueId>('UniqeId8');
     loadCacheMap();
     _uniqueId = loadUniqueId();
   }
@@ -112,6 +114,7 @@ class LocalNoteMapService extends NoteService {
         id: noteObject.getId(),
         dateOfCreation: noteObject.getDateOfCreation(),
         dateOfLastEdit: noteObject.getDateOfLastEdit(),
+        cardColorIntValue: noteObject.getCardColor().value,
       );
       _boxSingleNotes.put(noteObject.getId(), hv);
       return true;
@@ -135,7 +138,8 @@ class LocalNoteMapService extends NoteService {
             title: hn.title,
             body: hn.body,
             dateOfCreation: hn.dateOfCreation,
-            dateOfLastEdit: hn.dateOfLastEdit);
+            dateOfLastEdit: hn.dateOfLastEdit, 
+            cardColor: Color(hn.cardColorIntValue));
         _cacheMap.addAll({hn.id: noteObject});
       }
     }

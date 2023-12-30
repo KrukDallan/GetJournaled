@@ -108,7 +108,8 @@ class _WelcomePage extends State<WelcomePage> {
                               title: '',
                               body: '',
                               id: _notesService.getUniqueId(),
-                              lDateOfCreation: DateTime(now.year, now.month, now.day)
+                              lDateOfCreation: DateTime(now.year, now.month, now.day),
+                              cardColor: Colors.deepOrange.shade200,
                             )));
               },
               child: Text(

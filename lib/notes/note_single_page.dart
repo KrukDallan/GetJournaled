@@ -15,6 +15,7 @@ class SingleNotePage extends StatefulWidget {
   late int id;
   late DateTime dateOfCreation;
   late DateTime dateOfLastEdit;
+  late Color cardColor;
 
   SingleNotePage(
       {super.key,
@@ -22,7 +23,8 @@ class SingleNotePage extends StatefulWidget {
       required this.body,
       required this.id,
       required this.dateOfCreation,
-      required this.dateOfLastEdit});
+      required this.dateOfLastEdit,
+      required this.cardColor});
 
   @override
   State<StatefulWidget> createState() => _SingleNotePage();
@@ -130,7 +132,8 @@ class _SingleNotePage extends State<SingleNotePage> {
                             body: widget.body,
                             dateOfCreation: widget.dateOfCreation,
                             dateOfLastEdit:
-                                DateTime(now.year, now.month, now.day));
+                                DateTime(now.year, now.month, now.day), 
+                                cardColor: widget.cardColor);
                         // res==true? -> object updated, else object added (it was not present, shouldn't happen)
                         bool res = await _notesService.update(noteObject);
                         // check if the note is already present in the map
