@@ -8,6 +8,11 @@ import 'dart:async';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
 
+
+//
+// TODO: change MenuAnchor appearance
+//
+
 class NoteCard extends StatefulWidget {
   late String title;
   late String body;

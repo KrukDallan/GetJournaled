@@ -36,12 +36,12 @@ class _SingleNotePage extends State<SingleNotePage> {
   int _id = 0;
   DateTime _lDateOfCreation = DateTime(0);
   DateTime _lDateOfLastEdit = DateTime(0);
-  var mySnackBar = customSnackBar('Note saved!');
-  dynamic _oldBody;
+
+  int titleFontSize = 28;
 
   final NoteService _notesService = GetIt.I<NoteService>();
 
-  Map<int,NoteObject> _notesMap = {};
+  Map<int, NoteObject> _notesMap = {};
 
   StreamSubscription? _notesSub;
 
@@ -60,7 +60,6 @@ class _SingleNotePage extends State<SingleNotePage> {
       _body = widget.body;
       _lDateOfCreation = widget.dateOfCreation;
       _lDateOfLastEdit = widget.dateOfLastEdit;
-      _oldBody = widget.body;
     }
 
     _notesService.getAllNotes().then((value) => setState(() {
@@ -132,12 +131,12 @@ class _SingleNotePage extends State<SingleNotePage> {
                             body: widget.body,
                             dateOfCreation: widget.dateOfCreation,
                             dateOfLastEdit:
-                                DateTime(now.year, now.month, now.day), 
-                                cardColor: widget.cardColor);
+                                DateTime(now.year, now.month, now.day),
+                            cardColor: widget.cardColor);
                         // res==true? -> object updated, else object added (it was not present, shouldn't happen)
                         bool res = await _notesService.update(noteObject);
                         // check if the note is already present in the map
-                          _notesMap.addAll({widget.id:noteObject});
+                        _notesMap.addAll({widget.id: noteObject});
                       },
                       icon: const Icon(
                         Icons.save_sharp,
@@ -158,7 +157,8 @@ class _SingleNotePage extends State<SingleNotePage> {
                 left: 480 * 0.5 * 0.09, top: 800 * 0.5 * 0.02),
             child: Material(
               type: MaterialType.transparency,
-              child: EditableText(
+              child: EditableText(              
+                showCursor: true,
                 controller: TextEditingController(
                   text: widget.title,
                 ),
@@ -169,7 +169,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                   fontWeight: FontWeight.w700,
                   color: colorScheme.onPrimary,
                 ),
-                cursorColor: Colors.black,
+                cursorColor: Colors.white,
                 backgroundCursorColor: Colors.black,
                 onChanged: (String value) {
                   _title = value;
@@ -230,7 +230,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                 color: colorScheme.onPrimary,
               ),
               maxLines: null,
-              cursorColor: Colors.black,
+              cursorColor: Colors.white,
               backgroundCursorColor: const Color.fromARGB(255, 68, 67, 67),
               onChanged: (value) {
                 _body = value;
@@ -244,7 +244,7 @@ class _SingleNotePage extends State<SingleNotePage> {
   }
 
   // business logic
-  void _onNotesUpdate(Map<int,NoteObject> event) {
+  void _onNotesUpdate(Map<int, NoteObject> event) {
     setState(() {
       _notesMap = event;
     });

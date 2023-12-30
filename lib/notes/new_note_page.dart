@@ -147,6 +147,8 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
             child: Material(
               type: MaterialType.transparency,
               child: EditableText(
+                autofocus: true,
+                showCursor: true,
                 controller: TextEditingController(
                   text: widget.title,
                 ),
@@ -156,7 +158,7 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
                     color: colorScheme.onPrimary),
-                cursorColor: Colors.black,
+                cursorColor: Colors.white,
                 backgroundCursorColor: Colors.black,
                 onChanged: (String value) {
                   _title = value;
@@ -217,7 +219,7 @@ class _NewSingleNotePage extends State<NewSingleNotePage> {
                 color: colorScheme.onPrimary,
               ),
               maxLines: null,
-              cursorColor: Colors.black,
+              cursorColor: Colors.white,
               backgroundCursorColor: const Color.fromARGB(255, 68, 67, 67),
               onChanged: (value) {
                 _body = value;
