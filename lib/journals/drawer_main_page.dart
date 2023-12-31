@@ -19,11 +19,12 @@ class _Drawer extends State<Drawer> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(padding: customTopPadding(0.025)),
-              const Text('Your journals',
+              const Text('Journals',
               style: TextStyle(
                 fontFamily: 'Roboto',
                 fontSize: 24,
                 fontWeight: FontWeight.w700 ,
+                color: Colors.white
               ),),
               Padding(padding: customTopPadding(0.1)),
               SingleChildScrollView(
@@ -31,7 +32,10 @@ class _Drawer extends State<Drawer> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    DrawerCard(title: 'Title'),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: DrawerCard(title: 'Title'),
+                    ),
                     DrawerCard(title: 'Title2'),
                   ],
                 ),
@@ -86,6 +90,7 @@ class _DrawerCardState extends State<DrawerCard> {
                       style: const TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 16,
+                        color: Colors.black,
                       ),
                     )
                     ),
@@ -102,17 +107,12 @@ class DrawerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
+    return  SafeArea(
         child: Container(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [
-            Colors.blue.shade200,
-            Colors.purple.shade100,
-          ])),
-      child: const Drawer(),
+      decoration:  BoxDecoration(
+          color: Colors.black,
+          ),
+      child:  Drawer(),
     ));
   }
 }

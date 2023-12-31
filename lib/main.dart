@@ -6,7 +6,7 @@ import 'package:getjournaled/notes/note_main_page.dart';
 import 'package:provider/provider.dart';
 
 import 'package:getjournaled/welcome.dart';
-import 'package:getjournaled/drawer.dart';
+import 'package:getjournaled/journals/drawer_main_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
