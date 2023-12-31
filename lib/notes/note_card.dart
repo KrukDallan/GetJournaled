@@ -8,7 +8,6 @@ import 'dart:async';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_map_service.dart';
 
-
 //
 // TODO: change MenuAnchor appearance
 //
@@ -101,10 +100,6 @@ class _NoteCardState extends State<NoteCard> {
           SubmenuButton(
             menuChildren: <Widget>[
               MenuItemButton(
-                onPressed: () => _activate(MenuEntry.colorOrange),
-                child: Text(MenuEntry.colorOrange.label),
-              ),
-              MenuItemButton(
                 onPressed: () => _activate(MenuEntry.colorGreen),
                 child: Text(MenuEntry.colorGreen.label),
               ),
@@ -113,12 +108,16 @@ class _NoteCardState extends State<NoteCard> {
                 child: Text(MenuEntry.colorLightBlue.label),
               ),
               MenuItemButton(
-                onPressed: () => _activate(MenuEntry.colorTeal),
-                child: Text(MenuEntry.colorTeal.label),
+                onPressed: () => _activate(MenuEntry.colorOrange),
+                child: Text(MenuEntry.colorOrange.label),
               ),
               MenuItemButton(
                 onPressed: () => _activate(MenuEntry.colorPurple),
                 child: Text(MenuEntry.colorPurple.label),
+              ),
+              MenuItemButton(
+                onPressed: () => _activate(MenuEntry.colorTeal),
+                child: Text(MenuEntry.colorTeal.label),
               ),
             ],
             child: const Text('Background Color'),
