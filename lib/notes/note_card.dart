@@ -90,8 +90,8 @@ class _NoteCardState extends State<NoteCard> {
                       cardColor: widget.cardColor,
                     )));
       },
-      onLongPress: () {
-        _menuController.open();
+      onLongPressStart: (pos) {
+        _menuController.open(position:pos.localPosition);
       },
       child: MenuAnchor(
         controller: _menuController,
