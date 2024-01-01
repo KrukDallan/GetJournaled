@@ -19,8 +19,16 @@ class NewJournalPage extends StatefulWidget {
 class _NewJournalPage extends State<NewJournalPage> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    var colorScheme = Theme.of(context).colorScheme;
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: colorScheme.primary,
+        body: SingleChildScrollView(
+          child: Column(
+            
+          ),
+        ),
+      ));
   }
 
 }
