@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:getjournaled/shared.dart';
 import 'package:getjournaled/journals/journal_card.dart';
+
 class Drawer extends StatefulWidget {
   const Drawer({super.key});
 
@@ -47,8 +48,6 @@ class _Drawer extends State<Drawer> {
     );
   }
 }
-
-
 
 class DrawerPage extends StatelessWidget {
   const DrawerPage({super.key});

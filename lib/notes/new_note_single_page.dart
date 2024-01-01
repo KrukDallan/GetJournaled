@@ -2,17 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:getjournaled/db/abstraction/note_map_service.dart';
+import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 import 'package:getjournaled/notes/note_object_class.dart';
 
-class NewSingleNotePage extends StatefulWidget {
+class NewNoteSinglePage extends StatefulWidget {
   late String title;
   late String body;
   late int id;
   late DateTime lDateOfCreation;
   late Color cardColor;
 
-  NewSingleNotePage(
+  NewNoteSinglePage(
       {super.key,
       required this.title,
       required this.body,
@@ -24,7 +24,7 @@ class NewSingleNotePage extends StatefulWidget {
   State<StatefulWidget> createState() => _NewSingleNotePage();
 }
 
-class _NewSingleNotePage extends State<NewSingleNotePage> {
+class _NewSingleNotePage extends State<NewNoteSinglePage> {
   String _title = '';
   String _body = '';
   late int _id;

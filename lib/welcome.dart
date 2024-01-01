@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:getjournaled/notes/new_note_page.dart';
+import 'package:getjournaled/notes/new_note_single_page.dart';
 import 'package:getjournaled/notes/note_object_class.dart';
 import 'package:getjournaled/notes/note_view.dart';
 import 'package:getjournaled/shared.dart';
 import 'package:get_it/get_it.dart';
-import 'package:getjournaled/db/abstraction/note_map_service.dart';
+import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 
 
 class WelcomePage extends StatefulWidget{
@@ -104,7 +104,7 @@ class _WelcomePage extends State<WelcomePage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => NewSingleNotePage(
+                        builder: (context) => NewNoteSinglePage(
                               title: '',
                               body: '',
                               id: _notesService.getUniqueId(),

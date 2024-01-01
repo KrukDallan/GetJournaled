@@ -2,7 +2,7 @@ import 'dart:async';
 
 
 import 'package:flutter/material.dart';
-import 'package:getjournaled/db/abstraction/note_map_service.dart';
+import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 import 'package:getjournaled/hive/hive_unique_id.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:getjournaled/hive/hive_notes.dart';

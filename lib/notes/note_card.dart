@@ -6,7 +6,7 @@ import 'package:getjournaled/notes/note_single_page.dart';
 import 'dart:async';
 
 import 'package:get_it/get_it.dart';
-import 'package:getjournaled/db/abstraction/note_map_service.dart';
+import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 
 //
 // TODO: change MenuAnchor appearance

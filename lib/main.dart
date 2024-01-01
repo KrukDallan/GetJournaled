@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:getjournaled/db/abstraction/note_map_service.dart';
+import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 import 'package:getjournaled/db/bindings.dart';
 import 'package:getjournaled/notes/note_main_page.dart';
 import 'package:provider/provider.dart';
