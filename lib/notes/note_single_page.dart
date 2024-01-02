@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 import 'package:getjournaled/notes/note_object_class.dart';
@@ -39,6 +40,30 @@ class _SingleNotePage extends State<SingleNotePage> {
 
   int titleFontSize = 28;
 
+   Color get boxColor => _boxColor;
+  late Color _boxColor;
+  set boxColor(Color value) {
+    if (_boxColor != value) {
+      setState(() {
+        _boxColor = value;
+      });
+    }
+  }
+
+  MenuEntry? _lastSelection;
+
+  final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
+  final MenuController _menuController = MenuController();
+  bool _menuWasEnabled = false;
+
+  Future<void> _disableContextMenu() async {}
+
+  void _reenableContextMenu() {
+    if (_menuWasEnabled && !BrowserContextMenu.enabled) {
+      BrowserContextMenu.enableContextMenu();
+    }
+  }
+
   final NoteService _notesService = GetIt.I<NoteService>();
 
   Map<int, NoteObject> _notesMap = {};
@@ -61,6 +86,7 @@ class _SingleNotePage extends State<SingleNotePage> {
       _lDateOfCreation = widget.dateOfCreation;
       _lDateOfLastEdit = widget.dateOfLastEdit;
     }
+    _boxColor = widget.cardColor;
 
     _notesService.getAllNotes().then((value) => setState(() {
           _notesMap = value;
@@ -183,6 +209,76 @@ class _SingleNotePage extends State<SingleNotePage> {
                 ),
               ),
             ),
+            //
+            // Color box
+            //
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTapDown: (pos) {
+                    _menuController.open(position: pos.localPosition);
+                  } ,
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 8.0, left: 22.0),
+                    child: Container(
+                      color: Colors.white,
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: Center(
+                          child: SizedBox(
+                            width: 15,
+                            height: 15,
+                            child: Container(
+                              color: boxColor,
+                              child: MenuAnchor(
+                                controller: _menuController,
+                                anchorTapClosesMenu: true,
+                                menuChildren: <Widget>[
+                                      MenuItemButton(
+                                        onPressed: () =>
+                                            _activate(MenuEntry.colorGreen),
+                                        child: Text(MenuEntry.colorGreen.label),
+                                      ),
+                                      MenuItemButton(
+                                        onPressed: () =>
+                                            _activate(MenuEntry.colorLightBlue),
+                                        child: Text(
+                                            MenuEntry.colorLightBlue.label),
+                                      ),
+                                      MenuItemButton(
+                                        onPressed: () =>
+                                            _activate(MenuEntry.colorOrange),
+                                        child:
+                                            Text(MenuEntry.colorOrange.label),
+                                      ),
+                                      MenuItemButton(
+                                        onPressed: () =>
+                                            _activate(MenuEntry.colorPurple),
+                                        child:
+                                            Text(MenuEntry.colorPurple.label),
+                                      ),
+                                      MenuItemButton(
+                                        onPressed: () =>
+                                            _activate(MenuEntry.colorTeal),
+                                        child: Text(MenuEntry.colorTeal.label),
+                                      ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            //
+            // Dates 
+            //
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -255,4 +351,59 @@ class _SingleNotePage extends State<SingleNotePage> {
       _notesMap = event;
     });
   }
+
+    void _activate(MenuEntry selection) {
+    Color tmp = widget.cardColor;
+
+    switch (selection) {
+      case MenuEntry.colorMenu:
+        break;
+      case MenuEntry.colorOrange:
+        tmp = Colors.deepOrange.shade200;
+      case MenuEntry.colorGreen:
+        tmp = Colors.green.shade200;
+      case MenuEntry.colorLightBlue:
+        tmp = Colors.lightBlue.shade100;
+      case MenuEntry.colorTeal:
+        tmp = Colors.teal.shade100;
+      case MenuEntry.colorPurple:
+        tmp = Colors.deepPurple.shade100;
+    }
+    setState(() {
+      _lastSelection = selection;
+      widget.cardColor = tmp;
+      boxColor = tmp;
+      NoteObject noteObject = NoteObject(
+          id: widget.id,
+          title: widget.title,
+          body: widget.body,
+          dateOfCreation: widget.dateOfCreation,
+          dateOfLastEdit: widget.dateOfLastEdit,
+          cardColor: widget.cardColor);
+      _notesService.update(noteObject);
+    });
+  }
+}
+
+enum MenuEntry {
+  colorMenu('Color Menu'),
+  colorOrange(
+    'Orange Card',
+  ),
+  colorGreen(
+    'Green Card',
+  ),
+  colorLightBlue(
+    'Lightblue Card',
+  ),
+  colorTeal(
+    'Teal Card',
+  ),
+  colorPurple(
+    'Purple Card',
+  );
+
+  const MenuEntry(this.label, [this.shortcut]);
+  final String label;
+  final MenuSerializableShortcut? shortcut;
 }
