@@ -9,11 +9,11 @@ import 'package:getjournaled/notes/note_object_class.dart';
 class NewNoteSinglePage extends StatefulWidget {
   late String title;
   late String body;
-  late int id;
-  late DateTime lDateOfCreation;
+  final int id;
+  final DateTime lDateOfCreation;
   late Color cardColor;
 
-  NewNoteSinglePage({
+   NewNoteSinglePage({
     super.key,
     required this.title,
     required this.body,
@@ -27,9 +27,7 @@ class NewNoteSinglePage extends StatefulWidget {
 }
 
 class _NewSingleNotePage extends State<NewNoteSinglePage> {
-  String _title = '';
-  String _body = '';
-  late int _id;
+
   DateTime _lDateOfCreation = DateTime(0);
 
   Color get boxColor => _boxColor;
@@ -48,7 +46,6 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
 
   StreamSubscription? _notesSub;
 
-  MenuEntry? _lastSelection;
 
   final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
   final MenuController _menuController = MenuController();
@@ -71,7 +68,6 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
   @override
   void initState() {
     super.initState();
-    _id = widget.id;
     _lDateOfCreation = widget.lDateOfCreation;
 
     _notesService.getAllNotes().then((value) => setState(() {
@@ -83,8 +79,7 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
-    _title = widget.title;
-    _body = widget.body;
+
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(
@@ -141,8 +136,8 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                           DateTime now = DateTime.now();
                           NoteObject noteObject = NoteObject(
                               id: widget.id,
-                              title: _title,
-                              body: _body,
+                              title: widget.title,
+                              body: widget.body,
                               dateOfCreation:
                                   DateTime(now.year, now.month, now.day),
                               dateOfLastEdit:
@@ -188,7 +183,6 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                   cursorColor: Colors.white,
                   backgroundCursorColor: Colors.black,
                   onChanged: (String value) {
-                    _title = value;
                     widget.title = value;
                   },
                 ),
@@ -318,7 +312,6 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                 cursorColor: Colors.white,
                 backgroundCursorColor: const Color.fromARGB(255, 68, 67, 67),
                 onChanged: (value) {
-                  _body = value;
                   widget.body = value;
                 },
               ),
@@ -354,7 +347,6 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
         tmp = Colors.deepPurple.shade100;
     }
     setState(() {
-      _lastSelection = selection;
       widget.cardColor = tmp;
       boxColor = tmp;
       NoteObject noteObject = NoteObject(

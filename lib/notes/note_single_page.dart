@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 import 'package:getjournaled/notes/note_object_class.dart';
@@ -32,15 +31,19 @@ class SingleNotePage extends StatefulWidget {
 }
 
 class _SingleNotePage extends State<SingleNotePage> {
-  String _title = '';
-  dynamic _body = '';
-  int _id = 0;
-  DateTime _lDateOfCreation = DateTime(0);
-  DateTime _lDateOfLastEdit = DateTime(0);
 
   int titleFontSize = 28;
 
-   Color get boxColor => _boxColor;
+  final NoteService _notesService = GetIt.I<NoteService>();
+
+  Map<int, NoteObject> _notesMap = {};
+
+  StreamSubscription? _notesSub;
+
+  //
+  // colored box
+  //
+  Color get boxColor => _boxColor;
   late Color _boxColor;
   set boxColor(Color value) {
     if (_boxColor != value) {
@@ -50,42 +53,20 @@ class _SingleNotePage extends State<SingleNotePage> {
     }
   }
 
-  MenuEntry? _lastSelection;
-
   final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
   final MenuController _menuController = MenuController();
-  bool _menuWasEnabled = false;
-
-  Future<void> _disableContextMenu() async {}
-
-  void _reenableContextMenu() {
-    if (_menuWasEnabled && !BrowserContextMenu.enabled) {
-      BrowserContextMenu.enableContextMenu();
-    }
-  }
-
-  final NoteService _notesService = GetIt.I<NoteService>();
-
-  Map<int, NoteObject> _notesMap = {};
-
-  StreamSubscription? _notesSub;
 
   @override
   void dispose() {
     _notesSub?.cancel();
+    _buttonFocusNode.dispose();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    if (_id == -1) {
-      _id = widget.id;
-      _title = widget.title;
-      _body = widget.body;
-      _lDateOfCreation = widget.dateOfCreation;
-      _lDateOfLastEdit = widget.dateOfLastEdit;
-    }
+
     _boxColor = widget.cardColor;
 
     _notesService.getAllNotes().then((value) => setState(() {
@@ -97,7 +78,6 @@ class _SingleNotePage extends State<SingleNotePage> {
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
-    _title = widget.title;
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(
@@ -154,7 +134,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                           DateTime now = DateTime.now();
                           NoteObject noteObject = NoteObject(
                               id: widget.id,
-                              title: _title,
+                              title: widget.title,
                               body: widget.body,
                               dateOfCreation: widget.dateOfCreation,
                               dateOfLastEdit:
@@ -166,7 +146,8 @@ class _SingleNotePage extends State<SingleNotePage> {
                           _notesMap.addAll({widget.id: noteObject});
 
                           setState(() {
-                            widget.dateOfLastEdit = DateTime(now.year, now.month, now.day);
+                            widget.dateOfLastEdit =
+                                DateTime(now.year, now.month, now.day);
                           });
                         },
                         icon: const Icon(
@@ -188,7 +169,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                   left: 480 * 0.5 * 0.09, top: 800 * 0.5 * 0.02),
               child: Material(
                 type: MaterialType.transparency,
-                child: EditableText(              
+                child: EditableText(
                   showCursor: true,
                   controller: TextEditingController(
                     text: widget.title,
@@ -203,7 +184,6 @@ class _SingleNotePage extends State<SingleNotePage> {
                   cursorColor: Colors.white,
                   backgroundCursorColor: Colors.black,
                   onChanged: (String value) {
-                    _title = value;
                     widget.title = value;
                   },
                 ),
@@ -218,7 +198,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                 GestureDetector(
                   onTapDown: (pos) {
                     _menuController.open(position: pos.localPosition);
-                  } ,
+                  },
                   child: Padding(
                     padding: EdgeInsets.only(top: 8.0, left: 22.0),
                     child: Container(
@@ -236,34 +216,31 @@ class _SingleNotePage extends State<SingleNotePage> {
                                 controller: _menuController,
                                 anchorTapClosesMenu: true,
                                 menuChildren: <Widget>[
-                                      MenuItemButton(
-                                        onPressed: () =>
-                                            _activate(MenuEntry.colorGreen),
-                                        child: Text(MenuEntry.colorGreen.label),
-                                      ),
-                                      MenuItemButton(
-                                        onPressed: () =>
-                                            _activate(MenuEntry.colorLightBlue),
-                                        child: Text(
-                                            MenuEntry.colorLightBlue.label),
-                                      ),
-                                      MenuItemButton(
-                                        onPressed: () =>
-                                            _activate(MenuEntry.colorOrange),
-                                        child:
-                                            Text(MenuEntry.colorOrange.label),
-                                      ),
-                                      MenuItemButton(
-                                        onPressed: () =>
-                                            _activate(MenuEntry.colorPurple),
-                                        child:
-                                            Text(MenuEntry.colorPurple.label),
-                                      ),
-                                      MenuItemButton(
-                                        onPressed: () =>
-                                            _activate(MenuEntry.colorTeal),
-                                        child: Text(MenuEntry.colorTeal.label),
-                                      ),
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorGreen),
+                                    child: Text(MenuEntry.colorGreen.label),
+                                  ),
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorLightBlue),
+                                    child: Text(MenuEntry.colorLightBlue.label),
+                                  ),
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorOrange),
+                                    child: Text(MenuEntry.colorOrange.label),
+                                  ),
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorPurple),
+                                    child: Text(MenuEntry.colorPurple.label),
+                                  ),
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorTeal),
+                                    child: Text(MenuEntry.colorTeal.label),
+                                  ),
                                 ],
                               ),
                             ),
@@ -277,7 +254,7 @@ class _SingleNotePage extends State<SingleNotePage> {
             ),
 
             //
-            // Dates 
+            // Dates
             //
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -334,7 +311,6 @@ class _SingleNotePage extends State<SingleNotePage> {
                 cursorColor: Colors.white,
                 backgroundCursorColor: const Color.fromARGB(255, 68, 67, 67),
                 onChanged: (value) {
-                  _body = value;
                   widget.body = value;
                 },
               ),
@@ -352,7 +328,7 @@ class _SingleNotePage extends State<SingleNotePage> {
     });
   }
 
-    void _activate(MenuEntry selection) {
+  void _activate(MenuEntry selection) {
     Color tmp = widget.cardColor;
 
     switch (selection) {
@@ -370,7 +346,6 @@ class _SingleNotePage extends State<SingleNotePage> {
         tmp = Colors.deepPurple.shade100;
     }
     setState(() {
-      _lastSelection = selection;
       widget.cardColor = tmp;
       boxColor = tmp;
       NoteObject noteObject = NoteObject(

@@ -36,10 +36,8 @@ class NoteCard extends StatefulWidget {
 class _NoteCardState extends State<NoteCard> {
   final NoteService _notesService = GetIt.I<NoteService>();
 
-  MenuEntry? _lastSelection;
   final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
   final MenuController _menuController = MenuController();
-  bool _menuWasEnabled = false;
 
   Color get cardColor => _cardColor;
   late Color _cardColor;
@@ -54,24 +52,21 @@ class _NoteCardState extends State<NoteCard> {
   @override
   void initState() {
     super.initState();
-    _disableContextMenu();
     _cardColor = widget.cardColor;
   }
 
   @override
   void dispose() {
     _buttonFocusNode.dispose();
-    _reenableContextMenu();
     super.dispose();
   }
 
-  Future<void> _disableContextMenu() async {}
-
+  /* I don't know if I may need this
   void _reenableContextMenu() {
     if (_menuWasEnabled && !BrowserContextMenu.enabled) {
       BrowserContextMenu.enableContextMenu();
     }
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +86,7 @@ class _NoteCardState extends State<NoteCard> {
                     )));
       },
       onLongPressStart: (pos) {
-        _menuController.open(position:pos.localPosition);
+        _menuController.open(position: pos.localPosition);
       },
       child: MenuAnchor(
         controller: _menuController,
@@ -183,7 +178,6 @@ class _NoteCardState extends State<NoteCard> {
         tmp = Colors.deepPurple.shade100;
     }
     setState(() {
-      _lastSelection = selection;
       widget.cardColor = tmp;
       NoteObject noteObject = NoteObject(
           id: widget.id,
@@ -196,9 +190,6 @@ class _NoteCardState extends State<NoteCard> {
     });
   }
 
-  void _handleLongPress(LongPressEndDetails details) {
-    _menuController.open(position: details.localPosition);
-  }
 }
 
 enum MenuEntry {

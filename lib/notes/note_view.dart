@@ -9,8 +9,6 @@ import 'package:getjournaled/shared.dart';
 
 import 'package:getjournaled/notes/note_card.dart';
 
-int localUniqueId = 0;
-
 class Notes extends StatefulWidget {
   const Notes({super.key});
 
@@ -34,39 +32,47 @@ class _Notes extends State<Notes> {
   @override
   void initState() {
     super.initState();
-    localUniqueId = (_notesMap.isNotEmpty) ? (_notesService.getUniqueId()) : 0;
 
     _notesService.getAllNotes().then((value) => setState(() {
           _notesMap = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
 
+    //
+    // Display the alert dialog
+    //
     SchedulerBinding.instance.addPostFrameCallback((_) {
       ifLoaded();
     });
   }
 
+  //
+  // function to use to display the alert dialog
+  //
   void ifLoaded() async {
-    if(_notesService.getUniqueId() == 0 ){
+    if (_notesService.getUniqueId() == 0) {
       AlertDialog alertDialog = AlertDialog(
-      title: const Text('Quick guide'),
-      content: const Text(
-          ' • Single tap on a note to open it\n • Double tap to delete it\n • Hold to customize it'),
-      actions: [
-        TextButton(
-          child: const Text('Ok',
-          style: TextStyle(
-            color: Colors.white,
-          ),),
-          onPressed: () => Navigator.pop(context, 'Ok'),
-        ),
-      ],
-    );
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alertDialog;
-        });}
+        title: const Text('Quick guide'),
+        content: const Text(
+            ' • Single tap on a note to open it\n • Double tap to delete it\n • Hold to customize it'),
+        actions: [
+          TextButton(
+            child: const Text(
+              'Ok',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            onPressed: () => Navigator.pop(context, 'Ok'),
+          ),
+        ],
+      );
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return alertDialog;
+          });
+    }
   }
 
   int leftPadding = 2;
@@ -96,10 +102,6 @@ class _Notes extends State<Notes> {
                       ),
                     ),
                   ),
-                  /* ElevatedButton(
-                    onPressed: () => _notesService.removeAll(), 
-                    child: const Icon(Icons.delete_forever)
-                    ), */
                   const Expanded(child: Text('')),
                   Padding(
                     padding: const EdgeInsets.only(top: 4.0, right: 15.0),

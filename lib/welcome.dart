@@ -2,25 +2,21 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:getjournaled/notes/new_note_single_page.dart';
-import 'package:getjournaled/notes/note_object_class.dart';
-import 'package:getjournaled/notes/note_view.dart';
 import 'package:getjournaled/shared.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 
-
-class WelcomePage extends StatefulWidget{
-    const WelcomePage(
-      {super.key,});
+class WelcomePage extends StatefulWidget {
+  const WelcomePage({
+    super.key,
+  });
 
   @override
   State<StatefulWidget> createState() => _WelcomePage();
 }
 
 class _WelcomePage extends State<WelcomePage> {
-    final NoteService _notesService = GetIt.I<NoteService>();
-
-  Map<int, NoteObject> _notesMap = {};
+  final NoteService _notesService = GetIt.I<NoteService>();
 
   StreamSubscription? _notesSub;
 
@@ -33,12 +29,6 @@ class _WelcomePage extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
-    localUniqueId = (_notesMap.isNotEmpty) ? (_notesService.getUniqueId()) : 0;
-
-    _notesService.getAllNotes().then((value) => setState(() {
-          _notesMap = value;
-        }));
-    _notesSub = _notesService.stream.listen(_onNotesUpdate);
   }
 
   @override
@@ -46,9 +36,9 @@ class _WelcomePage extends State<WelcomePage> {
     var colorScheme = Theme.of(context).colorScheme;
     return SafeArea(
         child: Container(
-      decoration:  const BoxDecoration(
-          color: Colors.black,
-          ),
+      decoration: const BoxDecoration(
+        color: Colors.black,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -67,7 +57,7 @@ class _WelcomePage extends State<WelcomePage> {
           Container(
             height: 50,
             width: 200,
-            decoration:  BoxDecoration(
+            decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
               color: Colors.amber.shade50,
             ),
@@ -108,7 +98,8 @@ class _WelcomePage extends State<WelcomePage> {
                               title: '',
                               body: '',
                               id: _notesService.getUniqueId(),
-                              lDateOfCreation: DateTime(now.year, now.month, now.day),
+                              lDateOfCreation:
+                                  DateTime(now.year, now.month, now.day),
                               cardColor: Colors.deepOrange.shade200,
                             )));
               },
@@ -124,11 +115,5 @@ class _WelcomePage extends State<WelcomePage> {
         ],
       ),
     ));
-  }
-    // business logic
-  void _onNotesUpdate(Map<int,NoteObject> event) {
-    setState(() {
-      _notesMap = event;
-    });
   }
 }
