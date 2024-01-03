@@ -6,7 +6,7 @@ import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 import 'package:getjournaled/hive/hive_unique_id.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:getjournaled/hive/hive_notes.dart';
-import 'package:getjournaled/notes/note_object_class.dart';
+import 'package:getjournaled/notes/note_object.dart';
 
 class LocalNoteMapService extends NoteService {
   final Map<int, NoteObject> _cacheMap = {};
@@ -69,8 +69,8 @@ class LocalNoteMapService extends NoteService {
     await Hive.initFlutter();
     Hive.registerAdapter(HiveNotesAdapter());
     Hive.registerAdapter(HiveUniqueIdAdapter());
-    _boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes8');
-    _boxUniqueId = await Hive.openBox<HiveUniqueId>('UniqeId8');
+    _boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes9');
+    _boxUniqueId = await Hive.openBox<HiveUniqueId>('HiveNotesUniqeId9');
     loadCacheMap();
     _uniqueId = loadUniqueId();
   }

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:getjournaled/notes/note_object_class.dart';
+import 'package:getjournaled/notes/note_object.dart';
 
 abstract class NoteService{
   @protected

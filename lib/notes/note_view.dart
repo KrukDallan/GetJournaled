@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
-import 'package:getjournaled/notes/note_object_class.dart';
+import 'package:getjournaled/notes/note_object.dart';
 import 'package:getjournaled/shared.dart';
 
 import 'package:getjournaled/notes/note_card.dart';

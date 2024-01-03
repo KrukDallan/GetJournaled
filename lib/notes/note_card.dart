@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:getjournaled/notes/note_object_class.dart';
+import 'package:getjournaled/notes/note_object.dart';
 
 import 'package:getjournaled/notes/note_single_page.dart';
 import 'dart:async';
