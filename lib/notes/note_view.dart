@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 import 'package:getjournaled/notes/note_object_class.dart';
@@ -20,7 +21,7 @@ class Notes extends StatefulWidget {
 class _Notes extends State<Notes> {
   final NoteService _notesService = GetIt.I<NoteService>();
 
-  Map<int,NoteObject> _notesMap = {};
+  Map<int, NoteObject> _notesMap = {};
 
   StreamSubscription? _notesSub;
 
@@ -39,6 +40,33 @@ class _Notes extends State<Notes> {
           _notesMap = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
+
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      ifLoaded();
+    });
+  }
+
+  void ifLoaded() async {
+    if(_notesService.getUniqueId() == 0 ){
+      AlertDialog alertDialog = AlertDialog(
+      title: const Text('Quick guide'),
+      content: const Text(
+          ' • Single tap on a note to open it\n • Double tap to delete it\n • Hold to customize it'),
+      actions: [
+        TextButton(
+          child: const Text('Ok',
+          style: TextStyle(
+            color: Colors.white,
+          ),),
+          onPressed: () => Navigator.pop(context, 'Ok'),
+        ),
+      ],
+    );
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return alertDialog;
+        });}
   }
 
   int leftPadding = 2;
@@ -56,7 +84,7 @@ class _Notes extends State<Notes> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                   Padding(
+                  Padding(
                     padding: const EdgeInsets.only(left: 18.0, top: 8.0),
                     child: Text(
                       'Notes',
@@ -126,7 +154,7 @@ class _Notes extends State<Notes> {
                           body: entry.value.getBody(),
                           id: entry.value.getId(),
                           dateOfCreation: entry.value.getDateOfCreation(),
-                          dateOfLastEdit: entry.value.getDateOfLastEdit(), 
+                          dateOfLastEdit: entry.value.getDateOfLastEdit(),
                           cardColor: entry.value.getCardColor(),
                         ),
                       ),
@@ -142,7 +170,7 @@ class _Notes extends State<Notes> {
   }
 
   // business logic
-  void _onNotesUpdate(Map<int,NoteObject> event) {
+  void _onNotesUpdate(Map<int, NoteObject> event) {
     setState(() {
       _notesMap = event;
       leftPadding = 2;
