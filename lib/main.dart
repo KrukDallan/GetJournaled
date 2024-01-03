@@ -106,13 +106,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // This method is rerun every time setState is called, for instance as done
-  // by the _incrementCounter method above.
-  //
-  // The Flutter framework has been optimized to make rerunning build methods
-  // fast, so that you can just rebuild anything that needs updating rather
-  // than having to individually change instances of widgets.
-
   var selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
@@ -128,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 2:
         page = const NotesPage();
       default:
-        page = Text('UnimplementedError(no widget for $selectedIndex)');
+        page = Text('UnimplementedError(no widget for index $selectedIndex)');
     }
 
     var mainArea = ColoredBox(
@@ -194,47 +187,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               body: page,
             );
-            /*  return Column(
-              children: [
-                Expanded(child: mainArea),
-                NavigationBar(
-                  selectedIndex: selectedIndex,
-                  onDestinationSelected: (int index) {
-                    setState(() {
-                      selectedIndex = index;
-                    });
-                  },
-                    indicatorColor: colorScheme.primary,
-                    backgroundColor: colorScheme.secondary,
-                    destinations: const [
-                      NavigationDestination(
-                        icon: Icon(
-                          Icons.home_filled,
-                        ),
-                        label: 'Home page',
-                      ),
-                      NavigationDestination(
-                        icon: Icon(
-                          Icons.article,
-                        ),
-                        label: 'Drawer',
-                      ),
-                      NavigationDestination(
-                        icon: Icon(
-                          Icons.note_alt_rounded,
-                        ),
-                        label: 'Notes',
-                      ),
-                      NavigationDestination(
-                        icon: Icon(
-                          Icons.settings,
-                        ),
-                        label: 'Settings',
-                      ),
-                    ],
-                    ),
-              ],
-            ); */
           } else {
             return Row(
               children: [
