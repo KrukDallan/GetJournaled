@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
+import 'package:getjournaled/hive/notes/hive_tutorial_notes.dart';
 import 'package:getjournaled/notes/note_object.dart';
 import 'package:getjournaled/shared.dart';
 
 import 'package:getjournaled/notes/note_card.dart';
+import 'package:hive/hive.dart';
 
 class Notes extends StatefulWidget {
   const Notes({super.key});
@@ -49,8 +51,9 @@ class _Notes extends State<Notes> {
   //
   // function to use to display the alert dialog
   //
-  void ifLoaded() async {
-    if (_notesService.getUniqueId() == 0) {
+  void ifLoaded() {
+    bool boxTutorialNotesValue = _notesService.getTutorialNotesValue();
+    if (!boxTutorialNotesValue) {
       AlertDialog alertDialog = AlertDialog(
         title: const Text('Quick guide'),
         content: const Text(
@@ -65,6 +68,19 @@ class _Notes extends State<Notes> {
             ),
             onPressed: () => Navigator.pop(context, 'Ok'),
           ),
+          TextButton(
+            onPressed: () {
+              HiveTutorialNotes htn = HiveTutorialNotes(dismissed: true);
+              _notesService.updateHiveTutorial(htn);
+              Navigator.pop(context, 'Dismiss');
+            }, 
+            child: const Text(
+              'Dismiss',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            )
         ],
       );
       showDialog(

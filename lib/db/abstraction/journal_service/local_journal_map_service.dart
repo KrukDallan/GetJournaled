@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
-import 'package:getjournaled/hive/hive_journal.dart';
+import 'package:getjournaled/hive/journal/hive_journal.dart';
 import 'package:getjournaled/hive/hive_unique_id.dart';
 import 'package:getjournaled/journals/journal_object.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -26,7 +26,10 @@ class LocalJournalMapService extends JournalService {
         id: journalObject.getId(), 
         body: journalObject.getBody(), 
         dateOfCreation: journalObject.getDateOfCreation(), 
-        cardColorIntValue: journalObject.getCardColor().value
+        cardColorIntValue: journalObject.getCardColor().value,
+        dayRating: journalObject.getDayRating(),
+        highlight: journalObject.getHighlight(),
+        lowlight: journalObject.getLowlight(),
         );
         _boxSingleJournal.put(_uniqueId, hj);
         _uniqueId += 1;
@@ -101,7 +104,10 @@ class LocalJournalMapService extends JournalService {
           id: journalObject.getId(),
           body: journalObject.getBody(),
           dateOfCreation: journalObject.getDateOfCreation(),
-          cardColorIntValue: journalObject.getCardColor().value
+          cardColorIntValue: journalObject.getCardColor().value,
+          dayRating: journalObject.getDayRating(),
+          highlight: journalObject.getHighlight(),
+          lowlight: journalObject.getLowlight(),
           );
           _boxSingleJournal.put(journalObject.getId(), hj);
           return true;
@@ -124,7 +130,11 @@ class LocalJournalMapService extends JournalService {
             id: hj.id,
             body: hj.body,
             dateOfCreation: hj.dateOfCreation,
-            cardColor: Color(hj.cardColorIntValue));
+            cardColor: Color(hj.cardColorIntValue),
+            dayRating: hj.dayRating,
+            highlight: hj.highlight,
+            lowlight: hj.lowlight,
+            );
         _cacheMap.addAll({hj.id: journalObject});
       }
     }

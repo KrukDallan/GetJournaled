@@ -46,7 +46,6 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
 
   StreamSubscription? _notesSub;
 
-
   final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
   final MenuController _menuController = MenuController();
   bool _menuWasEnabled = false;

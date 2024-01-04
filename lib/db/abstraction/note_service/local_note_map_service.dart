@@ -4,14 +4,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 import 'package:getjournaled/hive/hive_unique_id.dart';
+import 'package:getjournaled/hive/notes/hive_tutorial_notes.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:getjournaled/hive/hive_notes.dart';
+import 'package:getjournaled/hive/notes/hive_notes.dart';
 import 'package:getjournaled/notes/note_object.dart';
 
 class LocalNoteMapService extends NoteService {
   final Map<int, NoteObject> _cacheMap = {};
   late Box _boxSingleNotes;
   late Box _boxUniqueId;
+  late Box _boxTutorial;
   late int _uniqueId;
 
   @override
@@ -60,6 +62,12 @@ class LocalNoteMapService extends NoteService {
   }
 
   @override
+  bool getTutorialNotesValue() {
+    HiveTutorialNotes htn = _boxTutorial.getAt(0);
+    return htn.dismissed;
+  }
+
+  @override
   int getUniqueId() {
     return _uniqueId;
   }
@@ -69,10 +77,13 @@ class LocalNoteMapService extends NoteService {
     await Hive.initFlutter();
     Hive.registerAdapter(HiveNotesAdapter());
     Hive.registerAdapter(HiveUniqueIdAdapter());
+    Hive.registerAdapter(HiveTutorialNotesAdapter());
     _boxSingleNotes = await Hive.openBox<HiveNotes>('HiveNotes9');
     _boxUniqueId = await Hive.openBox<HiveUniqueId>('HiveNotesUniqeId9');
+    _boxTutorial = await Hive.openBox<HiveTutorialNotes>('HiveTutorial9');
     loadCacheMap();
     _uniqueId = loadUniqueId();
+    loadHiveTutorialBox();
   }
 
   @override
@@ -124,6 +135,13 @@ class LocalNoteMapService extends NoteService {
     }
   }
 
+  @override
+  Future<void> updateHiveTutorial(HiveTutorialNotes htn) {
+    _boxTutorial.putAt(0, htn);
+    return Future(() => null);
+
+  }
+
   //
   // utility functions
   //        |
@@ -151,6 +169,13 @@ class LocalNoteMapService extends NoteService {
       return tmp.id;
     } else {
       return 0;
+    }
+  }
+
+  void loadHiveTutorialBox() {
+    if(_boxTutorial.length == 0) {
+      HiveTutorialNotes htn = HiveTutorialNotes(dismissed: false);
+      _boxTutorial.add(htn);
     }
   }
 }

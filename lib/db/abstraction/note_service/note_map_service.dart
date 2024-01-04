@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:getjournaled/hive/notes/hive_tutorial_notes.dart';
 import 'package:getjournaled/notes/note_object.dart';
 
 abstract class NoteService{
@@ -19,6 +20,8 @@ Future<NoteObject?> get(int id);
 
 Future<Map<int,NoteObject>> getAllNotes();
 
+bool getTutorialNotesValue();
+
 int getUniqueId();
 
 // Initialize the service
@@ -29,5 +32,7 @@ Future<bool> remove(int id);
 Future<void> removeAll();
 
 Future<bool> update(NoteObject noteObject);
+
+Future<void> updateHiveTutorial(HiveTutorialNotes htn);
 
 }

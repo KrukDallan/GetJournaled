@@ -1,20 +1,35 @@
 import 'package:flutter/material.dart';
 
+// rate your day (1-10)
+// mood(s)
+// highlight of the day
+// lowlight of the day
+
 class JournalObject extends Object{
   late int _id;
   late dynamic _body;
   late final DateTime _dateOfCreation;
   late Color _cardColor;
+  late int _dayRating;
+  late String _highlight;
+  late String _lowlight;
 
   JournalObject(
       {required int id,
       required dynamic body,
       required DateTime dateOfCreation,
-      required Color cardColor,})
+      required Color cardColor,
+      required int dayRating,
+      required String highlight,
+      required String lowlight,
+      })
       : _id = id,
         _body = body,
         _dateOfCreation = dateOfCreation,
-        _cardColor = cardColor;
+        _cardColor = cardColor,
+        _dayRating = dayRating,
+        _highlight = highlight,
+        _lowlight = lowlight;
 
   int getId() {
     return _id;
@@ -50,10 +65,22 @@ class JournalObject extends Object{
     return tmp;
   }
 
+  int getDayRating(){
+    return _dayRating;
+  }
+
+  String getHighlight() {
+    return _highlight;
+  }
+
+  String getLowlight() {
+    return _lowlight;
+  }
+
   @override
   operator ==(Object other) => other is JournalObject && other.runtimeType == runtimeType && other._id==_id && (!other._dateOfCreation.isAfter(_dateOfCreation) && !other._dateOfCreation.isBefore(_dateOfCreation));
   
   @override
-  int get hashCode => (_id.hashCode + _body.hashCode + _dateOfCreation.hashCode);
+  int get hashCode => (_id.hashCode + _body.hashCode + _dateOfCreation.hashCode + _cardColor.hashCode );
   
 }

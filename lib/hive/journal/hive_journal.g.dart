@@ -21,13 +21,16 @@ class HiveJournalAdapter extends TypeAdapter<HiveJournal> {
       body: fields[1] as String,
       dateOfCreation: fields[3] as DateTime,
       cardColorIntValue: fields[6] as int,
+      dayRating: fields[7] as int,
+      highlight: fields[8] as String,
+      lowlight: fields[9] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, HiveJournal obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -35,7 +38,13 @@ class HiveJournalAdapter extends TypeAdapter<HiveJournal> {
       ..writeByte(3)
       ..write(obj.dateOfCreation)
       ..writeByte(6)
-      ..write(obj.cardColorIntValue);
+      ..write(obj.cardColorIntValue)
+      ..writeByte(7)
+      ..write(obj.dayRating)
+      ..writeByte(8)
+      ..write(obj.highlight)
+      ..writeByte(9)
+      ..write(obj.lowlight);
   }
 
   @override
