@@ -73,14 +73,14 @@ class _Notes extends State<Notes> {
               HiveTutorialNotes htn = HiveTutorialNotes(dismissed: true);
               _notesService.updateHiveTutorial(htn);
               Navigator.pop(context, 'Dismiss');
-            }, 
+            },
             child: const Text(
               'Dismiss',
               style: TextStyle(
                 color: Colors.white,
               ),
             ),
-            )
+          ),
         ],
       );
       showDialog(
@@ -103,9 +103,15 @@ class _Notes extends State<Notes> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(padding: customTopPadding(0.025)),
+              //
+              // Title and search bar
+              //
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  //
+                  // Title
+                  //
                   Padding(
                     padding: const EdgeInsets.only(left: 18.0, top: 8.0),
                     child: Text(
@@ -119,10 +125,45 @@ class _Notes extends State<Notes> {
                     ),
                   ),
                   const Expanded(child: Text('')),
+                  //
+                  // Search bar
+                  //
                   Padding(
-                    padding: const EdgeInsets.only(top: 4.0, right: 15.0),
+                    padding: const EdgeInsets.only(top: 4.0, right: 10.0),
                     child: Container(
-                      decoration: BoxDecoration(
+                      child: OutlinedButton(
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.only(left: 8.0)),
+                          fixedSize: MaterialStateProperty.resolveWith((states) => const Size(280, 35)),
+                        ),
+                        onPressed: () {}, 
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(left: 0.0),
+                              child: Icon(
+                                Icons.search_outlined,
+                              size: 22,
+                              color: Colors.white,
+                              ),
+                            ),
+                            Padding(padding: EdgeInsets.only(left: 90),
+                            // 
+                            // This should become an editable text
+                            //
+                            child: Text(
+                              'Search',
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            ),
+                          ],
+                        ))
+                        ,
+                      /* decoration: BoxDecoration(
                           color: Colors.grey.shade800,
                           borderRadius:
                               const BorderRadius.all(Radius.circular(10))),
@@ -140,12 +181,15 @@ class _Notes extends State<Notes> {
                             color: Colors.white,
                           ),
                         ),
-                      ),
+                      ), */
                     ),
                   ),
                 ],
               ),
               Padding(padding: customTopPadding(0.05)),
+              // 
+              // Grid where notes are shown
+              //
               GridView(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
@@ -158,10 +202,42 @@ class _Notes extends State<Notes> {
                   for (var entry in _notesMap.entries) ...[
                     GestureDetector(
                       onDoubleTap: () {
-                        setState(() {
-                          _notesService.remove(entry.key);
-                          leftPadding = 2;
-                        });
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Delete note'),
+                                content: const Text(
+                                    'Are you sure you want to delete this note?'),
+                                actions: [
+                                  TextButton(
+                                    child: const Text(
+                                      'Cancel',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.pop(context, 'Cancel');
+                                    },
+                                  ),
+                                  TextButton(
+                                      child: const Text(
+                                        'Delete',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          _notesService.remove(entry.key);
+                                          leftPadding = 2;
+                                        });
+                                        Navigator.pop(context, 'Ok');
+                                      }),
+                                ],
+                              );
+                            });
                       },
                       child: Padding(
                         padding: (leftPadding++ % 2 == 0)
