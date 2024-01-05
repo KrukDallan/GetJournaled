@@ -329,30 +329,28 @@ class _SingleNotePage extends State<SingleNotePage> {
   void _onTextChanged(String text) {
     if (text.endsWith('\n-')) {
       _makingList = true;
-      _textEditingController.text =
-          _textEditingController.text.replaceAll('-', ' • '); // REPLACE ALL IS NOT OK, it replaces unnecessary -
+      _textEditingController.text = _textEditingController.text
+          .replaceRange(text.length - 1, text.length, ' • ');
       _textEditingController.selection = TextSelection.fromPosition(
           TextPosition(offset: _textEditingController.text.length));
       widget.body = text;
-    } else if (text.endsWith('\r\n') && (_makingList == true)) {
-      print('yes');
+    }
+    if (_makingList == true) {
+      if (text.endsWith(' • \n')) {
+        _makingList = false;
+        _textEditingController.text = _textEditingController.text
+            .replaceRange(text.length - 4 , text.length, '\n');
+        _textEditingController.selection = TextSelection.fromPosition(
+            TextPosition(offset: _textEditingController.text.length));
+        widget.body = text;
+      }
+      else if (text.endsWith('\n') && (_makingList == true)){
       _textEditingController.text += ' • ';
       _textEditingController.selection = TextSelection.fromPosition(
           TextPosition(offset: _textEditingController.text.length));
       widget.body = text;
-    } else {
-      _textEditingController.text = text;
-      _textEditingController.selection = TextSelection.fromPosition(
-          TextPosition(offset: _textEditingController.text.length));
-      widget.body = text;
-      _makingList = false;
+      }
     }
-/*     else if(text.endsWith(' ')&& (_makingList == true)){
-      _makingList == false;
-      _textEditingController.selection = TextSelection.fromPosition(TextPosition(offset: _textEditingController.text.length));
-      widget.body = text;
-    } */
-    //print('widget.body: ${widget.body}, text: ${text}');
     if (text != widget.body) {
       widget.body = text;
     }
