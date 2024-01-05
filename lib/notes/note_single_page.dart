@@ -31,7 +31,6 @@ class SingleNotePage extends StatefulWidget {
 }
 
 class _SingleNotePage extends State<SingleNotePage> {
-
   int titleFontSize = 28;
 
   final NoteService _notesService = GetIt.I<NoteService>();
@@ -39,6 +38,9 @@ class _SingleNotePage extends State<SingleNotePage> {
   Map<int, NoteObject> _notesMap = {};
 
   StreamSubscription? _notesSub;
+
+  late TextEditingController _textEditingController;
+  bool _makingList = false;
 
   //
   // colored box
@@ -73,11 +75,13 @@ class _SingleNotePage extends State<SingleNotePage> {
           _notesMap = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
+    _textEditingController = TextEditingController(text: widget.body);
   }
 
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
+    _textEditingController = TextEditingController(text: widget.body);
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(
@@ -296,11 +300,14 @@ class _SingleNotePage extends State<SingleNotePage> {
                 )
               ],
             ),
+            //
+            // Body
+            //
             Expanded(
                 child: Padding(
               padding: const EdgeInsets.only(left: 480 * 0.5 * 0.1, top: 10.0),
               child: EditableText(
-                controller: TextEditingController(text: widget.body),
+                controller: _textEditingController,
                 focusNode: FocusNode(),
                 style: TextStyle(
                   fontFamily: 'Roboto',
@@ -310,15 +317,45 @@ class _SingleNotePage extends State<SingleNotePage> {
                 maxLines: null,
                 cursorColor: Colors.white,
                 backgroundCursorColor: const Color.fromARGB(255, 68, 67, 67),
-                onChanged: (value) {
-                  widget.body = value;
-                },
+                onChanged: _onTextChanged,
               ),
             ))
           ],
         ),
       ),
     );
+  }
+
+  void _onTextChanged(String text) {
+    if (text.endsWith('\n-')) {
+      _makingList = true;
+      _textEditingController.text =
+          _textEditingController.text.replaceAll('-', ' • '); // REPLACE ALL IS NOT OK, it replaces unnecessary -
+      _textEditingController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _textEditingController.text.length));
+      widget.body = text;
+    } else if (text.endsWith('\r\n') && (_makingList == true)) {
+      print('yes');
+      _textEditingController.text += ' • ';
+      _textEditingController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _textEditingController.text.length));
+      widget.body = text;
+    } else {
+      _textEditingController.text = text;
+      _textEditingController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _textEditingController.text.length));
+      widget.body = text;
+      _makingList = false;
+    }
+/*     else if(text.endsWith(' ')&& (_makingList == true)){
+      _makingList == false;
+      _textEditingController.selection = TextSelection.fromPosition(TextPosition(offset: _textEditingController.text.length));
+      widget.body = text;
+    } */
+    //print('widget.body: ${widget.body}, text: ${text}');
+    if (text != widget.body) {
+      widget.body = text;
+    }
   }
 
   // business logic
