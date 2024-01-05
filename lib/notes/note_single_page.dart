@@ -31,8 +31,6 @@ class SingleNotePage extends StatefulWidget {
 }
 
 class _SingleNotePage extends State<SingleNotePage> {
-  int titleFontSize = 28;
-
   final NoteService _notesService = GetIt.I<NoteService>();
 
   Map<int, NoteObject> _notesMap = {};
@@ -41,6 +39,11 @@ class _SingleNotePage extends State<SingleNotePage> {
 
   late TextEditingController _textEditingController;
   bool _makingList = false;
+
+  List<String> _undoList = <String>[];
+  List<String> _redoList = <String>[];
+  late String
+      _oldWidgetBody; // it should be dynamic.. not a problem until images can be inserted
 
   //
   // colored box
@@ -76,6 +79,7 @@ class _SingleNotePage extends State<SingleNotePage> {
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
     _textEditingController = TextEditingController(text: widget.body);
+    _oldWidgetBody = widget.body;
   }
 
   @override
@@ -119,6 +123,56 @@ class _SingleNotePage extends State<SingleNotePage> {
                 ),
                 const Expanded(child: Text('')),
                 //
+                // Undo button
+                //
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0, right: 2.0),
+                  child: IconButton(
+                      onPressed: () {
+                        if (_undoList.isNotEmpty) {
+                          _redoList.add(widget.body);
+                          setState(() {
+                            _textEditingController.text =
+                                _undoList.removeLast();
+                            widget.body = _textEditingController.text;
+                            _textEditingController.selection =
+                                TextSelection.fromPosition(TextPosition(
+                                    offset:
+                                        _textEditingController.text.length));
+                          });
+                        }
+                      },
+                      icon: Icon(
+                        Icons.undo_rounded,
+                        color: (_undoList.isEmpty)
+                            ? Colors.grey.shade800
+                            : Colors.white,
+                      )),
+                ),
+                //
+                // Redo button
+                //
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0, right: 16.0),
+                  child: IconButton(
+                      onPressed: () {
+                        if (_redoList.isNotEmpty) {
+                          _undoList.add(widget.body);
+                          setState(() {
+                            _textEditingController.text =
+                                _redoList.removeLast();
+                            widget.body = _textEditingController.text;
+                          });
+                        }
+                      },
+                      icon: Icon(
+                        Icons.redo_rounded,
+                        color: (_redoList.isEmpty)
+                            ? Colors.grey.shade800
+                            : Colors.white,
+                      )),
+                ),
+                //
                 // Save button
                 //
                 Padding(
@@ -135,11 +189,15 @@ class _SingleNotePage extends State<SingleNotePage> {
                         padding: const EdgeInsets.only(bottom: 0.0),
                         highlightColor: Colors.teal.shade200,
                         onPressed: () async {
-                          while(true){
-                            if(widget.body.toString().endsWith('\n')){
-                              widget.body = widget.body.toString().replaceRange(widget.body.toString().length -1, widget.body.toString().length, '');
-                            }
-                            else{
+                          _redoList.clear();
+                          _undoList.clear();
+                          while (true) {
+                            if (widget.body.toString().endsWith('\n')) {
+                              widget.body = widget.body.toString().replaceRange(
+                                  widget.body.toString().length - 1,
+                                  widget.body.toString().length,
+                                  '');
+                            } else {
                               break;
                             }
                           }
@@ -347,21 +405,27 @@ class _SingleNotePage extends State<SingleNotePage> {
       if (text.endsWith(' • \n')) {
         _makingList = false;
         _textEditingController.text = _textEditingController.text
-            .replaceRange(text.length - 4 , text.length, '\n');
+            .replaceRange(text.length - 4, text.length, '\n');
+        _textEditingController.selection = TextSelection.fromPosition(
+            TextPosition(offset: _textEditingController.text.length));
+        widget.body = _textEditingController.text;
+      } else if (text.endsWith('\n') && (_makingList == true)) {
+        _textEditingController.text += ' • ';
         _textEditingController.selection = TextSelection.fromPosition(
             TextPosition(offset: _textEditingController.text.length));
         widget.body = _textEditingController.text;
       }
-      else if (text.endsWith('\n') && (_makingList == true)){
-      _textEditingController.text += ' • ';
-      _textEditingController.selection = TextSelection.fromPosition(
-          TextPosition(offset: _textEditingController.text.length));
-      widget.body = _textEditingController.text;
-      }
     }
     if (text != widget.body) {
+      //
+      // Updating the _undoList
+      //
+      _undoList.add(widget.body);
       widget.body = _textEditingController.text;
 
+      setState(() {
+        
+      });
     }
   }
 

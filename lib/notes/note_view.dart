@@ -129,7 +129,7 @@ class _Notes extends State<Notes> {
                   // Search bar
                   //
                   Padding(
-                    padding: const EdgeInsets.only(top: 4.0, right: 10.0),
+                    padding: const EdgeInsets.only(top: 8.0, right: 10.0),
                     child: Container(
                       child: OutlinedButton(
                         style: ButtonStyle(
