@@ -135,6 +135,14 @@ class _SingleNotePage extends State<SingleNotePage> {
                         padding: const EdgeInsets.only(bottom: 0.0),
                         highlightColor: Colors.teal.shade200,
                         onPressed: () async {
+                          while(true){
+                            if(widget.body.toString().endsWith('\n')){
+                              widget.body = widget.body.toString().replaceRange(widget.body.toString().length -1, widget.body.toString().length, '');
+                            }
+                            else{
+                              break;
+                            }
+                          }
                           DateTime now = DateTime.now();
                           NoteObject noteObject = NoteObject(
                               id: widget.id,
@@ -333,7 +341,7 @@ class _SingleNotePage extends State<SingleNotePage> {
           .replaceRange(text.length - 1, text.length, ' • ');
       _textEditingController.selection = TextSelection.fromPosition(
           TextPosition(offset: _textEditingController.text.length));
-      widget.body = text;
+      widget.body = _textEditingController.text;
     }
     if (_makingList == true) {
       if (text.endsWith(' • \n')) {
@@ -342,17 +350,18 @@ class _SingleNotePage extends State<SingleNotePage> {
             .replaceRange(text.length - 4 , text.length, '\n');
         _textEditingController.selection = TextSelection.fromPosition(
             TextPosition(offset: _textEditingController.text.length));
-        widget.body = text;
+        widget.body = _textEditingController.text;
       }
       else if (text.endsWith('\n') && (_makingList == true)){
       _textEditingController.text += ' • ';
       _textEditingController.selection = TextSelection.fromPosition(
           TextPosition(offset: _textEditingController.text.length));
-      widget.body = text;
+      widget.body = _textEditingController.text;
       }
     }
     if (text != widget.body) {
-      widget.body = text;
+      widget.body = _textEditingController.text;
+
     }
   }
 
