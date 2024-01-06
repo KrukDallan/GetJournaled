@@ -84,7 +84,7 @@ class _SingleNotePage extends State<SingleNotePage> {
       _textEditingController.value = _textEditingController.value.copyWith(
         text: text,
         selection: TextSelection(baseOffset: text.length, extentOffset: text.length), composing: TextRange.collapsed(text.length),
-      );
+      ); 
     });
 
 
@@ -103,7 +103,7 @@ class _SingleNotePage extends State<SingleNotePage> {
       _textEditingController.value = _textEditingController.value.copyWith(
         text: text,
         selection: TextSelection(baseOffset: text.length, extentOffset: text.length), composing: TextRange.collapsed(text.length),
-      ); 
+      );  
       });
     return SafeArea(
       child: Container(
@@ -398,6 +398,7 @@ class _SingleNotePage extends State<SingleNotePage> {
               child: EditableText(
                 controller: _textEditingController,
                 focusNode: FocusNode(),
+                autofocus: true,
                 style: TextStyle(
                   fontFamily: 'Roboto',
                   fontSize: 16,
