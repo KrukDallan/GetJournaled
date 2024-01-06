@@ -161,11 +161,11 @@ class _SingleNotePage extends State<SingleNotePage> {
                           });
                         }
                       },
-                      icon:  Icon(
+                      icon:  const Icon(
                         Icons.undo_rounded,
-                        color: (_undoList.isEmpty)
+                        color: /* (_undoList.isEmpty)
                             ? Colors.grey.shade800 
-                            :  Colors.white,
+                            :  */ Colors.white,
                       )),
                 ),
                 //
@@ -188,11 +188,11 @@ class _SingleNotePage extends State<SingleNotePage> {
                           });
                         }
                       },
-                      icon:  Icon(
+                      icon:  const Icon(
                         Icons.redo_rounded,
-                        color: (_redoList.isEmpty)
+                        color: /* (_redoList.isEmpty)
                             ? Colors.grey.shade800
-                            : Colors.white,
+                            :  */Colors.white,
                       )),
                 ),
                 //
@@ -447,8 +447,6 @@ class _SingleNotePage extends State<SingleNotePage> {
       //
       _undoList.add(widget.body);
       widget.body = _textEditingController.text;
-      setState(() {  
-      });
     }
   }
 
