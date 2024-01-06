@@ -83,7 +83,7 @@ class _SingleNotePage extends State<SingleNotePage> {
       final String text = _textEditingController.text;
       _textEditingController.value = _textEditingController.value.copyWith(
         text: text,
-        selection: TextSelection(baseOffset: text.length, extentOffset: text.length), composing: TextRange.empty,
+        selection: TextSelection(baseOffset: text.length, extentOffset: text.length), composing: TextRange.collapsed(text.length),
       );
     });
 
@@ -99,10 +99,10 @@ class _SingleNotePage extends State<SingleNotePage> {
     var colorScheme = Theme.of(context).colorScheme;
     _textEditingController = TextEditingController(text: widget.body);
           setState(() {
-                    final String _text = _textEditingController.text;
+                    final String text = _textEditingController.text;
       _textEditingController.value = _textEditingController.value.copyWith(
-        text: _text,
-        selection: TextSelection(baseOffset: _text.length, extentOffset: _text.length), composing: TextRange.empty,
+        text: text,
+        selection: TextSelection(baseOffset: text.length, extentOffset: text.length), composing: TextRange.collapsed(text.length),
       ); 
       });
     return SafeArea(
@@ -446,10 +446,8 @@ class _SingleNotePage extends State<SingleNotePage> {
       //
       _undoList.add(widget.body);
       widget.body = _textEditingController.text;
-      setState(() {
-        
+      setState(() {  
       });
-
     }
   }
 
