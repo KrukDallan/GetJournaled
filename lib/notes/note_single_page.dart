@@ -37,7 +37,7 @@ class _SingleNotePage extends State<SingleNotePage> {
 
   StreamSubscription? _notesSub;
 
-  late TextEditingController _textEditingController;
+  TextEditingController _textEditingController = TextEditingController();
   bool _makingList = false;
 
   List<String> _undoList = <String>[];
@@ -65,6 +65,7 @@ class _SingleNotePage extends State<SingleNotePage> {
   void dispose() {
     _notesSub?.cancel();
     _buttonFocusNode.dispose();
+    _textEditingController.dispose();
     super.dispose();
   }
 
@@ -78,8 +79,19 @@ class _SingleNotePage extends State<SingleNotePage> {
           _notesMap = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
-    _textEditingController = TextEditingController(text: widget.body);
-    _oldWidgetBody = widget.body;
+    _textEditingController.addListener(() {
+      final String text = _textEditingController.text;
+      _textEditingController.value = _textEditingController.value.copyWith(
+        text: text,
+        selection: TextSelection(baseOffset: text.length, extentOffset: text.length), composing: TextRange.empty,
+      );
+    });
+
+
+/*     _textEditingController.text =  widget.body;
+    _textEditingController.selection = TextSelection.fromPosition(
+        TextPosition(offset: _textEditingController.text.length));
+    _oldWidgetBody = widget.body; */
   }
 
   @override
@@ -142,11 +154,11 @@ class _SingleNotePage extends State<SingleNotePage> {
                           });
                         }
                       },
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.undo_rounded,
-                        color: (_undoList.isEmpty)
-                            ? Colors.grey.shade800
-                            : Colors.white,
+                        color: /* (_undoList.isEmpty)
+                            ? Colors.grey.shade800 
+                            : */ Colors.white,
                       )),
                 ),
                 //
@@ -162,14 +174,18 @@ class _SingleNotePage extends State<SingleNotePage> {
                             _textEditingController.text =
                                 _redoList.removeLast();
                             widget.body = _textEditingController.text;
+                            _textEditingController.selection =
+                                TextSelection.fromPosition(TextPosition(
+                                    offset:
+                                        _textEditingController.text.length));
                           });
                         }
                       },
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.redo_rounded,
-                        color: (_redoList.isEmpty)
+                        color: /* (_redoList.isEmpty)
                             ? Colors.grey.shade800
-                            : Colors.white,
+                            : */ Colors.white,
                       )),
                 ),
                 //
@@ -381,6 +397,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                   color: colorScheme.onPrimary,
                 ),
                 maxLines: null,
+                showSelectionHandles: true,
                 cursorColor: Colors.white,
                 backgroundCursorColor: const Color.fromARGB(255, 68, 67, 67),
                 onChanged: _onTextChanged,
@@ -422,10 +439,11 @@ class _SingleNotePage extends State<SingleNotePage> {
       //
       _undoList.add(widget.body);
       widget.body = _textEditingController.text;
-
-      setState(() {
-        
-      });
+/*             final String _text = _textEditingController.text;
+      _textEditingController.value = _textEditingController.value.copyWith(
+        text: _text,
+        selection: TextSelection(baseOffset: _text.length, extentOffset: _text.length), composing: TextRange.empty,
+      ); */
     }
   }
 
