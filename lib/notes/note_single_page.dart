@@ -98,6 +98,13 @@ class _SingleNotePage extends State<SingleNotePage> {
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
     _textEditingController = TextEditingController(text: widget.body);
+          setState(() {
+                    final String _text = _textEditingController.text;
+      _textEditingController.value = _textEditingController.value.copyWith(
+        text: _text,
+        selection: TextSelection(baseOffset: _text.length, extentOffset: _text.length), composing: TextRange.empty,
+      ); 
+      });
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(
@@ -154,11 +161,11 @@ class _SingleNotePage extends State<SingleNotePage> {
                           });
                         }
                       },
-                      icon: const Icon(
+                      icon:  Icon(
                         Icons.undo_rounded,
-                        color: /* (_undoList.isEmpty)
+                        color: (_undoList.isEmpty)
                             ? Colors.grey.shade800 
-                            : */ Colors.white,
+                            :  Colors.white,
                       )),
                 ),
                 //
@@ -181,11 +188,11 @@ class _SingleNotePage extends State<SingleNotePage> {
                           });
                         }
                       },
-                      icon: const Icon(
+                      icon:  Icon(
                         Icons.redo_rounded,
-                        color: /* (_redoList.isEmpty)
+                        color: (_redoList.isEmpty)
                             ? Colors.grey.shade800
-                            : */ Colors.white,
+                            : Colors.white,
                       )),
                 ),
                 //
@@ -439,11 +446,10 @@ class _SingleNotePage extends State<SingleNotePage> {
       //
       _undoList.add(widget.body);
       widget.body = _textEditingController.text;
-/*             final String _text = _textEditingController.text;
-      _textEditingController.value = _textEditingController.value.copyWith(
-        text: _text,
-        selection: TextSelection(baseOffset: _text.length, extentOffset: _text.length), composing: TextRange.empty,
-      ); */
+      setState(() {
+        
+      });
+
     }
   }
 
