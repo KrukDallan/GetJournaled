@@ -57,7 +57,7 @@ class _Notes extends State<Notes> {
       AlertDialog alertDialog = AlertDialog(
         title: const Text('Quick guide'),
         content: const Text(
-            ' • Single tap on a note to open it\n • Double tap to delete it\n • Hold to customize it'),
+            ' • Single tap on a note to open it\n • Double tap to delete it\n • Hold to customize it\n • Your notes are automatically saved as you type'),
         actions: [
           TextButton(
             child: const Text(

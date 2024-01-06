@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 const EdgeInsets topPadding = EdgeInsets.only(top: 800*0.5*0.75);
 
@@ -76,4 +77,36 @@ class CustomTextButton extends StatelessWidget{
               ),
       );
   }
+}
+
+class MyTextInputFormatter extends TextInputFormatter{
+
+  bool _makingList = false;
+  @override
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
+    String _textToReturn = newValue.text;
+    if(newValue.text.endsWith('\n-')) {
+      _makingList = true;
+      _textToReturn = _textToReturn.replaceRange(_textToReturn.length -1, _textToReturn.length, '\n • ');
+    }
+    else if(_makingList == true) {
+      if (_textToReturn.endsWith('\n • \n')) {
+        _makingList = false;
+        _textToReturn = _textToReturn.replaceRange(_textToReturn.length -4, _textToReturn.length, '\n');
+      } else if (_makingList == true && _textToReturn.endsWith('\n')){
+        _textToReturn += ' • ';
+      }
+    }
+
+    return TextEditingValue(text: _textToReturn);
+  }
+
+  bool getMakingList(){
+    return _makingList;
+  }
+
+  void setMakingList(bool newValue){
+    _makingList = newValue;
+  }
+
 }
