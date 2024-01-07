@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -82,12 +84,13 @@ class CustomTextButton extends StatelessWidget{
 class MyTextInputFormatter extends TextInputFormatter{
 
   bool _makingList = false;
+  int _cursorOffset = 0;
   @override
   TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     String _textToReturn = newValue.text;
     if(newValue.text.endsWith('\n-')) {
       _makingList = true;
-      _textToReturn = _textToReturn.replaceRange(_textToReturn.length -1, _textToReturn.length, '\n • ');
+      _textToReturn = _textToReturn.replaceRange(_textToReturn.length -1, _textToReturn.length, ' • ');
     }
     else if(_makingList == true) {
       if (_textToReturn.endsWith('\n • \n')) {
@@ -97,6 +100,7 @@ class MyTextInputFormatter extends TextInputFormatter{
         _textToReturn += ' • ';
       }
     }
+    _cursorOffset = getDifferentCharIndex(oldValue.text, newValue.text);
 
     return TextEditingValue(text: _textToReturn);
   }
@@ -108,5 +112,31 @@ class MyTextInputFormatter extends TextInputFormatter{
   void setMakingList(bool newValue){
     _makingList = newValue;
   }
+
+  int getCursorOffset(){
+    return _cursorOffset;
+  }
+
+  int getDifferentCharIndex(String first, String second){
+    if((first.isEmpty) || (second.isEmpty)){
+      // because 'second' will always  be 'newValue'
+      return 0;
+    }
+    else{
+      for(int i = 0; i < min(first.length, second.length); i++) {
+        if(first[i] != second[i]){
+          return i;
+        }
+      }
+      // if the code arrives here it means that 'second' is shorter (user deleted the last character) or
+      // longer by one char (user added a char)
+      return second.length +1;
+
+    }
+  }
+
+  // set cursor position: 
+  // if oldvalue.length == 0 -> offset = 0, 
+  // altrimenti offset = (index of different character between oldValue e newValue)
 
 }

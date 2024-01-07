@@ -177,7 +177,6 @@ class _SingleNotePage extends State<SingleNotePage> {
                               dateOfLastEdit:
                                   DateTime(now.year, now.month, now.day),
                               cardColor: widget.cardColor);
-                          // res==true? -> object updated, else object added (it was not present, shouldn't happen)
                           _notesService.update(noteObject);
                           // check if the note is already present in the map
                           _notesMap.addAll({widget.id: noteObject});
@@ -343,7 +342,6 @@ class _SingleNotePage extends State<SingleNotePage> {
                 controller: _textEditingController,
                 inputFormatters: [_myTextInputFormatter],
                 focusNode: FocusNode(),
-                autofocus: true,
                 style: TextStyle(
                   fontFamily: 'Roboto',
                   fontSize: 16,
@@ -354,16 +352,6 @@ class _SingleNotePage extends State<SingleNotePage> {
                 cursorColor: Colors.white,
                 backgroundCursorColor: const Color.fromARGB(255, 68, 67, 67),
                 onChanged: _onTextChanged,
-                onTapOutside: (event) {
-                  DateTime now = DateTime.now();
-                  if (widget.dateOfLastEdit
-                      .isBefore(DateTime(now.year, now.month, now.day))) {
-                    setState(() {
-                      widget.dateOfLastEdit =
-                          DateTime(now.year, now.month, now.day);
-                    });
-                  }
-                },
               ),
             ))
           ],
@@ -396,32 +384,8 @@ class _SingleNotePage extends State<SingleNotePage> {
       }
     } */
     if (text != widget.body) {
-      //
-      // Updating the _undoList
-      //
       widget.body = _textEditingController.text;
-/*       while (true) {
-        if (widget.body.toString().endsWith('\n')) {
-          widget.body = widget.body.toString().replaceRange(
-              widget.body.toString().length - 1,
-              widget.body.toString().length,
-              '');
-        } else {
-          break;
-        }
-      }
-      DateTime now = DateTime.now();
-      NoteObject noteObject = NoteObject(
-          id: widget.id,
-          title: widget.title,
-          body: widget.body,
-          dateOfCreation: widget.dateOfCreation,
-          dateOfLastEdit: DateTime(now.year, now.month, now.day),
-          cardColor: widget.cardColor);
-      // res==true? -> object updated, else object added (it was not present, shouldn't happen)
-      _notesService.update(noteObject);
-      // check if the note is already present in the map
-      _notesMap.addAll({widget.id: noteObject}); */
+      _textEditingController.selection = TextSelection.fromPosition(TextPosition(offset: _myTextInputFormatter.getCursorOffset() ));
     }
   }
 
