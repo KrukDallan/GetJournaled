@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
+import 'package:getjournaled/journals/new_journal_page.dart';
 import 'package:getjournaled/notes/new_note_single_page.dart';
 import 'package:getjournaled/shared.dart';
 import 'package:get_it/get_it.dart';
@@ -19,6 +21,9 @@ class _WelcomePage extends State<WelcomePage> {
   final NoteService _notesService = GetIt.I<NoteService>();
 
   StreamSubscription? _notesSub;
+
+  final JournalService _journalService = GetIt.I<JournalService>();
+  StreamSubscription? _journalSub;
 
   @override
   void dispose() {
@@ -66,7 +71,22 @@ class _WelcomePage extends State<WelcomePage> {
                 fixedSize: MaterialStateProperty.resolveWith(
                     (states) => const Size(180, 50)),
               ),
-              onPressed: () {},
+              onPressed: () {
+                DateTime now =DateTime.now();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NewJournalPage(
+                      id: _journalService.getUniqueId(), 
+                      body: '', 
+                      dateOfCreation: DateTime(now.year, now.month, now.day), 
+                      cardColorIntValue: Colors.deepOrange.shade200.value, 
+                      dayRating: -1, 
+                      highlight: '', 
+                      lowlight: '')
+                    )
+                   );
+              },
               child: Text(
                 'New journal',
                 style: TextStyle(

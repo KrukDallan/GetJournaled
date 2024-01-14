@@ -1,20 +1,25 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
+import 'package:getjournaled/db/abstraction/settings_service/settings_map_service.dart';
 import 'package:getjournaled/db/bindings.dart';
 import 'package:getjournaled/notes/note_main_page.dart';
+import 'package:getjournaled/settings/settings.dart';
 import 'package:provider/provider.dart';
+
 
 import 'package:getjournaled/welcome.dart';
 import 'package:getjournaled/journals/drawer_main_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   await bindDependencies();
   await GetIt.I<NoteService>().open();
   await GetIt.I<JournalService>().open();
+  await GetIt.I<SettingsService>().open();
   runApp(const MyApp());
 }
 
@@ -122,6 +127,8 @@ class _MyHomePageState extends State<MyHomePage> {
         page = const DrawerPage();
       case 2:
         page = const NotesPage();
+      case 3:
+        page = Settings();
       default:
         page = Text('UnimplementedError(no widget for index $selectedIndex)');
     }

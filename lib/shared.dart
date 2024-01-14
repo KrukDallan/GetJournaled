@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/src/foundation/change_notifier.dart';
 
 const EdgeInsets topPadding = EdgeInsets.only(top: 800 * 0.5 * 0.75);
 
@@ -93,7 +94,7 @@ class MyTextInputFormatter extends TextInputFormatter {
     String textToReturn = newValue.text;
     _cursorOffset = newValue.selection.extentOffset;
 
-    if (newValue.text.endsWith('\n-') && _makingList == false) {
+    if ((newValue.text.endsWith('\n-') || (oldValue.text.isEmpty && newValue.text.endsWith('-')  )) && _makingList == false) {
       _makingList = true;
       textToReturn = textToReturn.replaceRange(
           textToReturn.length - 1, textToReturn.length, ' • ');
@@ -107,6 +108,11 @@ class MyTextInputFormatter extends TextInputFormatter {
       } else if (_makingList == true && textToReturn.endsWith('\n')) {
         textToReturn += ' • ';
         _cursorOffset += 3;
+      }
+      else if(oldValue.text.endsWith('•') && !newValue.text.endsWith('•')){
+        _makingList = false;
+        textToReturn = newValue.text;
+        _cursorOffset = newValue.selection.extentOffset;
       }
     }
 
@@ -124,24 +130,4 @@ class MyTextInputFormatter extends TextInputFormatter {
   int getCursorOffset() {
     return _cursorOffset;
   }
-
-  int getDifferentCharIndex(String first, String second) {
-    if ((first.isEmpty) || (second.isEmpty)) {
-      // because 'second' will always  be 'newValue'
-      return 0;
-    } else {
-      for (int i = 0; i < min(first.length, second.length); i++) {
-        if (first[i] != second[i]) {
-          return i;
-        }
-      }
-      // if the code arrives here it means that 'second' is shorter (user deleted the last character) or
-      // longer by one char (user added a char)
-      return second.length + 1;
-    }
-  }
-
-  // set cursor position:
-  // if oldvalue.length == 0 -> offset = 0,
-  // altrimenti offset = (index of different character between oldValue e newValue)
 }

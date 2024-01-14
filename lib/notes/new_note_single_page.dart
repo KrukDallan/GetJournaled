@@ -81,6 +81,7 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
 
     return SafeArea(
       child: Container(
+        
         decoration: BoxDecoration(
           color: colorScheme.primary,
         ),
@@ -296,6 +297,9 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                 )
               ],
             ),
+            //
+            // Body
+            //
             Expanded(
                 child: Padding(
               padding: const EdgeInsets.only(left: 480 * 0.5 * 0.1, top: 10.0),
@@ -313,6 +317,7 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                 onChanged: (value) {
                   widget.body = value;
                 },
+                
               ),
             ))
           ],
