@@ -507,9 +507,9 @@ class _SingleNotePage extends State<SingleNotePage> {
 
   // business logic
   void _onNotesUpdate(Map<int, NoteObject> event) {
-    setState(() {
+    /* setState(() {
       _notesMap = event;
-    });
+    }); */
   }
 
   void _onSettingsUpdate(Map<int, SettingsObject> event) {
