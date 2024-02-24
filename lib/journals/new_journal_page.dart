@@ -40,7 +40,13 @@ class NewJournalPage extends StatefulWidget {
 
 class _NewJournalPage extends State<NewJournalPage> {
   TextEditingController _bodyTextEditingController = TextEditingController();
+  TextEditingController _titleTextEditingController = TextEditingController();
   final MyTextInputFormatter _bodyTextInputFormatter = MyTextInputFormatter();
+  final TitleTextInputFormatter _tTIF = TitleTextInputFormatter();
+
+   ValueNotifier<String> tempTitle = ValueNotifier("Title (optional)");
+   Color titleTextColor = Colors.grey.shade600;
+  late ValueNotifier<Color> titleColor;
 
   // box card color
   Color get boxColor => _boxColor;
@@ -81,14 +87,17 @@ class _NewJournalPage extends State<NewJournalPage> {
           _journalMap = value;
         }));
     _journalSub = _journalService.stream.listen(_onJournalsUpdate);
+    _titleTextEditingController.text = widget.title;
+    titleColor = ValueNotifier(titleTextColor);
   }
+
+
+    
 
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
-    ValueNotifier<String> tempTitle = ValueNotifier("Title (optional)");
-    ValueNotifier<Color> titleColor = ValueNotifier(Colors.grey.shade600);
-    return SafeArea(
+   return SafeArea(
         child: Scaffold(
       backgroundColor: colorScheme.primary,
       body: SingleChildScrollView(
@@ -131,15 +140,10 @@ class _NewJournalPage extends State<NewJournalPage> {
               padding: const EdgeInsets.only(left: 12, top: 8),
               child: Material(
                   type: MaterialType.transparency,
-                  child: ValueListenableBuilder(
-                    valueListenable: tempTitle,
-                    builder:
-                        (BuildContext context, String value, Widget? child) {
-                      return EditableText(
+                  child: EditableText(
                         showCursor: true,
-                        controller: TextEditingController(
-                          text: tempTitle.value,
-                          ),
+                        controller: _titleTextEditingController,
+                        inputFormatters: [_tTIF],
                         focusNode: FocusNode(),
                         style: TextStyle(
                           fontFamily: 'Roboto-Medium',
@@ -154,24 +158,12 @@ class _NewJournalPage extends State<NewJournalPage> {
                             },
                           ).valueListenable.value,
                         ),
-                        cursorColor: Colors.white,
+                        cursorColor: colorScheme.onPrimary,
                         backgroundCursorColor: Colors.black,
-                        onChanged: (String value) {
-                          if (value.contains("Title (optional)")) {
-                            tempTitle.value =
-                                value.replaceFirst("Title (optional)", "");
-                            widget.title = tempTitle.value;
-                            print(widget.title);
-                            titleColor.value = colorScheme.onPrimary;
-                          } else {
-                            widget.title = value;
-                            tempTitle.value = value;
-                          }
-                        },
-                      );
-                    },
-                  )),
-            ),
+                        onChanged: _onTitleTextChanged,
+                      )
+                    ),
+                  ),
             //
             // Main body
             //
@@ -197,10 +189,10 @@ class _NewJournalPage extends State<NewJournalPage> {
                       style: TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 16,
-                        color: colorScheme.primary,
+                        color: colorScheme.onPrimary,
                       ),
                       maxLines: null,
-                      cursorColor: Colors.black,
+                      cursorColor: colorScheme.onPrimary,
                       backgroundCursorColor:
                           const Color.fromARGB(255, 68, 67, 67),
                       onChanged: _onBodyTextChanged,
@@ -226,6 +218,24 @@ class _NewJournalPage extends State<NewJournalPage> {
 
       _bodyTextEditingController.selection = TextSelection.fromPosition(
           TextPosition(offset: _bodyTextInputFormatter.getCursorOffset()));
+    }
+  }
+
+  void _onTitleTextChanged(String text){
+
+    if(!text.contains("Title (optional)")){
+          print(text);
+      titleColor.value = Colors.white;
+      titleTextColor = Colors.white;
+      setState(() {
+        
+      });
+    }
+    if(text != widget.title){
+      _titleTextEditingController.text = text;
+      widget.title = text;
+
+      _titleTextEditingController.selection = TextSelection.fromPosition(TextPosition(offset: _tTIF.getCursorOffset()));
     }
   }
 

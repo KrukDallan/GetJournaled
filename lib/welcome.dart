@@ -78,7 +78,7 @@ class _WelcomePage extends State<WelcomePage> {
                   MaterialPageRoute(
                     builder: (context) => NewJournalPage(
                       id: _journalService.getUniqueId(), 
-                      title: '',
+                      title: 'Title (optional)',
                       body: '', 
                       dateOfCreation: DateTime(now.year, now.month, now.day), 
                       cardColorIntValue: Colors.deepOrange.shade200.value, 

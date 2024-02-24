@@ -131,3 +131,28 @@ class MyTextInputFormatter extends TextInputFormatter {
     return _cursorOffset;
   }
 }
+
+class TitleTextInputFormatter extends TextInputFormatter {
+  bool _makingList = false;
+  int _cursorOffset = 0;
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    String textToReturn = newValue.text;
+    _cursorOffset = newValue.selection.extentOffset;
+    if(newValue.text == 'Title (optional)'){
+
+    }
+    else if(newValue.text.contains('Title (optional)')) {
+      textToReturn = textToReturn.replaceAll('Title (optional)', '');
+      _cursorOffset = 1;
+    } 
+
+    return TextEditingValue(text: textToReturn);
+  }
+
+
+  int getCursorOffset() {
+    return _cursorOffset;
+  }
+}
