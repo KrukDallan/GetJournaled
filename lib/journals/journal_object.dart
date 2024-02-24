@@ -7,29 +7,35 @@ import 'package:flutter/material.dart';
 
 class JournalObject extends Object{
   late int _id;
+  late dynamic _title;
   late dynamic _body;
   late final DateTime _dateOfCreation;
   late Color _cardColor;
   late int _dayRating;
   late String _highlight;
   late String _lowlight;
+    late String _noteWorthy;
 
   JournalObject(
       {required int id,
+      required dynamic title,
       required dynamic body,
       required DateTime dateOfCreation,
       required Color cardColor,
       required int dayRating,
       required String highlight,
       required String lowlight,
+      required String noteWorthy,
       })
       : _id = id,
+      _title = title,
         _body = body,
         _dateOfCreation = dateOfCreation,
         _cardColor = cardColor,
         _dayRating = dayRating,
         _highlight = highlight,
-        _lowlight = lowlight;
+        _lowlight = lowlight,
+        _noteWorthy = noteWorthy;
 
   int getId() {
     return _id;
@@ -38,6 +44,16 @@ class JournalObject extends Object{
   int setId(int newId) {
     int prev = _id;
     _id = newId;
+    return prev;
+  }
+
+    dynamic getTitle() {
+    return _title;
+  }
+
+  dynamic setTitle(dynamic newTitle) {
+    dynamic prev = _title;
+    _title = newTitle;
     return prev;
   }
 
@@ -76,6 +92,11 @@ class JournalObject extends Object{
   String getLowlight() {
     return _lowlight;
   }
+
+    String getNoteWorthy() {
+    return _noteWorthy;
+  }
+
 
   @override
   operator ==(Object other) => other is JournalObject && other.runtimeType == runtimeType && other._id==_id && (!other._dateOfCreation.isAfter(_dateOfCreation) && !other._dateOfCreation.isBefore(_dateOfCreation));

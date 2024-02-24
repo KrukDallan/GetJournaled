@@ -24,12 +24,14 @@ class LocalJournalMapService extends JournalService {
       streamJournalController.add(_cacheMap);
       HiveJournal hj = HiveJournal(
         id: journalObject.getId(), 
+        title: journalObject.getTitle(),
         body: journalObject.getBody(), 
         dateOfCreation: journalObject.getDateOfCreation(), 
         cardColorIntValue: journalObject.getCardColor().value,
         dayRating: journalObject.getDayRating(),
         highlight: journalObject.getHighlight(),
         lowlight: journalObject.getLowlight(),
+        noteWorthy: journalObject.getNoteWorthy(),
         );
         _boxSingleJournal.put(_uniqueId, hj);
         _uniqueId += 1;
@@ -102,12 +104,14 @@ class LocalJournalMapService extends JournalService {
       //update in hivebox
       HiveJournal hj = HiveJournal(
           id: journalObject.getId(),
+          title: journalObject.getTitle(),
           body: journalObject.getBody(),
           dateOfCreation: journalObject.getDateOfCreation(),
           cardColorIntValue: journalObject.getCardColor().value,
           dayRating: journalObject.getDayRating(),
           highlight: journalObject.getHighlight(),
           lowlight: journalObject.getLowlight(),
+          noteWorthy: journalObject.getNoteWorthy(),
           );
           _boxSingleJournal.put(journalObject.getId(), hj);
           return true;
@@ -128,12 +132,14 @@ class LocalJournalMapService extends JournalService {
         HiveJournal hj = _boxSingleJournal.get(k);
         JournalObject journalObject = JournalObject(
             id: hj.id,
+            title: hj.title,
             body: hj.body,
             dateOfCreation: hj.dateOfCreation,
             cardColor: Color(hj.cardColorIntValue),
             dayRating: hj.dayRating,
             highlight: hj.highlight,
             lowlight: hj.lowlight,
+            noteWorthy: hj.noteWorthy,
             );
         _cacheMap.addAll({hj.id: journalObject});
       }

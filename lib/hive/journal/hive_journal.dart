@@ -11,6 +11,9 @@ class HiveJournal extends HiveObject {
   @HiveField(0)
   late int id;
 
+  @HiveField(10)
+  late int title;
+
   @HiveField(1)
   late String body;
 
@@ -29,14 +32,19 @@ class HiveJournal extends HiveObject {
   @HiveField(9)
   late String lowlight;
 
+  @HiveField(11)
+  late String noteWorthy;
+
   HiveJournal(
       {required this.id,
+      required this.title,
       required this.body,
       required this.dateOfCreation,
       required this.cardColorIntValue,
       required this.dayRating,
       required this.highlight,
       required this.lowlight,
+      required this.noteWorthy,
       });
 
   int getId() {

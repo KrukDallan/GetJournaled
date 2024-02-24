@@ -216,7 +216,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                           })),
                 },
                 if (_autoSave == false) ...{
-//
+                  //
                   // Save button
                   //
                   Padding(
@@ -432,9 +432,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                 onChanged: _onTextChanged,
                 readOnly: false,
                 selectionColor: Colors.lightBlue.shade300,
-                
               ),
-              
             ))
           ],
         ),
@@ -443,7 +441,6 @@ class _SingleNotePage extends State<SingleNotePage> {
   }
 
   void _onTextChanged(String text) {
-
     if (text != widget.body) {
       _undoList.add(widget.body);
       _bodyTextEditingController.text = text;

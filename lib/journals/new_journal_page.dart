@@ -12,22 +12,26 @@ import 'package:getjournaled/shared.dart';
 
 class NewJournalPage extends StatefulWidget {
   late int id;
+  late String title;
   late String body;
   late DateTime dateOfCreation;
   late int cardColorIntValue;
   late int dayRating;
   late String highlight;
   late String lowlight;
+  late String noteWorthy;
 
   NewJournalPage({
     super.key,
     required this.id,
+    required this.title,
     required this.body,
     required this.dateOfCreation,
     required this.cardColorIntValue,
     required this.dayRating,
     required this.highlight,
     required this.lowlight,
+    required this.noteWorthy,
   });
 
   @override
@@ -82,6 +86,8 @@ class _NewJournalPage extends State<NewJournalPage> {
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
+    ValueNotifier<String> tempTitle = ValueNotifier("Title (optional)");
+    ValueNotifier<Color> titleColor = ValueNotifier(Colors.grey.shade600);
     return SafeArea(
         child: Scaffold(
       backgroundColor: colorScheme.primary,
@@ -118,6 +124,57 @@ class _NewJournalPage extends State<NewJournalPage> {
                 ),
               ],
             ),
+            //
+            // Title
+            //
+            Padding(
+              padding: const EdgeInsets.only(left: 12, top: 8),
+              child: Material(
+                  type: MaterialType.transparency,
+                  child: ValueListenableBuilder(
+                    valueListenable: tempTitle,
+                    builder:
+                        (BuildContext context, String value, Widget? child) {
+                      return EditableText(
+                        showCursor: true,
+                        controller: TextEditingController(
+                          text: tempTitle.value,
+                          ),
+                        focusNode: FocusNode(),
+                        style: TextStyle(
+                          fontFamily: 'Roboto-Medium',
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700,
+                          color: ValueListenableBuilder(
+                            valueListenable: titleColor,
+                            builder: (BuildContext context, Color color, Widget? child) {
+                              return Container(
+                                color: titleColor.value,
+                              );
+                            },
+                          ).valueListenable.value,
+                        ),
+                        cursorColor: Colors.white,
+                        backgroundCursorColor: Colors.black,
+                        onChanged: (String value) {
+                          if (value.contains("Title (optional)")) {
+                            tempTitle.value =
+                                value.replaceFirst("Title (optional)", "");
+                            widget.title = tempTitle.value;
+                            print(widget.title);
+                            titleColor.value = colorScheme.onPrimary;
+                          } else {
+                            widget.title = value;
+                            tempTitle.value = value;
+                          }
+                        },
+                      );
+                    },
+                  )),
+            ),
+            //
+            // Main body
+            //
             const Padding(
               padding: EdgeInsets.only(top: 4.0, left: 18.0),
               child: Text('How was your day?'),
@@ -125,36 +182,36 @@ class _NewJournalPage extends State<NewJournalPage> {
             Padding(
               padding: const EdgeInsets.only(left: 12.0, right: 12.0),
               child: Card(
-                color: Colors.amber.shade100,
+                color: Colors.purple.shade100,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8.0)),
-                child:  SizedBox(
-                  width: MediaQuery.of(context).size.width*0.95,
-                  height: MediaQuery.of(context).size.height*0.2 ,
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.95,
+                  height: MediaQuery.of(context).size.height * 0.2,
                   child: Padding(
-                      padding: const EdgeInsets.only(top: 2.0, left: 4.0),
-                      child: EditableText(
-                        controller: _bodyTextEditingController,
-                        inputFormatters: [_bodyTextInputFormatter],
-                        focusNode: FocusNode(),
-                        style: TextStyle(
-                          fontFamily: 'Roboto',
-                          fontSize: 16,
-                          color: colorScheme.primary,
-                        ),
-                        maxLines: null,
-                        cursorColor: Colors.black,
-                        backgroundCursorColor:
-                            const Color.fromARGB(255, 68, 67, 67),
-                        onChanged: _onBodyTextChanged,
+                    padding: const EdgeInsets.only(top: 2.0, left: 4.0),
+                    child: EditableText(
+                      controller: _bodyTextEditingController,
+                      inputFormatters: [_bodyTextInputFormatter],
+                      focusNode: FocusNode(),
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 16,
+                        color: colorScheme.primary,
                       ),
+                      maxLines: null,
+                      cursorColor: Colors.black,
+                      backgroundCursorColor:
+                          const Color.fromARGB(255, 68, 67, 67),
+                      onChanged: _onBodyTextChanged,
                     ),
+                  ),
                 ),
-                ),
-                //
-                // Main body
-                //
               ),
+              //
+              // Main body
+              //
+            ),
           ],
         ),
       ),
