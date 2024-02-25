@@ -9,7 +9,6 @@ import 'package:getjournaled/notes/note_object.dart';
 import 'package:getjournaled/shared.dart';
 
 import 'package:getjournaled/notes/note_card.dart';
-import 'package:hive/hive.dart';
 
 class Notes extends StatefulWidget {
   const Notes({super.key});
@@ -163,25 +162,6 @@ class _Notes extends State<Notes> {
                           ],
                         ))
                         ,
-                      /* decoration: BoxDecoration(
-                          color: Colors.grey.shade800,
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10))),
-                      child: SizedBox(
-                        width: 35,
-                        height: 35,
-                        child: IconButton(
-                          padding: const EdgeInsets.only(bottom: 0.0),
-                          onPressed: () async {
-                            _notesService.removeAll();
-                          },
-                          icon: const Icon(
-                            Icons.search,
-                            size: 22.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ), */
                     ),
                   ),
                 ],

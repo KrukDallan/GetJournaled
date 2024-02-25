@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
 import 'package:getjournaled/journals/new_journal_page.dart';
 import 'package:getjournaled/notes/new_note_single_page.dart';
@@ -17,13 +18,15 @@ class WelcomePage extends StatefulWidget {
   State<StatefulWidget> createState() => _WelcomePage();
 }
 
-class _WelcomePage extends State<WelcomePage> {
+class _WelcomePage extends State<WelcomePage> with TickerProviderStateMixin{
   final NoteService _notesService = GetIt.I<NoteService>();
 
   StreamSubscription? _notesSub;
 
   final JournalService _journalService = GetIt.I<JournalService>();
   StreamSubscription? _journalSub;
+
+  double opacity = 1.0;
 
   @override
   void dispose() {
@@ -35,6 +38,8 @@ class _WelcomePage extends State<WelcomePage> {
   void initState() {
     super.initState();
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -49,12 +54,20 @@ class _WelcomePage extends State<WelcomePage> {
         children: [
           Padding(padding: customTopPadding(0.1)),
           Center(
-            child: Text(
-              'Welcome!',
-              style: TextStyle(
-                color: Colors.amber.shade50,
-                fontSize: 45,
-                fontFamily: 'Lobster',
+            child: FadeTransition(
+              opacity: AnimationController(
+                vsync: this, 
+                value: opacity, 
+                duration: const Duration(milliseconds: 500),
+
+                 ),
+              child: Text(
+                'Welcome!',
+                style: TextStyle(
+                  color: Colors.amber.shade50,
+                  fontSize: 45,
+                  fontFamily: 'Lobster',
+                ),
               ),
             ),
           ),

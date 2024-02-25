@@ -1,6 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
+import 'package:getjournaled/journals/journal_object.dart';
 import 'package:getjournaled/shared.dart';
 import 'package:getjournaled/journals/journal_card.dart';
+import 'package:get_it/get_it.dart';
+import 'package:flutter/scheduler.dart';
 
 class Drawer extends StatefulWidget {
   const Drawer({super.key});
@@ -10,6 +16,77 @@ class Drawer extends StatefulWidget {
 }
 
 class _Drawer extends State<Drawer> {
+  final JournalService _journalService = GetIt.I<JournalService>();
+
+  Map<int, JournalObject> _journalMap = {};
+
+  StreamSubscription? _journalSub;
+  @override
+  void dispose() {
+    _journalSub?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _journalService.getAllJournals().then((value) => setState(() {
+          _journalMap = value;
+        }));
+    _journalSub = _journalService.stream.listen(_onJournalsUpdate);
+
+    //
+    // Display the alert dialog
+    //
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      //ifLoaded();
+    });
+  }
+
+  //
+  // function to use to display the alert dialog
+  //
+  /* void ifLoaded() {
+    bool boxTutorialNotesValue = _journalService.getTutorialNotesValue();
+    if (!boxTutorialNotesValue) {
+      AlertDialog alertDialog = AlertDialog(
+        title: const Text('Quick guide'),
+        content: const Text(
+            ' • Single tap on a note to open it\n • Double tap to delete it\n • Hold to customize it\n • Your notes are automatically saved as you type'),
+        actions: [
+          TextButton(
+            child: const Text(
+              'Ok',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            onPressed: () => Navigator.pop(context, 'Ok'),
+          ),
+          TextButton(
+            onPressed: () {
+              HiveTutorialNotes htn = HiveTutorialNotes(dismissed: true);
+              _notesService.updateHiveTutorial(htn);
+              Navigator.pop(context, 'Dismiss');
+            },
+            child: const Text(
+              'Dismiss',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      );
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return alertDialog;
+          });
+    }
+  } */
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -20,24 +97,137 @@ class _Drawer extends State<Drawer> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(padding: customTopPadding(0.025)),
-              const Text('Journals',
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 24,
-                fontWeight: FontWeight.w700 ,
-                color: Colors.white
-              ),),
-              Padding(padding: customTopPadding(0.1)),
+              //
+              // Title and search bar
+              //
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  //
+                  // Title
+                  //
+                  Padding(
+                    padding: const EdgeInsets.only(left: 18.0, top: 8.0),
+                    child: Text(
+                      'Journals',
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 30,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.amber.shade50,
+                      ),
+                    ),
+                  ),
+                  const Expanded(child: Text('')),
+                  //
+                  // Search bar
+                  //
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, right: 10.0),
+                    child: Container(
+                      child: OutlinedButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.resolveWith(
+                                (states) => EdgeInsets.only(left: 8.0)),
+                            fixedSize: MaterialStateProperty.resolveWith(
+                                (states) => const Size(280, 35)),
+                          ),
+                          onPressed: () {},
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(left: 0.0),
+                                child: Icon(
+                                  Icons.search_outlined,
+                                  size: 22,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 90),
+                                //
+                                // This should become an editable text
+                                //
+                                child: Text(
+                                  'Search',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(padding: customTopPadding(0.05)),
+              //
+              // Row where journals are shown
+              //
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
+                reverse: true,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: DrawerCard(title: 'Title'),
-                    ),
-                    DrawerCard(title: 'Title2'),
+                    for (var entry in _journalMap.entries) ...[
+                      GestureDetector(
+                        onDoubleTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Delete page'),
+                                  content: const Text(
+                                      'Are you sure you want to delete this page?'),
+                                  actions: [
+                                    TextButton(
+                                      child: const Text(
+                                        'Cancel',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context, 'Cancel');
+                                      },
+                                    ),
+                                    TextButton(
+                                        child: const Text(
+                                          'Delete',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          setState(() {
+                                            _journalService.remove(entry.key);
+                                          });
+                                          Navigator.pop(context, 'Ok');
+                                        }),
+                                  ],
+                                );
+                              });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 4.0, right: 6.0, left:0.0),
+                          child: DrawerCard(
+                            title: entry.value.getTitle(),
+                            body: entry.value.getBody(),
+                            id: entry.value.getId(),
+                            dateOfCreation: entry.value.getDateOfCreation(),
+                            cardColor: entry.value.getCardColor(),
+                            dayRating: entry.value.getDayRating(),
+                            highlight: entry.value.getHighlight(),
+                            lowlight: entry.value.getLowlight(),
+                            noteWorthy: entry.value.getNoteWorthy(),
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               )
@@ -47,6 +237,12 @@ class _Drawer extends State<Drawer> {
       ),
     );
   }
+
+  void _onJournalsUpdate(Map<int, JournalObject> event) {
+    setState(() {
+      _journalMap = event;
+    });
+  }
 }
 
 class DrawerPage extends StatelessWidget {
@@ -54,12 +250,12 @@ class DrawerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  SafeArea(
+    return SafeArea(
         child: Container(
-      decoration:  BoxDecoration(
-          color: Colors.black,
-          ),
-      child:  Drawer(),
+      decoration: BoxDecoration(
+        color: Colors.black,
+      ),
+      child: Drawer(),
     ));
   }
 }
