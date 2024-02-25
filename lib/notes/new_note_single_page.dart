@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 import 'package:getjournaled/notes/note_object.dart';
+import 'package:getjournaled/shared.dart';
 
 class NewNoteSinglePage extends StatefulWidget {
   late String title;
@@ -13,7 +14,7 @@ class NewNoteSinglePage extends StatefulWidget {
   final DateTime lDateOfCreation;
   late Color cardColor;
 
-   NewNoteSinglePage({
+  NewNoteSinglePage({
     super.key,
     required this.title,
     required this.body,
@@ -27,6 +28,9 @@ class NewNoteSinglePage extends StatefulWidget {
 }
 
 class _NewSingleNotePage extends State<NewNoteSinglePage> {
+  TextEditingController _bodyTextEditingController = TextEditingController();
+  final MyTextInputFormatter _bodyTextInputFormatter = MyTextInputFormatter();
+  final FocusNode _bodyFocusNode = FocusNode();
 
   DateTime _lDateOfCreation = DateTime(0);
 
@@ -39,6 +43,9 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
       });
     }
   }
+
+  late String _oldTitle;
+  late String _oldBody;
 
   final NoteService _notesService = GetIt.I<NoteService>();
 
@@ -73,6 +80,8 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
           _notesMap = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
+    _oldTitle = widget.title;
+    _oldBody = widget.body;
   }
 
   @override
@@ -81,7 +90,6 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
 
     return SafeArea(
       child: Container(
-        
         decoration: BoxDecoration(
           color: colorScheme.primary,
         ),
@@ -106,7 +114,41 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                           iconSize: 15.0,
                           padding: const EdgeInsets.only(bottom: 1.0),
                           onPressed: () {
-                            Navigator.pop(context);
+                            if ( (widget.title != _oldTitle) || (widget.body != _oldBody) ) {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Exit?'),
+                                      content: const Text(
+                                          'You have unsaved changes, if you leave now they will be lost.'),
+                                      actions: [
+                                        TextButton(
+                                          child: const Text(
+                                            'Cancel',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pop(context, 'Cancel');
+                                          },
+                                        ),
+                                        TextButton(
+                                            child: const Text(
+                                              'Leave',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context, 'Ok');
+                                              Navigator.pop(context);
+                                            }),
+                                      ],
+                                    );
+                                  });
+                            }
                           },
                           icon: const Icon(
                             Icons.arrow_back_ios_rounded,
@@ -189,7 +231,7 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
               ),
             ),
             //
-            // Color box 
+            // Color box
             //
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -197,7 +239,7 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                 GestureDetector(
                   onTapDown: (pos) {
                     _menuController.open(position: pos.localPosition);
-                  } ,
+                  },
                   child: Padding(
                     padding: EdgeInsets.only(top: 8.0, left: 22.0),
                     child: Container(
@@ -215,34 +257,31 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                                 controller: _menuController,
                                 anchorTapClosesMenu: true,
                                 menuChildren: <Widget>[
-                                      MenuItemButton(
-                                        onPressed: () =>
-                                            _activate(MenuEntry.colorGreen),
-                                        child: Text(MenuEntry.colorGreen.label),
-                                      ),
-                                      MenuItemButton(
-                                        onPressed: () =>
-                                            _activate(MenuEntry.colorLightBlue),
-                                        child: Text(
-                                            MenuEntry.colorLightBlue.label),
-                                      ),
-                                      MenuItemButton(
-                                        onPressed: () =>
-                                            _activate(MenuEntry.colorOrange),
-                                        child:
-                                            Text(MenuEntry.colorOrange.label),
-                                      ),
-                                      MenuItemButton(
-                                        onPressed: () =>
-                                            _activate(MenuEntry.colorPurple),
-                                        child:
-                                            Text(MenuEntry.colorPurple.label),
-                                      ),
-                                      MenuItemButton(
-                                        onPressed: () =>
-                                            _activate(MenuEntry.colorTeal),
-                                        child: Text(MenuEntry.colorTeal.label),
-                                      ),
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorGreen),
+                                    child: Text(MenuEntry.colorGreen.label),
+                                  ),
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorLightBlue),
+                                    child: Text(MenuEntry.colorLightBlue.label),
+                                  ),
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorOrange),
+                                    child: Text(MenuEntry.colorOrange.label),
+                                  ),
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorPurple),
+                                    child: Text(MenuEntry.colorPurple.label),
+                                  ),
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorTeal),
+                                    child: Text(MenuEntry.colorTeal.label),
+                                  ),
                                 ],
                               ),
                             ),
@@ -304,26 +343,37 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                 child: Padding(
               padding: const EdgeInsets.only(left: 480 * 0.5 * 0.1, top: 10.0),
               child: EditableText(
-                controller: TextEditingController(text: widget.body),
-                focusNode: FocusNode(),
+                controller: _bodyTextEditingController,
+                inputFormatters: [_bodyTextInputFormatter],
+                focusNode: _bodyFocusNode,
                 style: TextStyle(
                   fontFamily: 'Roboto',
                   fontSize: 16,
                   color: colorScheme.onPrimary,
                 ),
                 maxLines: null,
+                showSelectionHandles: true,
                 cursorColor: Colors.white,
                 backgroundCursorColor: const Color.fromARGB(255, 68, 67, 67),
-                onChanged: (value) {
-                  widget.body = value;
-                },
-                
+                onChanged: _onTextChanged,
+                readOnly: false,
+                selectionColor: Colors.lightBlue.shade300,
               ),
-            ))
+            )),
           ],
         ),
       ),
     );
+  }
+
+  void _onTextChanged(String text) {
+    if (text != widget.body) {
+      _bodyTextEditingController.text = text;
+      widget.body = _bodyTextEditingController.text;
+
+      _bodyTextEditingController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _bodyTextInputFormatter.getCursorOffset()));
+    }
   }
 
   // business logic
@@ -363,7 +413,6 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
       _notesService.update(noteObject);
     });
   }
-
 }
 
 enum MenuEntry {

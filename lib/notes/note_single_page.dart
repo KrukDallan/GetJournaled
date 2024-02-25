@@ -73,6 +73,9 @@ class _SingleNotePage extends State<SingleNotePage> {
     }
   }
 
+  late String _oldTitle;
+  late dynamic _oldBody;
+
   final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
   final MenuController _menuController = MenuController();
 
@@ -100,6 +103,9 @@ class _SingleNotePage extends State<SingleNotePage> {
     _settingsService.get(0).then((value) => _autoSave = value!.getAutoSave());
 
     _bodyTextEditingController.addListener(() {});
+
+    _oldTitle = widget.title;
+    _oldBody = widget.body;
   }
 
   @override
@@ -142,7 +148,47 @@ class _SingleNotePage extends State<SingleNotePage> {
                           iconSize: 15.0,
                           padding: const EdgeInsets.only(bottom: 1.0),
                           onPressed: () {
-                            Navigator.pop(context);
+                            if (_autoSave == false) {
+                              if ((widget.title != _oldTitle) ||
+                                  (widget.body != _oldBody)) {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Exit?'),
+                                        content: const Text(
+                                            'You have unsaved changes, if you leave now they will be lost.'),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context, 'Cancel');
+                                            },
+                                          ),
+                                          TextButton(
+                                              child: const Text(
+                                                'Leave',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context, 'Ok');
+                                                Navigator.pop(context);
+                                              }),
+                                        ],
+                                      );
+                                    });
+                              }
+                            }
+                            else{
+                              Navigator.pop(context);
+                            }
                           },
                           icon: const Icon(
                             Icons.arrow_back_ios_rounded,
@@ -433,7 +479,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                 readOnly: false,
                 selectionColor: Colors.lightBlue.shade300,
               ),
-            ))
+            )),
           ],
         ),
       ),
