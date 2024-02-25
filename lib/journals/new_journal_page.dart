@@ -59,6 +59,7 @@ class _NewJournalPage extends State<NewJournalPage> {
     Colors.black,
     Colors.black
   ];
+  int rateIndex = -1;
 
   final MenuController _menuController = MenuController();
 
@@ -181,6 +182,50 @@ class _NewJournalPage extends State<NewJournalPage> {
                             Icons.arrow_back_ios_rounded,
                             color: Colors.white,
                           )),
+                    ),
+                  ),
+                ),
+                const Expanded(child: Text('')),
+                //
+                // Save button
+                //
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0, right: 15.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade800,
+                      borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    ),
+                    child: SizedBox(
+                      width: 35,
+                      height: 35,
+                      child: IconButton(
+                        padding: const EdgeInsets.only(bottom: 0.0),
+                        highlightColor: Colors.teal.shade200,
+                        onPressed: () {
+                          DateTime now = DateTime.now();
+                          JournalObject noteObject = JournalObject(
+                              id: widget.id,
+                              title: widget.title,
+                              body: widget.body,
+                              dateOfCreation:
+                                  DateTime(now.year, now.month, now.day),
+                              cardColor: boxColor,
+                              highlight: widget.highlight,
+                              lowlight: widget.lowlight,
+                              noteWorthy: widget.noteWorthy,
+                              dayRating: rateIndex);
+                          _journalService.add(noteObject);
+                          _journalMap.addAll({widget.id: noteObject});
+                          _oldBody = widget.body;
+                          _oldTitle = widget.title;
+                        },
+                        icon: const Icon(
+                          Icons.save_sharp,
+                          size: 18.0,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -327,6 +372,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                           rateButtonsColors[i] = colorScheme.primary;
                         }
                         rateButtonsColors[0] = Colors.lightBlue.shade100;
+                        rateIndex = 0;
                         setState(() {});
                       },
                       child: Text(
@@ -354,6 +400,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                           rateButtonsColors[i] = colorScheme.primary;
                         }
                         rateButtonsColors[1] = Colors.lightBlue.shade100;
+                        rateIndex = 1;
                         setState(() {});
                       },
                       child: Text(
@@ -382,6 +429,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                           rateButtonsColors[i] = colorScheme.primary;
                         }
                         rateButtonsColors[2] = Colors.lightBlue.shade100;
+                        rateIndex = 2;
                         setState(() {});
                       },
                       child: Text(
@@ -415,6 +463,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                           rateButtonsColors[i] = colorScheme.primary;
                         }
                         rateButtonsColors[3] = Colors.lightBlue.shade100;
+                        rateIndex = 3;
                         setState(() {});
                       },
                       child: Text(
@@ -443,6 +492,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                           rateButtonsColors[i] = colorScheme.primary;
                         }
                         rateButtonsColors[4] = Colors.lightBlue.shade100;
+                        rateIndex = 4;
                         setState(() {});
                       },
                       child: Text(
@@ -461,7 +511,7 @@ class _NewJournalPage extends State<NewJournalPage> {
             // Body
             //
             Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 26.0, top: 4.0),
+              padding: const EdgeInsets.only(left: 20.0, right: 26.0, top: 10.0),
               child: Container(
                 padding: EdgeInsets.all(8.0),
                 height: MediaQuery.of(context).size.height * 80 / 100,

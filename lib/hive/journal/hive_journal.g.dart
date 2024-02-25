@@ -18,7 +18,7 @@ class HiveJournalAdapter extends TypeAdapter<HiveJournal> {
     };
     return HiveJournal(
       id: fields[0] as int,
-      title: fields[10] as int,
+      title: fields[10] as String,
       body: fields[1] as String,
       dateOfCreation: fields[3] as DateTime,
       cardColorIntValue: fields[6] as int,

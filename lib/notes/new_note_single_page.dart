@@ -190,6 +190,8 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                               cardColor: boxColor);
                           _notesService.add(noteObject);
                           _notesMap.addAll({widget.id: noteObject});
+                          _oldBody = widget.body;
+                          _oldTitle = widget.title;
 
                           //var mySnackBar = customSnackBar('Note saved!');
                           //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);

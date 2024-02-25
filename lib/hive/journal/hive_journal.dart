@@ -12,7 +12,7 @@ class HiveJournal extends HiveObject {
   late int id;
 
   @HiveField(10)
-  late int title;
+  late String title;
 
   @HiveField(1)
   late String body;

@@ -74,7 +74,7 @@ class _SingleNotePage extends State<SingleNotePage> {
   }
 
   late String _oldTitle;
-  late dynamic _oldBody;
+  late String _oldBody;
 
   final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
   final MenuController _menuController = MenuController();
@@ -306,7 +306,8 @@ class _SingleNotePage extends State<SingleNotePage> {
                               _notesService.update(noteObject);
                               // check if the note is already present in the map
                               _notesMap.addAll({widget.id: noteObject});
-
+                              _oldBody = widget.body;
+                              _oldTitle = widget.title;
                               setState(() {
                                 widget.dateOfLastEdit =
                                     DateTime(now.year, now.month, now.day);

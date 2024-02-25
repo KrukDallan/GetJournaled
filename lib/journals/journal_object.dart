@@ -5,30 +5,29 @@ import 'package:flutter/material.dart';
 // highlight of the day
 // lowlight of the day
 
-class JournalObject extends Object{
+class JournalObject extends Object {
   late int _id;
-  late dynamic _title;
+  late String _title;
   late dynamic _body;
   late final DateTime _dateOfCreation;
   late Color _cardColor;
   late int _dayRating;
   late String _highlight;
   late String _lowlight;
-    late String _noteWorthy;
+  late String _noteWorthy;
 
-  JournalObject(
-      {required int id,
-      required dynamic title,
-      required dynamic body,
-      required DateTime dateOfCreation,
-      required Color cardColor,
-      required int dayRating,
-      required String highlight,
-      required String lowlight,
-      required String noteWorthy,
-      })
-      : _id = id,
-      _title = title,
+  JournalObject({
+    required int id,
+    required String title,
+    required dynamic body,
+    required DateTime dateOfCreation,
+    required Color cardColor,
+    required int dayRating,
+    required String highlight,
+    required String lowlight,
+    required String noteWorthy,
+  })  : _id = id,
+        _title = title,
         _body = body,
         _dateOfCreation = dateOfCreation,
         _cardColor = cardColor,
@@ -47,12 +46,12 @@ class JournalObject extends Object{
     return prev;
   }
 
-    dynamic getTitle() {
+  String getTitle() {
     return _title;
   }
 
-  dynamic setTitle(dynamic newTitle) {
-    dynamic prev = _title;
+  String setTitle(String newTitle) {
+    String prev = _title;
     _title = newTitle;
     return prev;
   }
@@ -71,7 +70,7 @@ class JournalObject extends Object{
     return _dateOfCreation;
   }
 
-  Color getCardColor(){
+  Color getCardColor() {
     return _cardColor;
   }
 
@@ -81,7 +80,7 @@ class JournalObject extends Object{
     return tmp;
   }
 
-  int getDayRating(){
+  int getDayRating() {
     return _dayRating;
   }
 
@@ -93,15 +92,21 @@ class JournalObject extends Object{
     return _lowlight;
   }
 
-    String getNoteWorthy() {
+  String getNoteWorthy() {
     return _noteWorthy;
   }
 
+  @override
+  operator ==(Object other) =>
+      other is JournalObject &&
+      other.runtimeType == runtimeType &&
+      other._id == _id &&
+      (!other._dateOfCreation.isAfter(_dateOfCreation) &&
+          !other._dateOfCreation.isBefore(_dateOfCreation));
 
   @override
-  operator ==(Object other) => other is JournalObject && other.runtimeType == runtimeType && other._id==_id && (!other._dateOfCreation.isAfter(_dateOfCreation) && !other._dateOfCreation.isBefore(_dateOfCreation));
-  
-  @override
-  int get hashCode => (_id.hashCode + _body.hashCode + _dateOfCreation.hashCode + _cardColor.hashCode );
-  
+  int get hashCode => (_id.hashCode +
+      _body.hashCode +
+      _dateOfCreation.hashCode +
+      _cardColor.hashCode);
 }
