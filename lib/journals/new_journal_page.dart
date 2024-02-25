@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
 import 'package:getjournaled/journals/journal_object.dart';
+import 'package:getjournaled/settings/settings_object.dart';
 import 'package:getjournaled/shared.dart';
 
 class NewJournalPage extends StatefulWidget {
@@ -15,7 +16,7 @@ class NewJournalPage extends StatefulWidget {
   late String title;
   late String body;
   late DateTime dateOfCreation;
-  late int cardColorIntValue;
+  late Color cardColor;
   late int dayRating;
   late String highlight;
   late String lowlight;
@@ -27,7 +28,7 @@ class NewJournalPage extends StatefulWidget {
     required this.title,
     required this.body,
     required this.dateOfCreation,
-    required this.cardColorIntValue,
+    required this.cardColor,
     required this.dayRating,
     required this.highlight,
     required this.lowlight,
@@ -43,10 +44,15 @@ class _NewJournalPage extends State<NewJournalPage> {
   TextEditingController _titleTextEditingController = TextEditingController();
   final MyTextInputFormatter _bodyTextInputFormatter = MyTextInputFormatter();
   final TitleTextInputFormatter _tTIF = TitleTextInputFormatter();
+  bool isTitleWhite = false;
 
-   ValueNotifier<String> tempTitle = ValueNotifier("Title (optional)");
-   Color titleTextColor = Colors.grey.shade600;
+  FocusNode myFocusNode = FocusNode();
+
+  ValueNotifier<String> tempTitle = ValueNotifier("Title (optional)");
+  Color titleTextColor = Colors.grey.shade600;
   late ValueNotifier<Color> titleColor;
+
+    final MenuController _menuController = MenuController();
 
   // box card color
   Color get boxColor => _boxColor;
@@ -91,13 +97,10 @@ class _NewJournalPage extends State<NewJournalPage> {
     titleColor = ValueNotifier(titleTextColor);
   }
 
-
-    
-
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
-   return SafeArea(
+    return SafeArea(
         child: Scaffold(
       backgroundColor: colorScheme.primary,
       body: SingleChildScrollView(
@@ -137,67 +140,150 @@ class _NewJournalPage extends State<NewJournalPage> {
             // Title
             //
             Padding(
-              padding: const EdgeInsets.only(left: 12, top: 8),
+              padding: const EdgeInsets.only(left: 16, top: 8),
               child: Material(
                   type: MaterialType.transparency,
                   child: EditableText(
-                        showCursor: true,
-                        controller: _titleTextEditingController,
-                        inputFormatters: [_tTIF],
-                        focusNode: FocusNode(),
-                        style: TextStyle(
-                          fontFamily: 'Roboto-Medium',
-                          fontSize: 28,
-                          fontWeight: FontWeight.w700,
-                          color: ValueListenableBuilder(
-                            valueListenable: titleColor,
-                            builder: (BuildContext context, Color color, Widget? child) {
-                              return Container(
-                                color: titleColor.value,
-                              );
-                            },
-                          ).valueListenable.value,
+                    showCursor: true,
+                    controller: _titleTextEditingController,
+                    inputFormatters: [_tTIF],
+                    focusNode: myFocusNode,
+                    style: TextStyle(
+                      fontFamily: 'Roboto-Medium',
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
+                      color: ValueListenableBuilder(
+                        valueListenable: titleColor,
+                        builder:
+                            (BuildContext context, Color color, Widget? child) {
+                          return Container(
+                            color: titleColor.value,
+                          );
+                        },
+                      ).valueListenable.value,
+                    ),
+                    autofocus: true,
+                    cursorColor: colorScheme.onPrimary,
+                    backgroundCursorColor: Colors.black,
+                    onChanged: _onTitleTextChanged,
+                  )),
+            ),
+            //
+            // Color box
+            //
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTapDown: (pos) {
+                    _menuController.open(position: pos.localPosition);
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 8.0, left: 22.0),
+                    child: Container(
+                      color: Colors.white,
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: Center(
+                          child: SizedBox(
+                            width: 15,
+                            height: 15,
+                            child: Container(
+                              color: boxColor,
+                              child: MenuAnchor(
+                                controller: _menuController,
+                                anchorTapClosesMenu: true,
+                                menuChildren: <Widget>[
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorGreen),
+                                    child: Text(MenuEntry.colorGreen.label),
+                                  ),
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorLightBlue),
+                                    child: Text(MenuEntry.colorLightBlue.label),
+                                  ),
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorOrange),
+                                    child: Text(MenuEntry.colorOrange.label),
+                                  ),
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorPurple),
+                                    child: Text(MenuEntry.colorPurple.label),
+                                  ),
+                                  MenuItemButton(
+                                    onPressed: () =>
+                                        _activate(MenuEntry.colorTeal),
+                                    child: Text(MenuEntry.colorTeal.label),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                        cursorColor: colorScheme.onPrimary,
-                        backgroundCursorColor: Colors.black,
-                        onChanged: _onTitleTextChanged,
-                      )
+                      ),
                     ),
                   ),
+                ),
+              ],
+            ),
+            //
+            // Dates
+            //
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, left: 22.0),
+                  child: DefaultTextStyle(
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
+                    child: Text(
+                        'Created: ${widget.dateOfCreation.toString().replaceAll('00:00:00.000', '')}'),
+                  ),
+                ),
+              ],
+            ),
             //
             // Main body
             //
             const Padding(
-              padding: EdgeInsets.only(top: 4.0, left: 18.0),
+              padding: EdgeInsets.only(top: 10.0, left: 22.0),
               child: Text('How was your day?'),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 12.0, right: 12.0),
-              child: Card(
-                color: Colors.purple.shade100,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0)),
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.95,
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 2.0, left: 4.0),
-                    child: EditableText(
-                      controller: _bodyTextEditingController,
-                      inputFormatters: [_bodyTextInputFormatter],
-                      focusNode: FocusNode(),
-                      style: TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 16,
-                        color: colorScheme.onPrimary,
-                      ),
-                      maxLines: null,
-                      cursorColor: colorScheme.onPrimary,
-                      backgroundCursorColor:
-                          const Color.fromARGB(255, 68, 67, 67),
-                      onChanged: _onBodyTextChanged,
-                    ),
+              padding: const EdgeInsets.only(left: 20.0, right: 26.0, top: 4.0),
+              child: Container(
+                padding: EdgeInsets.all(8.0),
+                height: MediaQuery.of(context).size.height*80/100,
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  border: Border.all(
+                    color: colorScheme.onPrimary,
+                    width: 0.5,
                   ),
+                  borderRadius: BorderRadius.circular(6.0),
+                ),
+                child: EditableText(
+                  controller: _bodyTextEditingController,
+                  inputFormatters: [_bodyTextInputFormatter],
+                  focusNode: FocusNode(),
+                  style: TextStyle(
+                    fontFamily: 'Roboto',
+                    fontSize: 16,
+                    color: colorScheme.onPrimary,
+                  ),
+                  maxLines: null,
+                  cursorColor: colorScheme.onPrimary,
+                  backgroundCursorColor:
+                      const Color.fromARGB(255, 68, 67, 67),
+                  onChanged: _onBodyTextChanged,
                 ),
               ),
               //
@@ -221,21 +307,22 @@ class _NewJournalPage extends State<NewJournalPage> {
     }
   }
 
-  void _onTitleTextChanged(String text){
-
-    if(!text.contains("Title (optional)")){
-          print(text);
-      titleColor.value = Colors.white;
-      titleTextColor = Colors.white;
-      setState(() {
-        
-      });
+  void _onTitleTextChanged(String text) {
+    if (!isTitleWhite) {
+      if (!text.contains("Title (optional)")) {
+        titleColor.value = Colors.white;
+        titleTextColor = Colors.white;
+        isTitleWhite = true;
+        setState(() {});
+      }
     }
-    if(text != widget.title){
+
+    if (text != widget.title) {
       _titleTextEditingController.text = text;
       widget.title = text;
 
-      _titleTextEditingController.selection = TextSelection.fromPosition(TextPosition(offset: _tTIF.getCursorOffset()));
+      _titleTextEditingController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _tTIF.getCursorOffset()));
     }
   }
 
@@ -244,4 +331,67 @@ class _NewJournalPage extends State<NewJournalPage> {
       _journalMap = event;
     });
   }
+
+    void _activate(MenuEntry selection) {
+    Color tmp = widget.cardColor;
+
+    switch (selection) {
+      case MenuEntry.colorMenu:
+        break;
+      case MenuEntry.colorOrange:
+        tmp = Colors.deepOrange.shade200;
+      case MenuEntry.colorGreen:
+        tmp = Colors.green.shade200;
+      case MenuEntry.colorLightBlue:
+        tmp = Colors.lightBlue.shade100;
+      case MenuEntry.colorTeal:
+        tmp = Colors.teal.shade100;
+      case MenuEntry.colorPurple:
+        tmp = Colors.deepPurple.shade100;
+    }
+    setState(() {
+      widget.cardColor = tmp;
+      boxColor = tmp;
+      JournalObject journalObject = JournalObject(
+          id: widget.id,
+          title: widget.title,
+          body: widget.body,
+          dateOfCreation: widget.dateOfCreation,
+          cardColor: widget.cardColor,
+          dayRating: widget.dayRating,
+          highlight: widget.highlight,
+          lowlight: widget.lowlight,
+          noteWorthy: widget.noteWorthy,);
+      _journalService.update(journalObject);
+    });
+  }
+
+
+  void _onSettingsUpdate(Map<int, SettingsObject> event) {
+    setState(() {});
+  }
+
 }
+
+
+enum MenuEntry {
+  colorMenu('Color Menu'),
+  colorOrange(
+    'Orange Card',
+  ),
+  colorGreen(
+    'Green Card',
+  ),
+  colorLightBlue(
+    'Lightblue Card',
+  ),
+  colorTeal(
+    'Teal Card',
+  ),
+  colorPurple(
+    'Purple Card',
+  );
+
+  const MenuEntry(this.label, [this.shortcut]);
+  final String label;
+  final MenuSerializableShortcut? shortcut;}

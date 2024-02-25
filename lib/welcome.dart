@@ -81,7 +81,7 @@ class _WelcomePage extends State<WelcomePage> {
                       title: 'Title (optional)',
                       body: '', 
                       dateOfCreation: DateTime(now.year, now.month, now.day), 
-                      cardColorIntValue: Colors.deepOrange.shade200.value, 
+                      cardColor: Colors.deepOrange.shade200, 
                       dayRating: -1, 
                       highlight: '', 
                       lowlight: '',

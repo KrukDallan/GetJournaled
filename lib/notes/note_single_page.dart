@@ -465,10 +465,6 @@ class _SingleNotePage extends State<SingleNotePage> {
         widget.dateOfLastEdit = DateTime(now.year, now.month, now.day);
       }
     }
-
-/*     setState(() {
-      
-    });*/
   }
 
   void _activate(MenuEntry selection) {
