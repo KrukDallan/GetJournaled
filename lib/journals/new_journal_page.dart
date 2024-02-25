@@ -52,7 +52,15 @@ class _NewJournalPage extends State<NewJournalPage> {
   Color titleTextColor = Colors.grey.shade600;
   late ValueNotifier<Color> titleColor;
 
-    final MenuController _menuController = MenuController();
+  List<Color> rateButtonsColors = [
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black,
+    Colors.black
+  ];
+
+  final MenuController _menuController = MenuController();
 
   // box card color
   Color get boxColor => _boxColor;
@@ -130,7 +138,8 @@ class _NewJournalPage extends State<NewJournalPage> {
                           iconSize: 15.0,
                           padding: const EdgeInsets.only(bottom: 1.0),
                           onPressed: () {
-if ( (widget.title != _oldTitle) || (widget.body != _oldBody) ) {
+                            if ((widget.title != _oldTitle) ||
+                                (widget.body != _oldBody)) {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
@@ -164,6 +173,8 @@ if ( (widget.title != _oldTitle) || (widget.body != _oldBody) ) {
                                       ],
                                     );
                                   });
+                            } else {
+                              Navigator.pop(context);
                             }
                           },
                           icon: const Icon(
@@ -290,17 +301,170 @@ if ( (widget.title != _oldTitle) || (widget.body != _oldBody) ) {
               ],
             ),
             //
-            // Main body
+            // Main section
             //
             const Padding(
               padding: EdgeInsets.only(top: 10.0, left: 22.0),
               child: Text('How was your day?'),
             ),
+            // Day rating
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 4.0, left: 4.0, right: 0.0),
+                  child: OutlinedButton(
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.resolveWith((states) =>
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0))),
+                        backgroundColor: MaterialStateColor.resolveWith(
+                            (states) => rateButtonsColors[0]),
+                      ),
+                      onPressed: () {
+                        for (var i = 0; i < rateButtonsColors.length; i++) {
+                          rateButtonsColors[i] = colorScheme.primary;
+                        }
+                        rateButtonsColors[0] = Colors.lightBlue.shade100;
+                        setState(() {});
+                      },
+                      child: Text(
+                        "Terrible\n (╥_╥)",
+                        style: TextStyle(
+                            color: (rateButtonsColors[0] == colorScheme.primary)
+                                ? Colors.white
+                                : Colors.black,
+                            fontSize: 12),
+                      )),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 4.0, left: 0.0, right: 0.0),
+                  child: OutlinedButton(
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.resolveWith((states) =>
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0))),
+                        backgroundColor: MaterialStateColor.resolveWith(
+                            (states) => rateButtonsColors[1]),
+                      ),
+                      onPressed: () {
+                        for (var i = 0; i < rateButtonsColors.length; i++) {
+                          rateButtonsColors[i] = colorScheme.primary;
+                        }
+                        rateButtonsColors[1] = Colors.lightBlue.shade100;
+                        setState(() {});
+                      },
+                      child: Text(
+                        "Not so good\n ┐(´～｀)┌",
+                        style: TextStyle(
+                          color: (rateButtonsColors[1] == colorScheme.primary)
+                              ? Colors.white
+                              : Colors.black,
+                          fontSize: 12,
+                        ),
+                      )),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 4.0, left: 0.0, right: 0.0),
+                  child: OutlinedButton(
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.resolveWith((states) =>
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0))),
+                        backgroundColor: MaterialStateColor.resolveWith(
+                            (states) => rateButtonsColors[2]),
+                      ),
+                      onPressed: () {
+                        for (var i = 0; i < rateButtonsColors.length; i++) {
+                          rateButtonsColors[i] = colorScheme.primary;
+                        }
+                        rateButtonsColors[2] = Colors.lightBlue.shade100;
+                        setState(() {});
+                      },
+                      child: Text(
+                        "Normal\n  ( ﾟｰﾟ)",
+                        style: TextStyle(
+                          color: (rateButtonsColors[2] == colorScheme.primary)
+                              ? Colors.white
+                              : Colors.black,
+                          fontSize: 12,
+                        ),
+                      )),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 4.0, left: 0.0, right: 0.0),
+                  child: OutlinedButton(
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.resolveWith((states) =>
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0))),
+                        backgroundColor: MaterialStateColor.resolveWith(
+                            (states) => rateButtonsColors[3]),
+                      ),
+                      onPressed: () {
+                        for (var i = 0; i < rateButtonsColors.length; i++) {
+                          rateButtonsColors[i] = colorScheme.primary;
+                        }
+                        rateButtonsColors[3] = Colors.lightBlue.shade100;
+                        setState(() {});
+                      },
+                      child: Text(
+                        "     Good!\n （＾ｖ＾）",
+                        style: TextStyle(
+                          color: (rateButtonsColors[3] == colorScheme.primary)
+                              ? Colors.white
+                              : Colors.black,
+                          fontSize: 12,
+                        ),
+                      )),
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(top: 4.0, left: 0.0, right: 8.0),
+                  child: OutlinedButton(
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.resolveWith((states) =>
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0))),
+                        backgroundColor: MaterialStateColor.resolveWith(
+                            (states) => rateButtonsColors[4]),
+                      ),
+                      onPressed: () {
+                        for (var i = 0; i < rateButtonsColors.length; i++) {
+                          rateButtonsColors[i] = colorScheme.primary;
+                        }
+                        rateButtonsColors[4] = Colors.lightBlue.shade100;
+                        setState(() {});
+                      },
+                      child: Text(
+                        " Very good!\n˖✧◝(⁰▿⁰)◜✧˖",
+                        style: TextStyle(
+                          color: (rateButtonsColors[4] == colorScheme.primary)
+                              ? Colors.white
+                              : Colors.black,
+                          fontSize: 12,
+                        ),
+                      )),
+                ),
+              ],
+            ),
+            //
+            // Body
+            //
             Padding(
               padding: const EdgeInsets.only(left: 20.0, right: 26.0, top: 4.0),
               child: Container(
                 padding: EdgeInsets.all(8.0),
-                height: MediaQuery.of(context).size.height*80/100,
+                height: MediaQuery.of(context).size.height * 80 / 100,
                 decoration: BoxDecoration(
                   color: colorScheme.primary,
                   border: Border.all(
@@ -320,8 +484,7 @@ if ( (widget.title != _oldTitle) || (widget.body != _oldBody) ) {
                   ),
                   maxLines: null,
                   cursorColor: colorScheme.onPrimary,
-                  backgroundCursorColor:
-                      const Color.fromARGB(255, 68, 67, 67),
+                  backgroundCursorColor: const Color.fromARGB(255, 68, 67, 67),
                   onChanged: _onBodyTextChanged,
                 ),
               ),
@@ -371,7 +534,7 @@ if ( (widget.title != _oldTitle) || (widget.body != _oldBody) ) {
     });
   }
 
-    void _activate(MenuEntry selection) {
+  void _activate(MenuEntry selection) {
     Color tmp = widget.cardColor;
 
     switch (selection) {
@@ -392,26 +555,24 @@ if ( (widget.title != _oldTitle) || (widget.body != _oldBody) ) {
       widget.cardColor = tmp;
       boxColor = tmp;
       JournalObject journalObject = JournalObject(
-          id: widget.id,
-          title: widget.title,
-          body: widget.body,
-          dateOfCreation: widget.dateOfCreation,
-          cardColor: widget.cardColor,
-          dayRating: widget.dayRating,
-          highlight: widget.highlight,
-          lowlight: widget.lowlight,
-          noteWorthy: widget.noteWorthy,);
+        id: widget.id,
+        title: widget.title,
+        body: widget.body,
+        dateOfCreation: widget.dateOfCreation,
+        cardColor: widget.cardColor,
+        dayRating: widget.dayRating,
+        highlight: widget.highlight,
+        lowlight: widget.lowlight,
+        noteWorthy: widget.noteWorthy,
+      );
       _journalService.update(journalObject);
     });
   }
 
-
   void _onSettingsUpdate(Map<int, SettingsObject> event) {
     setState(() {});
   }
-
 }
-
 
 enum MenuEntry {
   colorMenu('Color Menu'),
@@ -433,4 +594,5 @@ enum MenuEntry {
 
   const MenuEntry(this.label, [this.shortcut]);
   final String label;
-  final MenuSerializableShortcut? shortcut;}
+  final MenuSerializableShortcut? shortcut;
+}

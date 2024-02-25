@@ -149,6 +149,9 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                                     );
                                   });
                             }
+                            else{
+                              Navigator.pop(context);
+                            }
                           },
                           icon: const Icon(
                             Icons.arrow_back_ios_rounded,

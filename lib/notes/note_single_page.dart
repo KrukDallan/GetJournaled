@@ -185,6 +185,9 @@ class _SingleNotePage extends State<SingleNotePage> {
                                       );
                                     });
                               }
+                              else{
+                                Navigator.pop(context);
+                              }
                             }
                             else{
                               Navigator.pop(context);
