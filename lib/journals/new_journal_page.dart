@@ -65,6 +65,9 @@ class _NewJournalPage extends State<NewJournalPage> {
     }
   }
 
+  late String _oldTitle;
+  late String _oldBody;
+
   final JournalService _journalService = GetIt.I<JournalService>();
 
   Map<int, JournalObject> _journalMap = {};
@@ -95,6 +98,8 @@ class _NewJournalPage extends State<NewJournalPage> {
     _journalSub = _journalService.stream.listen(_onJournalsUpdate);
     _titleTextEditingController.text = widget.title;
     titleColor = ValueNotifier(titleTextColor);
+    _oldTitle = widget.title;
+    _oldBody = widget.body;
   }
 
   @override
@@ -125,7 +130,41 @@ class _NewJournalPage extends State<NewJournalPage> {
                           iconSize: 15.0,
                           padding: const EdgeInsets.only(bottom: 1.0),
                           onPressed: () {
-                            Navigator.pop(context);
+if ( (widget.title != _oldTitle) || (widget.body != _oldBody) ) {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Exit?'),
+                                      content: const Text(
+                                          'You have unsaved changes, if you leave now they will be lost.'),
+                                      actions: [
+                                        TextButton(
+                                          child: const Text(
+                                            'Cancel',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pop(context, 'Cancel');
+                                          },
+                                        ),
+                                        TextButton(
+                                            child: const Text(
+                                              'Leave',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context, 'Ok');
+                                              Navigator.pop(context);
+                                            }),
+                                      ],
+                                    );
+                                  });
+                            }
                           },
                           icon: const Icon(
                             Icons.arrow_back_ios_rounded,
