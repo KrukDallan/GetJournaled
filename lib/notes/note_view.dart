@@ -6,6 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 import 'package:getjournaled/hive/notes/hive_tutorial_notes.dart';
 import 'package:getjournaled/notes/note_object.dart';
+import 'package:getjournaled/notes/note_search_page.dart';
 import 'package:getjournaled/shared.dart';
 
 import 'package:getjournaled/notes/note_card.dart';
@@ -130,7 +131,13 @@ class _Notes extends State<Notes> {
                       width: 70,
                       height: 40,
                       child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const NoteSearchPage()));
+                        },
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -148,7 +155,7 @@ class _Notes extends State<Notes> {
                 ],
               ),
               const Padding(padding: EdgeInsets.only(bottom: 24)),
-              // --------------------------------------------------------------------------- 
+              // ---------------------------------------------------------------------------
               // Grid where notes are shown
               GridView(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
