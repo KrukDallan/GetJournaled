@@ -37,7 +37,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   //final ThemeMode _themeMode = ThemeMode.system;
   // TODO: fix dark mode colors
-  final ThemeMode _themeMode = ThemeMode.dark;
+  ThemeMode _themeMode = ThemeMode.dark;
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +85,12 @@ class _MyAppState extends State<MyApp> {
             page: WelcomePage(),
           ),
         ));
+  }
+
+  void changeTheme(ThemeMode themeMode){
+    setState((){
+      _themeMode = themeMode;
+    });
   }
 }
 

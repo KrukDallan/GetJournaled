@@ -102,74 +102,54 @@ class _Notes extends State<Notes> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Padding(padding: customTopPadding(0.025)),
-              //
+              // ---------------------------------------------------------------------------
               // Title and search bar
-              //
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  //
+                  // ---------------------------------------------------------------------------
                   // Title
-                  //
                   Padding(
                     padding: const EdgeInsets.only(left: 18.0, top: 8.0),
                     child: Text(
                       'Notes',
                       style: TextStyle(
                         fontFamily: 'Roboto',
-                        fontSize: 30,
+                        fontSize: 24,
                         fontWeight: FontWeight.w700,
                         color: Colors.amber.shade50,
                       ),
                     ),
                   ),
                   const Expanded(child: Text('')),
-                  //
+                  // ---------------------------------------------------------------------------
                   // Search bar
-                  //
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0, right: 10.0),
-                    child: Container(
+                    child: SizedBox(
+                      width: 70,
+                      height: 40,
                       child: OutlinedButton(
-                        style: ButtonStyle(
-                          padding: MaterialStateProperty.resolveWith((states) => EdgeInsets.only(left: 8.0)),
-                          fixedSize: MaterialStateProperty.resolveWith((states) => const Size(280, 35)),
-                        ),
-                        onPressed: () {}, 
+                        onPressed: () {},
                         child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: 0.0),
-                              child: Icon(
-                                Icons.search_outlined,
-                              size: 22,
+                            Icon(
+                              Icons.search_outlined,
+                              size: 20,
                               color: Colors.white,
-                              ),
-                            ),
-                            Padding(padding: EdgeInsets.only(left: 90),
-                            // 
-                            // This should become an editable text
-                            //
-                            child: Text(
-                              'Search',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
                             ),
                           ],
-                        ))
-                        ,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-              Padding(padding: customTopPadding(0.05)),
-              // 
+              const Padding(padding: EdgeInsets.only(bottom: 24)),
+              // --------------------------------------------------------------------------- 
               // Grid where notes are shown
-              //
               GridView(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,

@@ -3,10 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
 import 'package:getjournaled/journals/journal_object.dart';
+import 'package:getjournaled/journals/journal_search_page.dart';
 import 'package:getjournaled/shared.dart';
 import 'package:getjournaled/journals/journal_card.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 class Drawer extends StatefulWidget {
   const Drawer({super.key});
@@ -20,7 +22,13 @@ class _Drawer extends State<Drawer> {
 
   Map<int, JournalObject> _journalMap = {};
 
+  List<_DayRatingsData> _graphList = [];
+
   StreamSubscription? _journalSub;
+
+  bool _displayTitle = true;
+  double _sbw = 70;
+
   @override
   void dispose() {
     _journalSub?.cancel();
@@ -35,138 +43,81 @@ class _Drawer extends State<Drawer> {
           _journalMap = value;
         }));
     _journalSub = _journalService.stream.listen(_onJournalsUpdate);
-
-    //
-    // Display the alert dialog
-    //
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      //ifLoaded();
-    });
   }
-
-  //
-  // function to use to display the alert dialog
-  //
-  /* void ifLoaded() {
-    bool boxTutorialNotesValue = _journalService.getTutorialNotesValue();
-    if (!boxTutorialNotesValue) {
-      AlertDialog alertDialog = AlertDialog(
-        title: const Text('Quick guide'),
-        content: const Text(
-            ' • Single tap on a note to open it\n • Double tap to delete it\n • Hold to customize it\n • Your notes are automatically saved as you type'),
-        actions: [
-          TextButton(
-            child: const Text(
-              'Ok',
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-            onPressed: () => Navigator.pop(context, 'Ok'),
-          ),
-          TextButton(
-            onPressed: () {
-              HiveTutorialNotes htn = HiveTutorialNotes(dismissed: true);
-              _notesService.updateHiveTutorial(htn);
-              Navigator.pop(context, 'Dismiss');
-            },
-            child: const Text(
-              'Dismiss',
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      );
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return alertDialog;
-          });
-    }
-  } */
 
   @override
   Widget build(BuildContext context) {
+    for (var entry in _journalMap.entries) {
+      var tmp = _DayRatingsData(entry.value.getDateOfCreation().toString(),
+          entry.value.getDayRating());
+      _graphList.add(tmp);
+    }
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color.fromARGB(0, 0, 0, 0),
         body: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(padding: customTopPadding(0.025)),
-              //
+              const Padding(padding: EdgeInsets.only(top: 24)),
+              // ---------------------------------------------------------------------------
               // Title and search bar
-              //
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: (_displayTitle)
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.center,
                 children: [
-                  //
+                  // ---------------------------------------------------------------------------
                   // Title
-                  //
-                  Padding(
-                    padding: const EdgeInsets.only(left: 18.0, top: 8.0),
-                    child: Text(
-                      'Journals',
-                      style: TextStyle(
-                        fontFamily: 'Roboto',
-                        fontSize: 30,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.amber.shade50,
+                  if (_displayTitle) ...{
+                    Padding(
+                      padding: const EdgeInsets.only(left: 18.0, top: 8.0),
+                      child: Text(
+                        'Journals',
+                        style: TextStyle(
+                          fontFamily: 'Roboto',
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.amber.shade50,
+                        ),
                       ),
                     ),
-                  ),
+                  },
                   const Expanded(child: Text('')),
-                  //
-                  // Search bar
-                  //
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, right: 10.0),
-                    child: Container(
-                      child: OutlinedButton(
-                          style: ButtonStyle(
-                            padding: MaterialStateProperty.resolveWith(
-                                (states) => EdgeInsets.only(left: 8.0)),
-                            fixedSize: MaterialStateProperty.resolveWith(
-                                (states) => const Size(280, 35)),
-                          ),
-                          onPressed: () {},
+                  if (_displayTitle) ...{
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, right: 10.0),
+                      child: SizedBox(
+                        width: _sbw,
+                        height: 40,
+                        child: OutlinedButton(
+                          onPressed: () {
+                            //updateSearchBarSize();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const JournalSearchPage()));
+                          },
                           child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 0.0),
-                                child: Icon(
-                                  Icons.search_outlined,
-                                  size: 22,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(left: 90),
-                                //
-                                // This should become an editable text
-                                //
-                                child: Text(
-                                  'Search',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
+                              Icon(
+                                Icons.search_outlined,
+                                size: 20,
+                                color: Colors.white,
                               ),
                             ],
-                          )),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                  }
                 ],
               ),
-              Padding(padding: customTopPadding(0.05)),
-              //
+              const Padding(padding: EdgeInsets.only(bottom: 24)),
+              // ---------------------------------------------------------------------------
               // Row where journals are shown
-              //
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 reverse: true,
@@ -213,7 +164,8 @@ class _Drawer extends State<Drawer> {
                               });
                         },
                         child: Padding(
-                          padding: const EdgeInsets.only(top: 4.0, right: 6.0, left:0.0),
+                          padding: const EdgeInsets.only(
+                              top: 4.0, right: 6.0, left: 0.0),
                           child: DrawerCard(
                             title: entry.value.getTitle(),
                             body: entry.value.getBody(),
@@ -230,12 +182,34 @@ class _Drawer extends State<Drawer> {
                     ],
                   ],
                 ),
-              )
+              ),
+              SfCartesianChart(
+                primaryXAxis: CategoryAxis(),
+                title: ChartTitle(text: 'Daily Ratings'),
+                tooltipBehavior: TooltipBehavior(enable: true),
+                series: <CartesianSeries<_DayRatingsData, String>>[
+                  LineSeries<_DayRatingsData, String>(
+                    dataSource: _graphList,
+                    xValueMapper: (_DayRatingsData ratings, _) => ratings.date.replaceAll('00:00:00.000', ''),
+                    yValueMapper: (_DayRatingsData ratings, _) =>
+                        ratings.rating,
+                    name: 'Ratings',
+                    dataLabelSettings: DataLabelSettings(isVisible: true),
+                  )
+                ],
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  void updateSearchBarSize() {
+    setState(() {
+      _displayTitle = !_displayTitle;
+      _sbw = (!_displayTitle) ? 200.0 : 70.0;
+    });
   }
 
   void _onJournalsUpdate(Map<int, JournalObject> event) {
@@ -252,10 +226,17 @@ class DrawerPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.black,
       ),
-      child: Drawer(),
+      child: const Drawer(),
     ));
   }
+}
+
+class _DayRatingsData {
+  _DayRatingsData(this.date, this.rating);
+
+  final String date;
+  final int rating;
 }

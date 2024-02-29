@@ -84,6 +84,7 @@ class _SingleNotePage extends State<SingleNotePage> {
     _notesSub?.cancel();
     _settingsSub?.cancel();
     _buttonFocusNode.dispose();
+    _bodyFocusNode.dispose();
     //_bodyTextEditingController.dispose();
     super.dispose();
   }
@@ -178,18 +179,16 @@ class _SingleNotePage extends State<SingleNotePage> {
                                                 ),
                                               ),
                                               onPressed: () {
-                                                Navigator.pop(context, 'Ok');
+                                                Navigator.pop(context, 'Leave');
                                                 Navigator.pop(context);
                                               }),
                                         ],
                                       );
                                     });
-                              }
-                              else{
+                              } else {
                                 Navigator.pop(context);
                               }
-                            }
-                            else{
+                            } else {
                               Navigator.pop(context);
                             }
                           },
@@ -347,9 +346,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                   ),
                   cursorColor: Colors.white,
                   backgroundCursorColor: Colors.black,
-                  onChanged: (String value) {
-                    widget.title = value;
-                  },
+                  onChanged: _onTitleChanged,
                 ),
               ),
             ),
@@ -479,7 +476,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                 showSelectionHandles: true,
                 cursorColor: Colors.white,
                 backgroundCursorColor: const Color.fromARGB(255, 68, 67, 67),
-                onChanged: _onTextChanged,
+                onChanged: _onBodyChanged,
                 readOnly: false,
                 selectionColor: Colors.lightBlue.shade300,
               ),
@@ -490,7 +487,7 @@ class _SingleNotePage extends State<SingleNotePage> {
     );
   }
 
-  void _onTextChanged(String text) {
+  void _onBodyChanged(String text) {
     if (text != widget.body) {
       _undoList.add(widget.body);
       _bodyTextEditingController.text = text;
@@ -498,6 +495,28 @@ class _SingleNotePage extends State<SingleNotePage> {
 
       _bodyTextEditingController.selection = TextSelection.fromPosition(
           TextPosition(offset: _bodyTextInputFormatter.getCursorOffset()));
+
+      if (_autoSave) {
+        _undoColor.value = Colors.white;
+        DateTime now = DateTime.now();
+        NoteObject noteObject = NoteObject(
+            id: widget.id,
+            title: widget.title,
+            body: widget.body,
+            dateOfCreation: widget.dateOfCreation,
+            dateOfLastEdit: DateTime(now.year, now.month, now.day),
+            cardColor: widget.cardColor);
+        _notesService.update(noteObject);
+        // check if the note is already present in the map
+        _notesMap.addAll({widget.id: noteObject});
+        widget.dateOfLastEdit = DateTime(now.year, now.month, now.day);
+      }
+    }
+  }
+
+  void _onTitleChanged(String text){
+    if (text != widget.title) {
+      widget.title = text;
 
       if (_autoSave) {
         _undoColor.value = Colors.white;

@@ -14,15 +14,20 @@ class HiveSettings extends HiveObject {
   @HiveField(1)
   late bool autosave;
 
-  HiveSettings(
-      {required this.id,
-      required this.autosave});
+  @HiveField(2)
+  late bool darkmode;
+
+  HiveSettings({required this.id, required this.autosave, required this.darkmode});
 
   int getId() {
     return id;
   }
 
-  bool getAutosave(){
+  bool getAutosave() {
     return autosave;
+  }
+
+    bool getDarkmode() {
+    return darkmode;
   }
 }

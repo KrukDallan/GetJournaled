@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
+import 'package:getjournaled/db/abstraction/settings_service/settings_map_service.dart';
 import 'package:getjournaled/journals/journal_object.dart';
 import 'package:getjournaled/settings/settings_object.dart';
 import 'package:getjournaled/shared.dart';
@@ -59,7 +60,7 @@ class _NewJournalPage extends State<NewJournalPage> {
     Colors.black,
     Colors.black
   ];
-  int rateIndex = -1;
+  int rateIndex = 0;
 
   final MenuController _menuController = MenuController();
 
@@ -79,9 +80,13 @@ class _NewJournalPage extends State<NewJournalPage> {
 
   final JournalService _journalService = GetIt.I<JournalService>();
 
+  final SettingsService _settingsService = GetIt.I<SettingsService>();
+
   Map<int, JournalObject> _journalMap = {};
 
   StreamSubscription? _journalSub;
+
+  StreamSubscription? _settingsSub;
 
   Future<void> _disableContextMenu() async {}
 
@@ -92,9 +97,18 @@ class _NewJournalPage extends State<NewJournalPage> {
     }
   }
 
+  bool _autoSave = false;
+
+  List<String> _undoList = <String>[];
+  ValueNotifier<Color> _undoColor = ValueNotifier(Colors.grey.shade800);
+  List<String> _redoList = <String>[];
+  ValueNotifier<Color> _redoColor = ValueNotifier(Colors.grey.shade800);
+
   @override
   void dispose() {
     _journalSub?.cancel();
+    _settingsSub?.cancel();
+    myFocusNode.dispose();
     super.dispose();
   }
 
@@ -106,6 +120,9 @@ class _NewJournalPage extends State<NewJournalPage> {
         }));
     _journalSub = _journalService.stream.listen(_onJournalsUpdate);
     _titleTextEditingController.text = widget.title;
+    _settingsSub = _settingsService.stream.listen(_onSettingsUpdate);
+    _settingsService.get(0).then((value) => _autoSave = value!.getAutoSave());
+
     titleColor = ValueNotifier(titleTextColor);
     _oldTitle = widget.title;
     _oldBody = widget.body;
@@ -125,6 +142,8 @@ class _NewJournalPage extends State<NewJournalPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                // ---------------------------------------------------------------------------
+                // Arrow back
                 Padding(
                   padding: const EdgeInsets.only(top: 4.0, left: 12.0),
                   child: Container(
@@ -139,41 +158,47 @@ class _NewJournalPage extends State<NewJournalPage> {
                           iconSize: 15.0,
                           padding: const EdgeInsets.only(bottom: 1.0),
                           onPressed: () {
-                            if ((widget.title != _oldTitle) ||
-                                (widget.body != _oldBody)) {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text('Exit?'),
-                                      content: const Text(
-                                          'You have unsaved changes, if you leave now they will be lost.'),
-                                      actions: [
-                                        TextButton(
-                                          child: const Text(
-                                            'Cancel',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pop(context, 'Cancel');
-                                          },
-                                        ),
-                                        TextButton(
+                            if (_autoSave == false) {
+                              if ((widget.title != _oldTitle) ||
+                                  (widget.body != _oldBody)) {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        backgroundColor:
+                                            Color.fromARGB(255, 29, 29, 31),
+                                        title: const Text('Exit?'),
+                                        content: const Text(
+                                            'You have unsaved changes, if you leave now they will be lost.'),
+                                        actions: [
+                                          TextButton(
                                             child: const Text(
-                                              'Leave',
+                                              'Cancel',
                                               style: TextStyle(
                                                 color: Colors.white,
                                               ),
                                             ),
                                             onPressed: () {
-                                              Navigator.pop(context, 'Ok');
-                                              Navigator.pop(context);
-                                            }),
-                                      ],
-                                    );
-                                  });
+                                              Navigator.pop(context, 'Cancel');
+                                            },
+                                          ),
+                                          TextButton(
+                                              child: const Text(
+                                                'Leave',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context, 'Ok');
+                                                Navigator.pop(context);
+                                              }),
+                                        ],
+                                      );
+                                    });
+                              } else {
+                                Navigator.pop(context);
+                              }
                             } else {
                               Navigator.pop(context);
                             }
@@ -186,54 +211,144 @@ class _NewJournalPage extends State<NewJournalPage> {
                   ),
                 ),
                 const Expanded(child: Text('')),
-                //
+                // ---------------------------------------------------------------------------
                 // Save button
-                //
-                Padding(
-                  padding: const EdgeInsets.only(top: 4.0, right: 15.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade800,
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: SizedBox(
-                      width: 35,
-                      height: 35,
-                      child: IconButton(
-                        padding: const EdgeInsets.only(bottom: 0.0),
-                        highlightColor: Colors.teal.shade200,
-                        onPressed: () {
-                          DateTime now = DateTime.now();
-                          JournalObject noteObject = JournalObject(
-                              id: widget.id,
-                              title: widget.title,
-                              body: widget.body,
-                              dateOfCreation:
-                                  DateTime(now.year, now.month, now.day),
-                              cardColor: boxColor,
-                              highlight: widget.highlight,
-                              lowlight: widget.lowlight,
-                              noteWorthy: widget.noteWorthy,
-                              dayRating: rateIndex);
-                          _journalService.add(noteObject);
-                          _journalMap.addAll({widget.id: noteObject});
-                          _oldBody = widget.body;
-                          _oldTitle = widget.title;
+                if (_autoSave) ...{
+                  // ---------------------------------------------------------------------------
+                  // Undo & Redo
+                  Padding(
+                      padding: const EdgeInsets.only(right: 4.0),
+                      child: ValueListenableBuilder(
+                        valueListenable: _undoColor,
+                        builder:
+                            (BuildContext context, Color color, Widget? child) {
+                          return IconButton(
+                            onPressed: () {
+                              if (_undoList.isNotEmpty) {
+                                if (_redoList.isEmpty) {
+                                  _redoColor.value = Colors.white;
+                                }
+                                _redoList.add(_bodyTextEditingController.text);
+                                _bodyTextEditingController.text =
+                                    _undoList.removeLast();
+                                widget.body = _bodyTextEditingController.text;
+                                if (_undoList.isEmpty) {
+                                  _undoColor.value = Colors.grey.shade800;
+                                }
+                                setState(() {});
+                              }
+                            },
+                            icon: Icon(
+                              Icons.undo_rounded,
+                              color: color, // make color dynamic
+                            ),
+                          );
                         },
-                        icon: const Icon(
-                          Icons.save_sharp,
-                          size: 18.0,
-                          color: Colors.white,
+                      )),
+                  Padding(
+                      padding: const EdgeInsets.only(right: 4.0, left: 4.0),
+                      child: ValueListenableBuilder(
+                          valueListenable: _redoColor,
+                          builder: (BuildContext context, Color color,
+                              Widget? child) {
+                            return IconButton(
+                              onPressed: () {
+                                if (_redoList.isNotEmpty) {
+                                  if (_undoList.isEmpty) {
+                                    _undoColor.value = Colors.white;
+                                  }
+                                  _undoList
+                                      .add(_bodyTextEditingController.text);
+                                  _bodyTextEditingController.text =
+                                      _redoList.removeLast();
+                                  widget.body = _bodyTextEditingController.text;
+                                  if (_redoList.isEmpty) {
+                                    _redoColor.value = Colors.grey.shade800;
+                                  }
+                                  setState(() {});
+                                }
+                              },
+                              icon: Icon(
+                                Icons.redo_rounded,
+                                color: color,
+                              ),
+                            );
+                          })),
+                },
+                if (_autoSave == false) ...{
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0, right: 15.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade800,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: SizedBox(
+                        width: 35,
+                        height: 35,
+                        child: IconButton(
+                          padding: const EdgeInsets.only(bottom: 0.0),
+                          highlightColor: Colors.teal.shade200,
+                          onPressed: () {
+                            if (rateIndex != -1) {
+                              DateTime now = DateTime.now();
+                              JournalObject noteObject = JournalObject(
+                                  id: widget.id,
+                                  title: widget.title,
+                                  body: widget.body,
+                                  dateOfCreation:
+                                      DateTime(now.year, now.month, now.day),
+                                  cardColor: boxColor,
+                                  highlight: widget.highlight,
+                                  lowlight: widget.lowlight,
+                                  noteWorthy: widget.noteWorthy,
+                                  dayRating: rateIndex);
+                              _journalService.add(noteObject);
+                              _journalMap.addAll({widget.id: noteObject});
+                              _oldBody = widget.body;
+                              _oldTitle = widget.title;
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      backgroundColor:
+                                          Color.fromARGB(255, 29, 29, 31),
+                                      title: const Text('Rate your day'),
+                                      content: const Text(
+                                          'Rate your day before saving!'),
+                                      actions: [
+                                        TextButton(
+                                          child: const Text(
+                                            'Oki',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pop(context, 'Oki');
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  });
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.save_sharp,
+                            size: 18.0,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                },
               ],
             ),
-            //
+            // ---------------------------------------------------------------------------
             // Title
-            //
             Padding(
               padding: const EdgeInsets.only(left: 16, top: 8),
               child: Material(
@@ -242,7 +357,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                     showCursor: true,
                     controller: _titleTextEditingController,
                     inputFormatters: [_tTIF],
-                    focusNode: myFocusNode,
+                    focusNode: FocusNode(),
                     style: TextStyle(
                       fontFamily: 'Roboto-Medium',
                       fontSize: 28,
@@ -257,15 +372,13 @@ class _NewJournalPage extends State<NewJournalPage> {
                         },
                       ).valueListenable.value,
                     ),
-                    autofocus: true,
                     cursorColor: colorScheme.onPrimary,
                     backgroundCursorColor: Colors.black,
                     onChanged: _onTitleTextChanged,
                   )),
             ),
-            //
+            // ---------------------------------------------------------------------------
             // Color box
-            //
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -326,9 +439,8 @@ class _NewJournalPage extends State<NewJournalPage> {
                 ),
               ],
             ),
-            //
+            // ---------------------------------------------------------------------------
             // Dates
-            //
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -345,13 +457,13 @@ class _NewJournalPage extends State<NewJournalPage> {
                 ),
               ],
             ),
-            //
+            // ---------------------------------------------------------------------------
             // Main section
-            //
             const Padding(
               padding: EdgeInsets.only(top: 10.0, left: 22.0),
               child: Text('How was your day?'),
             ),
+            // ---------------------------------------------------------------------------
             // Day rating
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -373,6 +485,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                         }
                         rateButtonsColors[0] = Colors.lightBlue.shade100;
                         rateIndex = 0;
+                        widget.dayRating = rateIndex;
                         setState(() {});
                       },
                       child: Text(
@@ -401,6 +514,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                         }
                         rateButtonsColors[1] = Colors.lightBlue.shade100;
                         rateIndex = 1;
+                        widget.dayRating = rateIndex;
                         setState(() {});
                       },
                       child: Text(
@@ -430,6 +544,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                         }
                         rateButtonsColors[2] = Colors.lightBlue.shade100;
                         rateIndex = 2;
+                        widget.dayRating = rateIndex;
                         setState(() {});
                       },
                       child: Text(
@@ -464,6 +579,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                         }
                         rateButtonsColors[3] = Colors.lightBlue.shade100;
                         rateIndex = 3;
+                        widget.dayRating = rateIndex;
                         setState(() {});
                       },
                       child: Text(
@@ -493,6 +609,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                         }
                         rateButtonsColors[4] = Colors.lightBlue.shade100;
                         rateIndex = 4;
+                        widget.dayRating = rateIndex;
                         setState(() {});
                       },
                       child: Text(
@@ -507,11 +624,11 @@ class _NewJournalPage extends State<NewJournalPage> {
                 ),
               ],
             ),
-            //
+            // ---------------------------------------------------------------------------
             // Body
-            //
             Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 26.0, top: 10.0),
+              padding:
+                  const EdgeInsets.only(left: 20.0, right: 26.0, top: 10.0),
               child: Container(
                 padding: EdgeInsets.all(8.0),
                 height: MediaQuery.of(context).size.height * 80 / 100,
@@ -526,7 +643,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                 child: EditableText(
                   controller: _bodyTextEditingController,
                   inputFormatters: [_bodyTextInputFormatter],
-                  focusNode: FocusNode(),
+                  focusNode: myFocusNode,
                   style: TextStyle(
                     fontFamily: 'Roboto',
                     fontSize: 16,
@@ -538,9 +655,6 @@ class _NewJournalPage extends State<NewJournalPage> {
                   onChanged: _onBodyTextChanged,
                 ),
               ),
-              //
-              // Main body
-              //
             ),
           ],
         ),
@@ -556,6 +670,23 @@ class _NewJournalPage extends State<NewJournalPage> {
 
       _bodyTextEditingController.selection = TextSelection.fromPosition(
           TextPosition(offset: _bodyTextInputFormatter.getCursorOffset()));
+    }
+    if (_autoSave) {
+      _undoColor.value = Colors.white;
+      JournalObject journalObject = JournalObject(
+        id: widget.id,
+        title: widget.title,
+        body: widget.body,
+        dateOfCreation: widget.dateOfCreation,
+        cardColor: widget.cardColor,
+        highlight: widget.highlight,
+        lowlight: widget.lowlight,
+        noteWorthy: widget.noteWorthy,
+        dayRating: rateIndex,
+      );
+      _journalService.update(journalObject);
+      // check if the note is already present in the map
+      _journalMap.addAll({widget.id: journalObject});
     }
   }
 
@@ -575,6 +706,24 @@ class _NewJournalPage extends State<NewJournalPage> {
 
       _titleTextEditingController.selection = TextSelection.fromPosition(
           TextPosition(offset: _tTIF.getCursorOffset()));
+    }
+
+    if (_autoSave) {
+      _undoColor.value = Colors.white;
+      JournalObject journalObject = JournalObject(
+        id: widget.id,
+        title: widget.title,
+        body: widget.body,
+        dateOfCreation: widget.dateOfCreation,
+        cardColor: widget.cardColor,
+        highlight: widget.highlight,
+        lowlight: widget.lowlight,
+        noteWorthy: widget.noteWorthy,
+        dayRating: rateIndex,
+      );
+      _journalService.update(journalObject);
+      // check if the note is already present in the map
+      _journalMap.addAll({widget.id: journalObject});
     }
   }
 

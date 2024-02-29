@@ -19,17 +19,20 @@ class HiveSettingsAdapter extends TypeAdapter<HiveSettings> {
     return HiveSettings(
       id: fields[0] as int,
       autosave: fields[1] as bool,
+      darkmode: fields[2] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, HiveSettings obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.autosave);
+      ..write(obj.autosave)
+      ..writeByte(2)
+      ..write(obj.darkmode);
   }
 
   @override

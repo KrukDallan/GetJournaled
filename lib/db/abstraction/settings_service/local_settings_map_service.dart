@@ -10,6 +10,7 @@ class LocalSettingsMapService extends SettingsService{
   late Box _boxSettings;
   int _uniqueId = 0;
 
+
    @override
   Future<SettingsObject?> get(int id) async {
       return _cacheMap[id];
@@ -24,7 +25,7 @@ class LocalSettingsMapService extends SettingsService{
   @override
   Future<void> open() async {
     Hive.registerAdapter(HiveSettingsAdapter());
-    _boxSettings = await Hive.openBox<HiveSettings>('HiveSettings');
+    _boxSettings = await Hive.openBox<HiveSettings>('HiveSettings001');
     loadBoxSettings();
     loadCacheMap();
   }
@@ -52,6 +53,7 @@ class LocalSettingsMapService extends SettingsService{
       HiveSettings hs = HiveSettings(
         id: settingsObject.getId(),
         autosave: settingsObject.getAutoSave(),
+        darkmode: settingsObject.getDarkMode(),
       );
       _boxSettings.put(settingsObject.getId(), hs);
       return true;
@@ -67,7 +69,9 @@ class LocalSettingsMapService extends SettingsService{
     if(_boxSettings.isEmpty){
       HiveSettings hiveSettings = HiveSettings(
         id: 0, 
-        autosave: false);
+        autosave: false,
+        darkmode: true,
+        );
         _boxSettings.add(hiveSettings);
     }
   }
@@ -79,6 +83,8 @@ class LocalSettingsMapService extends SettingsService{
         SettingsObject settingsObject = SettingsObject(
           id: hs.id, 
           autoSave: hs.autosave,
+          darkMode: hs.darkmode,
+          
           );
           _cacheMap.addAll({hs.id : settingsObject});
       }
