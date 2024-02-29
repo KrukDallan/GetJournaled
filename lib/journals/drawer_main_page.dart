@@ -4,10 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
 import 'package:getjournaled/journals/journal_object.dart';
 import 'package:getjournaled/journals/journal_search_page.dart';
-import 'package:getjournaled/shared.dart';
 import 'package:getjournaled/journals/journal_card.dart';
 import 'package:get_it/get_it.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class Drawer extends StatefulWidget {

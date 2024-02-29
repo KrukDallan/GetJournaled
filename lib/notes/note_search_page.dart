@@ -1,10 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 import 'package:getjournaled/notes/note_object.dart';
-import 'package:getjournaled/shared.dart';
 import 'package:getjournaled/notes/note_card.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/scheduler.dart';

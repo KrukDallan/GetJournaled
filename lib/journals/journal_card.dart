@@ -6,7 +6,7 @@ import 'package:getjournaled/journals/journal_page.dart';
 import 'package:getjournaled/shared.dart';
 
 class DrawerCard extends StatefulWidget {
-  late int id;
+  late final int id;
   late String title;
   late String body;
   late DateTime dateOfCreation;
