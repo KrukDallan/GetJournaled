@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
 import 'package:getjournaled/journals/journal_object.dart';
 import 'package:getjournaled/shared.dart';
@@ -9,14 +8,14 @@ import 'package:getjournaled/journals/journal_card.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/scheduler.dart';
 
-class JournalSearchPage extends StatefulWidget {
-  const JournalSearchPage({super.key});
+class SearchPage extends StatefulWidget {
+  const SearchPage({super.key});
 
   @override
-  State<JournalSearchPage> createState() => _JournalSearchPage();
+  State<SearchPage> createState() => _SearchPage();
 }
 
-class _JournalSearchPage extends State<JournalSearchPage> {
+class _SearchPage extends State<SearchPage> {
   final JournalService _journalService = GetIt.I<JournalService>();
 
   Map<int, JournalObject> _journalMap = {};
@@ -25,7 +24,8 @@ class _JournalSearchPage extends State<JournalSearchPage> {
 
   StreamSubscription? _journalSub;
 
-  final TextEditingController _titleTextEditingController = TextEditingController();
+  final TextEditingController _titleTextEditingController =
+      TextEditingController();
 
   final FocusNode _myFocusNode = FocusNode();
 
@@ -70,35 +70,36 @@ class _JournalSearchPage extends State<JournalSearchPage> {
                 children: [
                   // ---------------------------------------------------------------------------
                   // Search bar
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8.0, right: 4.0),
-                      child: AnimatedSize(
-                        duration: const Duration(milliseconds: 580),
-                        curve: Curves.easeOutQuint,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0, right: 4.0),
+                    child: AnimatedSize(
+                      duration: const Duration(milliseconds: 580),
+                      curve: Curves.easeOutQuint,
+                      child: SizedBox(
+                        width: 300,
+                        height: 40,
                         child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: colorScheme.onPrimary),
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            padding:
-                                const EdgeInsets.only(top: 6.0, right: 4.0, left: 4.0),
-                            child: EditableText(
-                              autofocus: true,
-                              showCursor: true,
-                              controller: _titleTextEditingController,
-                              focusNode: _myFocusNode,
-                              style: TextStyle(
-                                fontFamily: 'Roboto',
-                                fontSize: 20,
-                                color: colorScheme.onPrimary,
-                              ),
-                              cursorColor: colorScheme.onPrimary,
-                              backgroundCursorColor: Colors.black,
-                              onChanged: _onSearchBar,
-                            ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: colorScheme.onPrimary),
+                            borderRadius: BorderRadius.circular(12.0),
                           ),
-                        
+                          padding: const EdgeInsets.only(
+                              top: 6.0, right: 4.0, left: 4.0),
+                          child: EditableText(
+                            autofocus: true,
+                            showCursor: true,
+                            controller: _titleTextEditingController,
+                            focusNode: _myFocusNode,
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              fontSize: 20,
+                              color: colorScheme.onPrimary,
+                            ),
+                            cursorColor: colorScheme.onPrimary,
+                            backgroundCursorColor: Colors.black,
+                            onChanged: _onSearchBar,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -153,11 +154,10 @@ class _JournalSearchPage extends State<JournalSearchPage> {
   }
 
   void _onSearchBar(String text) {
-    if(text == "" || text == " "){
+    print(text);
+    if (text == "") {
       _searchMathces.clear();
-      setState(() {
-        
-      });
+      setState(() {});
       return;
     }
     _searchMathces.clear();
@@ -165,6 +165,7 @@ class _JournalSearchPage extends State<JournalSearchPage> {
       var tmp = j.value;
       if (tmp.getTitle().contains(text) ||
           tmp.getBody().toString().contains(text)) {
+             print(text);
         _searchMathces.addAll({j.key: j.value});
       }
     }
@@ -174,7 +175,7 @@ class _JournalSearchPage extends State<JournalSearchPage> {
 
   void _onJournalsUpdate(Map<int, JournalObject> event) {
     setState(() {
-      _journalMap = event;
+      //_journalMap = event;
     });
   }
 }

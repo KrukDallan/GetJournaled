@@ -44,7 +44,7 @@ class JournalPage extends StatefulWidget {
 class _NewJournalPage extends State<JournalPage> {
   final JournalService _journalService = GetIt.I<JournalService>();
 
-  SettingsService _settingsService = GetIt.I<SettingsService>();
+  final SettingsService _settingsService = GetIt.I<SettingsService>();
 
   Map<int, JournalObject> _journalMap = {};
 
@@ -53,9 +53,8 @@ class _NewJournalPage extends State<JournalPage> {
   StreamSubscription? _settingsSub;
 
   TextEditingController _bodyTextEditingController = TextEditingController();
-  TextEditingController _titleTextEditingController = TextEditingController();
+  final TextEditingController _titleTextEditingController = TextEditingController();
   final MyTextInputFormatter _bTIF = MyTextInputFormatter();
-  final TitleTextInputFormatter _tTIF = TitleTextInputFormatter();
 
   FocusNode myFocusNode = FocusNode();
 
@@ -78,10 +77,10 @@ class _NewJournalPage extends State<JournalPage> {
   //
   bool _autoSave = false;
 
-  List<String> _undoList = <String>[];
-  ValueNotifier<Color> _undoColor = ValueNotifier(Colors.grey.shade800);
-  List<String> _redoList = <String>[];
-  ValueNotifier<Color> _redoColor = ValueNotifier(Colors.grey.shade800);
+  final List<String> _undoList = <String>[];
+  final ValueNotifier<Color> _undoColor = ValueNotifier(Colors.grey.shade800);
+  final List<String> _redoList = <String>[];
+  final ValueNotifier<Color> _redoColor = ValueNotifier(Colors.grey.shade800);
 
   final FocusNode _buttonFocusNode = FocusNode();
   final FocusNode _bodyFocusNode = FocusNode();
@@ -100,15 +99,6 @@ class _NewJournalPage extends State<JournalPage> {
 
   late String _oldTitle;
   late String _oldBody;
-
-  Future<void> _disableContextMenu() async {}
-
-  bool _menuWasEnabled = false;
-  void _reenableContextMenu() {
-    if (_menuWasEnabled && !BrowserContextMenu.enabled) {
-      BrowserContextMenu.enableContextMenu();
-    }
-  }
 
   @override
   void dispose() {
@@ -377,7 +367,7 @@ class _NewJournalPage extends State<JournalPage> {
                     _menuController.open(position: pos.localPosition);
                   },
                   child: Padding(
-                    padding: EdgeInsets.only(top: 8.0, left: 22.0),
+                    padding: const EdgeInsets.only(top: 8.0, left: 22.0),
                     child: Container(
                       color: Colors.white,
                       child: SizedBox(

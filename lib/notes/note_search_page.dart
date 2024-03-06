@@ -149,6 +149,14 @@ class _NoteSearchPage extends State<NoteSearchPage> {
   }
 
   void _onSearchBar(String text) {
+    print(text);
+    if(text == "" || text == " "){
+      _searchMathces.clear();
+      setState(() {
+        
+      });
+      return;
+    }
     _searchMathces.clear();
     for (var j in _noteMap.entries) {
       var tmp = j.value;

@@ -20,7 +20,7 @@ class _Drawer extends State<Drawer> {
 
   Map<int, JournalObject> _journalMap = {};
 
-  List<_DayRatingsData> _graphList = [];
+  final List<_DayRatingsData> _graphList = [];
 
   StreamSubscription? _journalSub;
 
@@ -45,6 +45,7 @@ class _Drawer extends State<Drawer> {
 
   @override
   Widget build(BuildContext context) {
+    _graphList.clear();
     for (var entry in _journalMap.entries) {
       var tmp = _DayRatingsData(entry.value.getDateOfCreation().toString(),
           entry.value.getDayRating());
@@ -182,8 +183,8 @@ class _Drawer extends State<Drawer> {
                 ),
               ),
               SfCartesianChart(
-                primaryXAxis: CategoryAxis(),
-                title: ChartTitle(text: 'Daily Ratings'),
+                primaryXAxis: const CategoryAxis(),
+                title: const ChartTitle(text: 'Daily Ratings'),
                 tooltipBehavior: TooltipBehavior(enable: true),
                 series: <CartesianSeries<_DayRatingsData, String>>[
                   LineSeries<_DayRatingsData, String>(
@@ -192,7 +193,7 @@ class _Drawer extends State<Drawer> {
                     yValueMapper: (_DayRatingsData ratings, _) =>
                         ratings.rating,
                     name: 'Ratings',
-                    dataLabelSettings: DataLabelSettings(isVisible: true),
+                    dataLabelSettings: const DataLabelSettings(isVisible: true),
                   )
                 ],
               ),

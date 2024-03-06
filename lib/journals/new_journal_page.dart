@@ -486,7 +486,20 @@ class _NewJournalPage extends State<NewJournalPage> {
                         rateButtonsColors[0] = Colors.lightBlue.shade100;
                         rateIndex = 0;
                         widget.dayRating = rateIndex;
-                        setState(() {});
+                        setState(() {
+                          JournalObject journalObject = JournalObject(
+                            id: widget.id,
+                            title: widget.title,
+                            body: widget.body,
+                            dateOfCreation: widget.dateOfCreation,
+                            cardColor: widget.cardColor,
+                            highlight: widget.highlight,
+                            lowlight: widget.lowlight,
+                            noteWorthy: widget.noteWorthy,
+                            dayRating: rateIndex,
+                          );
+                          _journalService.update(journalObject);
+                        });
                       },
                       child: Text(
                         "Terrible\n (╥_╥)",
@@ -515,7 +528,20 @@ class _NewJournalPage extends State<NewJournalPage> {
                         rateButtonsColors[1] = Colors.lightBlue.shade100;
                         rateIndex = 1;
                         widget.dayRating = rateIndex;
-                        setState(() {});
+                        setState(() {
+                          JournalObject journalObject = JournalObject(
+                            id: widget.id,
+                            title: widget.title,
+                            body: widget.body,
+                            dateOfCreation: widget.dateOfCreation,
+                            cardColor: widget.cardColor,
+                            highlight: widget.highlight,
+                            lowlight: widget.lowlight,
+                            noteWorthy: widget.noteWorthy,
+                            dayRating: rateIndex,
+                          );
+                          _journalService.update(journalObject);
+                        });
                       },
                       child: Text(
                         "Not so good\n ┐(´～｀)┌",
@@ -545,7 +571,20 @@ class _NewJournalPage extends State<NewJournalPage> {
                         rateButtonsColors[2] = Colors.lightBlue.shade100;
                         rateIndex = 2;
                         widget.dayRating = rateIndex;
-                        setState(() {});
+                        setState(() {
+                          JournalObject journalObject = JournalObject(
+                            id: widget.id,
+                            title: widget.title,
+                            body: widget.body,
+                            dateOfCreation: widget.dateOfCreation,
+                            cardColor: widget.cardColor,
+                            highlight: widget.highlight,
+                            lowlight: widget.lowlight,
+                            noteWorthy: widget.noteWorthy,
+                            dayRating: rateIndex,
+                          );
+                          _journalService.update(journalObject);
+                        });
                       },
                       child: Text(
                         "Normal\n  ( ﾟｰﾟ)",
@@ -580,7 +619,20 @@ class _NewJournalPage extends State<NewJournalPage> {
                         rateButtonsColors[3] = Colors.lightBlue.shade100;
                         rateIndex = 3;
                         widget.dayRating = rateIndex;
-                        setState(() {});
+                        setState(() {
+                          JournalObject journalObject = JournalObject(
+                            id: widget.id,
+                            title: widget.title,
+                            body: widget.body,
+                            dateOfCreation: widget.dateOfCreation,
+                            cardColor: widget.cardColor,
+                            highlight: widget.highlight,
+                            lowlight: widget.lowlight,
+                            noteWorthy: widget.noteWorthy,
+                            dayRating: rateIndex,
+                          );
+                          _journalService.update(journalObject);
+                        });
                       },
                       child: Text(
                         "     Good!\n （＾ｖ＾）",
@@ -610,7 +662,20 @@ class _NewJournalPage extends State<NewJournalPage> {
                         rateButtonsColors[4] = Colors.lightBlue.shade100;
                         rateIndex = 4;
                         widget.dayRating = rateIndex;
-                        setState(() {});
+                        setState(() {
+                          JournalObject journalObject = JournalObject(
+                            id: widget.id,
+                            title: widget.title,
+                            body: widget.body,
+                            dateOfCreation: widget.dateOfCreation,
+                            cardColor: widget.cardColor,
+                            highlight: widget.highlight,
+                            lowlight: widget.lowlight,
+                            noteWorthy: widget.noteWorthy,
+                            dayRating: rateIndex,
+                          );
+                          _journalService.update(journalObject);
+                        });
                       },
                       child: Text(
                         " Very good!\n˖✧◝(⁰▿⁰)◜✧˖",
@@ -759,7 +824,7 @@ class _NewJournalPage extends State<NewJournalPage> {
         body: widget.body,
         dateOfCreation: widget.dateOfCreation,
         cardColor: widget.cardColor,
-        dayRating: widget.dayRating,
+        dayRating: rateIndex,
         highlight: widget.highlight,
         lowlight: widget.lowlight,
         noteWorthy: widget.noteWorthy,
