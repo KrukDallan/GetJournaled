@@ -160,11 +160,13 @@ class _JournalSearchPage extends State<JournalSearchPage> {
       });
       return;
     }
+
+    final _text = text.toLowerCase();
     _searchMathces.clear();
     for (var j in _journalMap.entries) {
       var tmp = j.value;
-      if (tmp.getTitle().contains(text) ||
-          tmp.getBody().toString().contains(text)) {
+      if (tmp.getTitle().toLowerCase().contains(_text) ||
+          tmp.getBody().toString().toLowerCase().contains(_text)) {
         _searchMathces.addAll({j.key: j.value});
       }
     }

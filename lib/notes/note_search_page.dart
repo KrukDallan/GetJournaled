@@ -23,7 +23,8 @@ class _NoteSearchPage extends State<NoteSearchPage> {
 
   StreamSubscription? _noteSub;
 
-  final TextEditingController _titleTextEditingController = TextEditingController();
+  final TextEditingController _titleTextEditingController =
+      TextEditingController();
 
   final FocusNode _myFocusNode = FocusNode();
 
@@ -75,28 +76,27 @@ class _NoteSearchPage extends State<NoteSearchPage> {
                         duration: const Duration(milliseconds: 580),
                         curve: Curves.easeOutQuint,
                         child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: colorScheme.onPrimary),
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            padding:
-                                const EdgeInsets.only(top: 6.0, right: 4.0, left: 4.0),
-                            child: EditableText(
-                              autofocus: true,
-                              showCursor: true,
-                              controller: _titleTextEditingController,
-                              focusNode: _myFocusNode,
-                              style: TextStyle(
-                                fontFamily: 'Roboto',
-                                fontSize: 20,
-                                color: colorScheme.onPrimary,
-                              ),
-                              cursorColor: colorScheme.onPrimary,
-                              backgroundCursorColor: Colors.black,
-                              onChanged: _onSearchBar,
-                            ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: colorScheme.onPrimary),
+                            borderRadius: BorderRadius.circular(12.0),
                           ),
-                        
+                          padding: const EdgeInsets.only(
+                              top: 6.0, right: 4.0, left: 4.0),
+                          child: EditableText(
+                            autofocus: true,
+                            showCursor: true,
+                            controller: _titleTextEditingController,
+                            focusNode: _myFocusNode,
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              fontSize: 20,
+                              color: colorScheme.onPrimary,
+                            ),
+                            cursorColor: colorScheme.onPrimary,
+                            backgroundCursorColor: Colors.black,
+                            onChanged: _onSearchBar,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -131,9 +131,8 @@ class _NoteSearchPage extends State<NoteSearchPage> {
                             body: entry.value.getBody(),
                             id: entry.value.getId(),
                             dateOfCreation: entry.value.getDateOfCreation(),
-                            cardColor: entry.value.getCardColor(), 
+                            cardColor: entry.value.getCardColor(),
                             dateOfLastEdit: entry.value.getDateOfLastEdit(),
-                            
                           ),
                         ),
                       ),
@@ -149,23 +148,25 @@ class _NoteSearchPage extends State<NoteSearchPage> {
   }
 
   void _onSearchBar(String text) {
-    print(text);
-    if(text == "" || text == " "){
+    if (text == "" || text == " ") {
       _searchMathces.clear();
-      setState(() {
-        
-      });
+      setState(() {});
       return;
     }
+
+    final _text = text.toLowerCase();
     _searchMathces.clear();
     for (var j in _noteMap.entries) {
       var tmp = j.value;
-      if (tmp.getTitle().toString().contains(text) ||
-          tmp.getBody().toString().contains(text)) {
+      if (tmp
+              .getTitle()
+              .toString()
+              .toLowerCase()
+              .contains(_text) ||
+          tmp.getBody().toString().toLowerCase().contains(_text)) {
         _searchMathces.addAll({j.key: j.value});
       }
     }
-
     setState(() {});
   }
 
