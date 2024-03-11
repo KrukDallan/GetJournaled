@@ -82,7 +82,7 @@ class _JournalSearchPage extends State<JournalSearchPage> {
                               borderRadius: BorderRadius.circular(12.0),
                             ),
                             padding:
-                                const EdgeInsets.only(top: 6.0, right: 4.0, left: 4.0),
+                                const EdgeInsets.only(top: 5.0, right: 4.0, left: 4.0, bottom: 5.0),
                             child: EditableText(
                               autofocus: true,
                               showCursor: true,

@@ -6,6 +6,7 @@ import 'package:getjournaled/journals/journal_object.dart';
 import 'package:getjournaled/journals/journal_search_page.dart';
 import 'package:getjournaled/journals/journal_card.dart';
 import 'package:get_it/get_it.dart';
+import 'package:getjournaled/main.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class Drawer extends StatefulWidget {
@@ -51,9 +52,11 @@ class _Drawer extends State<Drawer> {
           entry.value.getDayRating());
       _graphList.add(tmp);
     }
+    var colorScheme = Theme.of(context).colorScheme;
+    
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+        backgroundColor: colorScheme.primary,
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

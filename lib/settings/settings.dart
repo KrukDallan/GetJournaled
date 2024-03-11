@@ -44,24 +44,27 @@ class _Settings extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
+    var settingsCardColor = (_darkMode)? Colors.grey.shade900 : Color.fromARGB(255, 231, 240, 243);
     return SafeArea(
         child: Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: colorScheme.primary,
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Card(
-              color: Colors.grey.shade900,
+              color: settingsCardColor,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
+                   Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Text(
                       'Use autosave',
                       style:
-                          TextStyle(fontFamily: 'Roboto', color: Colors.white),
+                          TextStyle(
+                            fontFamily: 'Roboto', 
+                            color: colorScheme.onPrimary),
                     ),
                   ),
                   Padding(
@@ -79,16 +82,18 @@ class _Settings extends State<Settings> {
               ),
             ),
             Card(
-              color: Colors.grey.shade900,
+              color: settingsCardColor,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Text(
                       'Enable darkmode',
                       style:
-                          TextStyle(fontFamily: 'Roboto', color: Colors.white),
+                          TextStyle(
+                            fontFamily: 'Roboto', 
+                            color: colorScheme.onPrimary),
                     ),
                   ),
                   Padding(

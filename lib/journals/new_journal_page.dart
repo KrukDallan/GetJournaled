@@ -1,10 +1,6 @@
-// TODO: una volta che l'utente ha compilato i campi, pusha le info nell'hive
-// box, e prendile in "drawer.dart" o la classe che poi gestirà questo.
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
 import 'package:getjournaled/db/abstraction/settings_service/settings_map_service.dart';
@@ -41,8 +37,8 @@ class NewJournalPage extends StatefulWidget {
 }
 
 class _NewJournalPage extends State<NewJournalPage> {
-  TextEditingController _bodyTextEditingController = TextEditingController();
-  TextEditingController _titleTextEditingController = TextEditingController();
+  final TextEditingController _bodyTextEditingController = TextEditingController();
+  final TextEditingController _titleTextEditingController = TextEditingController();
   final MyTextInputFormatter _bodyTextInputFormatter = MyTextInputFormatter();
   final TitleTextInputFormatter _tTIF = TitleTextInputFormatter();
   bool isTitleWhite = false;
@@ -88,21 +84,12 @@ class _NewJournalPage extends State<NewJournalPage> {
 
   StreamSubscription? _settingsSub;
 
-  Future<void> _disableContextMenu() async {}
-
-  bool _menuWasEnabled = false;
-  void _reenableContextMenu() {
-    if (_menuWasEnabled && !BrowserContextMenu.enabled) {
-      BrowserContextMenu.enableContextMenu();
-    }
-  }
-
   bool _autoSave = false;
 
-  List<String> _undoList = <String>[];
-  ValueNotifier<Color> _undoColor = ValueNotifier(Colors.grey.shade800);
-  List<String> _redoList = <String>[];
-  ValueNotifier<Color> _redoColor = ValueNotifier(Colors.grey.shade800);
+  final List<String> _undoList = <String>[];
+  final ValueNotifier<Color> _undoColor = ValueNotifier(Colors.grey.shade800);
+  final List<String> _redoList = <String>[];
+  final ValueNotifier<Color> _redoColor = ValueNotifier(Colors.grey.shade800);
 
   @override
   void dispose() {

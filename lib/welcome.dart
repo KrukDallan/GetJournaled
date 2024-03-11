@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
+import 'package:getjournaled/db/abstraction/settings_service/settings_map_service.dart';
 import 'package:getjournaled/journals/new_journal_page.dart';
 import 'package:getjournaled/notes/new_note_single_page.dart';
+import 'package:getjournaled/settings/settings_object.dart';
 import 'package:getjournaled/shared.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
@@ -18,7 +20,7 @@ class WelcomePage extends StatefulWidget {
   State<StatefulWidget> createState() => _WelcomePage();
 }
 
-class _WelcomePage extends State<WelcomePage> with TickerProviderStateMixin{
+class _WelcomePage extends State<WelcomePage> with TickerProviderStateMixin {
   final NoteService _notesService = GetIt.I<NoteService>();
 
   StreamSubscription? _notesSub;
@@ -26,28 +28,35 @@ class _WelcomePage extends State<WelcomePage> with TickerProviderStateMixin{
   final JournalService _journalService = GetIt.I<JournalService>();
   StreamSubscription? _journalSub;
 
+  final SettingsService _settingsService = GetIt.I<SettingsService>();
+
+  StreamSubscription? _settingsSub;
+
   double opacity = 1.0;
 
   @override
   void dispose() {
     _notesSub?.cancel();
+    _settingsSub?.cancel();
+    _journalSub?.cancel();
     super.dispose();
   }
 
   @override
   void initState() {
+        _settingsSub = _settingsService.stream.listen(_onSettingsUpdate);
+    _settingsService.get(0).then((value) => value);
     super.initState();
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
+    var welcomeColor = (colorScheme.primary == Colors.black)? Colors.amber.shade50 : Colors.deepPurple.shade400;
     return SafeArea(
         child: Container(
-      decoration: const BoxDecoration(
-        color: Colors.black,
+      decoration: BoxDecoration(
+        color: colorScheme.primary,
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -56,15 +65,14 @@ class _WelcomePage extends State<WelcomePage> with TickerProviderStateMixin{
           Center(
             child: FadeTransition(
               opacity: AnimationController(
-                vsync: this, 
-                value: opacity, 
+                vsync: this,
+                value: opacity,
                 duration: const Duration(milliseconds: 500),
-
-                 ),
+              ),
               child: Text(
                 'Welcome!',
                 style: TextStyle(
-                  color: Colors.amber.shade50,
+                  color: welcomeColor,
                   fontSize: 45,
                   fontFamily: 'Lobster',
                 ),
@@ -77,7 +85,7 @@ class _WelcomePage extends State<WelcomePage> with TickerProviderStateMixin{
             width: 200,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
-              color: Colors.amber.shade50,
+              color: welcomeColor,
             ),
             child: TextButton(
               style: ButtonStyle(
@@ -85,22 +93,22 @@ class _WelcomePage extends State<WelcomePage> with TickerProviderStateMixin{
                     (states) => const Size(180, 50)),
               ),
               onPressed: () {
-                DateTime now =DateTime.now();
+                DateTime now = DateTime.now();
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => NewJournalPage(
-                      id: _journalService.getUniqueId(), 
-                      title: 'Title (optional)',
-                      body: '', 
-                      dateOfCreation: DateTime(now.year, now.month, now.day), 
-                      cardColor: Colors.deepOrange.shade200, 
-                      dayRating: -1, 
-                      highlight: '', 
-                      lowlight: '',
-                      noteWorthy: '',)
-                    )
-                   );
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NewJournalPage(
+                              id: _journalService.getUniqueId(),
+                              title: 'Title (optional)',
+                              body: '',
+                              dateOfCreation:
+                                  DateTime(now.year, now.month, now.day),
+                              cardColor: Colors.deepOrange.shade200,
+                              dayRating: 0,
+                              highlight: '',
+                              lowlight: '',
+                              noteWorthy: '',
+                            )));
               },
               child: Text(
                 'New journal',
@@ -117,7 +125,7 @@ class _WelcomePage extends State<WelcomePage> with TickerProviderStateMixin{
             width: 200,
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(10)),
-              color: Colors.amber.shade50,
+              color: welcomeColor,
             ),
             child: TextButton(
               style: ButtonStyle(
@@ -150,5 +158,11 @@ class _WelcomePage extends State<WelcomePage> with TickerProviderStateMixin{
         ],
       ),
     ));
+  }
+
+  void _onSettingsUpdate(Map<int, SettingsObject> event){
+    setState(() {
+      
+    });
   }
 }

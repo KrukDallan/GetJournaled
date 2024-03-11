@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
               fontFamily: 'Roboto',
               colorScheme: const ColorScheme(
                   brightness: Brightness.light,
-                  primary: Color.fromARGB(255, 227, 247, 252),
+                  primary: Color.fromARGB(255, 237, 242, 243),
                   onPrimary: Colors.black,
                   secondary: Colors.white,
                   onSecondary: Colors.black,
@@ -145,13 +145,14 @@ class _MyHomePageState extends State<MyHomePage> {
         child: page,
       ),
     );
-
+    var navBarColor = (colorScheme.primary == Colors.black)? Colors.grey.shade800 : Colors.lightBlue.shade100;
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
-          if (constraints.maxWidth < 700) {
+          if (constraints.maxWidth < 360) {
             return Scaffold(
               bottomNavigationBar: NavigationBar(
+                elevation: 10.0,
                 labelBehavior:
                     NavigationDestinationLabelBehavior.onlyShowSelected,
                 selectedIndex: selectedIndex,
@@ -161,21 +162,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                 },
                 indicatorColor: Colors.transparent,
-                backgroundColor: Colors.grey.shade800,
+                backgroundColor: navBarColor,
                 indicatorShape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.elliptical(0, 0))),
                 destinations: [
                   NavigationDestination(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.home_filled,
-                      color: Colors.white,
+                      color: colorScheme.onPrimary,
                     ),
                     label: Text(
                       'Home Page',
                       style: TextStyle(
                         color: (selectedIndex == 0)
                             ? Colors.cyanAccent.shade100
-                            : Colors.white,
+                            : colorScheme.onPrimary,
                       ),
                     ).data!,
                   ),
@@ -207,7 +208,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 SafeArea(
                   child: NavigationRail(
                     backgroundColor: colorScheme.surface,
-                    extended: constraints.maxWidth >= 700,
+                    extended: constraints.maxWidth >= 360,
                     indicatorColor: colorScheme.primary,
                     destinations: [
                       NavigationRailDestination(
