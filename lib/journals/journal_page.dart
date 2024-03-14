@@ -4,14 +4,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
 import 'package:getjournaled/journals/journal_object.dart';
 import 'package:getjournaled/settings/settings_object.dart';
 import 'package:getjournaled/shared.dart';
 import 'package:getjournaled/db/abstraction/settings_service/settings_map_service.dart';
-import 'package:getjournaled/settings/settings_object.dart';
 
 class JournalPage extends StatefulWidget {
   late int id;
@@ -78,9 +76,10 @@ class _NewJournalPage extends State<JournalPage> {
   bool _autoSave = false;
 
   final List<String> _undoList = <String>[];
-  final ValueNotifier<Color> _undoColor = ValueNotifier(Colors.grey.shade800);
+  final ValueNotifier<Color> _undoColor = ValueNotifier(Colors.grey.shade400);
   final List<String> _redoList = <String>[];
-  final ValueNotifier<Color> _redoColor = ValueNotifier(Colors.grey.shade800);
+  final ValueNotifier<Color> _redoColor = ValueNotifier(Colors.grey.shade400);
+  late Color _activeUndoRedoColor;
 
   final FocusNode _buttonFocusNode = FocusNode();
   final FocusNode _bodyFocusNode = FocusNode();
@@ -133,6 +132,16 @@ class _NewJournalPage extends State<JournalPage> {
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
+    _activeUndoRedoColor = colorScheme.onPrimary;
+    if(colorScheme.primary != Colors.black){
+rateButtonsColors = [
+    Colors.white,
+    Colors.white,
+    Colors.white,
+    Colors.white,
+    Colors.white
+  ];
+    }
     _bodyTextEditingController = TextEditingController(text: widget.body);
     setState(() {
       final String text = _bodyTextEditingController.text;
@@ -160,7 +169,7 @@ class _NewJournalPage extends State<JournalPage> {
                   padding: const EdgeInsets.only(top: 4.0, left: 12.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade800,
+                      color: (colorScheme.primary == Colors.black)? Colors.grey.shade800 : Colors.lightBlue.shade100,
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     child: SizedBox(
@@ -182,10 +191,10 @@ class _NewJournalPage extends State<JournalPage> {
                                             'You have unsaved changes, if you leave now they will be lost.'),
                                         actions: [
                                           TextButton(
-                                            child: const Text(
+                                            child: Text(
                                               'Cancel',
                                               style: TextStyle(
-                                                color: Colors.white,
+                                                color: colorScheme.onPrimary,
                                               ),
                                             ),
                                             onPressed: () {
@@ -193,10 +202,10 @@ class _NewJournalPage extends State<JournalPage> {
                                             },
                                           ),
                                           TextButton(
-                                              child: const Text(
+                                              child: Text(
                                                 'Leave',
                                                 style: TextStyle(
-                                                  color: Colors.white,
+                                                  color: colorScheme.onPrimary,
                                                 ),
                                               ),
                                               onPressed: () {
@@ -213,10 +222,9 @@ class _NewJournalPage extends State<JournalPage> {
                               Navigator.pop(context);
                             }
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.arrow_back_ios_rounded,
-                            color: Colors
-                                .white, // Da matchare con colorMode (light o dark)
+                            color: colorScheme.onPrimary, 
                           )),
                     ),
                   ),
@@ -236,14 +244,14 @@ class _NewJournalPage extends State<JournalPage> {
                             onPressed: () {
                               if (_undoList.isNotEmpty) {
                                 if (_redoList.isEmpty) {
-                                  _redoColor.value = Colors.white;
+                                  _redoColor.value = colorScheme.onPrimary;
                                 }
                                 _redoList.add(_bodyTextEditingController.text);
                                 _bodyTextEditingController.text =
                                     _undoList.removeLast();
                                 widget.body = _bodyTextEditingController.text;
                                 if (_undoList.isEmpty) {
-                                  _undoColor.value = Colors.grey.shade800;
+                                  _undoColor.value = (colorScheme.primary == Colors.black)? Colors.grey.shade800 : Colors.grey.shade400;
                                 }
                                 setState(() {});
                               }
@@ -265,7 +273,7 @@ class _NewJournalPage extends State<JournalPage> {
                               onPressed: () {
                                 if (_redoList.isNotEmpty) {
                                   if (_undoList.isEmpty) {
-                                    _undoColor.value = Colors.white;
+                                    _undoColor.value = colorScheme.onPrimary;
                                   }
                                   _undoList
                                       .add(_bodyTextEditingController.text);
@@ -273,7 +281,7 @@ class _NewJournalPage extends State<JournalPage> {
                                       _redoList.removeLast();
                                   widget.body = _bodyTextEditingController.text;
                                   if (_redoList.isEmpty) {
-                                    _redoColor.value = Colors.grey.shade800;
+                                    _redoColor.value = (colorScheme.primary == Colors.black)? Colors.grey.shade800 : Colors.grey.shade400;
                                   }
                                   setState(() {});
                                 }
@@ -293,7 +301,7 @@ class _NewJournalPage extends State<JournalPage> {
                     padding: const EdgeInsets.only(top: 4.0, right: 15.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade800,
+                        color: (colorScheme.primary == Colors.black)? Colors.grey.shade800 : Colors.lightBlue.shade100,
                         borderRadius:
                             const BorderRadius.all(Radius.circular(10)),
                       ),
@@ -321,10 +329,10 @@ class _NewJournalPage extends State<JournalPage> {
                             _oldBody = widget.body;
                             _oldTitle = widget.title;
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.save_sharp,
                             size: 18.0,
-                            color: Colors.white,
+                            color: (colorScheme.primary == Colors.black)? Colors.white : Colors.black,
                           ),
                         ),
                       ),
@@ -719,7 +727,7 @@ class _NewJournalPage extends State<JournalPage> {
           TextPosition(offset: _bTIF.getCursorOffset()));
 
       if (_autoSave) {
-        _undoColor.value = Colors.white;
+        _undoColor.value = _activeUndoRedoColor;
         JournalObject journalObject = JournalObject(
           id: widget.id,
           title: widget.title,
@@ -743,7 +751,7 @@ class _NewJournalPage extends State<JournalPage> {
       widget.title = text;
 
       if (_autoSave) {
-        _undoColor.value = Colors.white;
+        _undoColor.value = _activeUndoRedoColor;
         JournalObject journalObject = JournalObject(
           id: widget.id,
           title: widget.title,

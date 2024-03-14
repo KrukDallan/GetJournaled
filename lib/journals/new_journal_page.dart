@@ -37,8 +37,10 @@ class NewJournalPage extends StatefulWidget {
 }
 
 class _NewJournalPage extends State<NewJournalPage> {
-  final TextEditingController _bodyTextEditingController = TextEditingController();
-  final TextEditingController _titleTextEditingController = TextEditingController();
+  final TextEditingController _bodyTextEditingController =
+      TextEditingController();
+  final TextEditingController _titleTextEditingController =
+      TextEditingController();
   final MyTextInputFormatter _bodyTextInputFormatter = MyTextInputFormatter();
   final TitleTextInputFormatter _tTIF = TitleTextInputFormatter();
   bool isTitleWhite = false;
@@ -46,17 +48,8 @@ class _NewJournalPage extends State<NewJournalPage> {
   FocusNode myFocusNode = FocusNode();
 
   ValueNotifier<String> tempTitle = ValueNotifier("Title (optional)");
-  Color titleTextColor = Colors.grey.shade600;
-  late ValueNotifier<Color> titleColor;
-
-  List<Color> rateButtonsColors = [
-    Colors.black,
-    Colors.black,
-    Colors.black,
-    Colors.black,
-    Colors.black
-  ];
-  int rateIndex = 0;
+  Color _titleTextColor = Colors.grey.shade600;
+  late ValueNotifier<Color> _titleColor;
 
   final MenuController _menuController = MenuController();
 
@@ -84,6 +77,9 @@ class _NewJournalPage extends State<NewJournalPage> {
 
   StreamSubscription? _settingsSub;
 
+  List<Color> _rateButtonsColors = [];
+  int rateIndex = 0;
+
   bool _autoSave = false;
 
   final List<String> _undoList = <String>[];
@@ -110,14 +106,25 @@ class _NewJournalPage extends State<NewJournalPage> {
     _settingsSub = _settingsService.stream.listen(_onSettingsUpdate);
     _settingsService.get(0).then((value) => _autoSave = value!.getAutoSave());
 
-    titleColor = ValueNotifier(titleTextColor);
+    _titleColor = ValueNotifier(_titleTextColor);
     _oldTitle = widget.title;
     _oldBody = widget.body;
+
+    _rateButtonsColors = (_settingsService.getTheme())
+        ? [Colors.black, Colors.black, Colors.black, Colors.black, Colors.black]
+        : [
+            const Color.fromARGB(255, 234, 244, 247),
+            const Color.fromARGB(255, 234, 244, 247),
+            const Color.fromARGB(255, 234, 244, 247),
+            const Color.fromARGB(255, 234, 244, 247),
+            const Color.fromARGB(255, 234, 244, 247),
+          ];
   }
 
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
+    _titleTextColor = colorScheme.onPrimary;
     return SafeArea(
         child: Scaffold(
       backgroundColor: colorScheme.primary,
@@ -213,7 +220,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                             onPressed: () {
                               if (_undoList.isNotEmpty) {
                                 if (_redoList.isEmpty) {
-                                  _redoColor.value = Colors.white;
+                                  _redoColor.value = Colors.grey.shade800;
                                 }
                                 _redoList.add(_bodyTextEditingController.text);
                                 _bodyTextEditingController.text =
@@ -242,7 +249,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                               onPressed: () {
                                 if (_redoList.isNotEmpty) {
                                   if (_undoList.isEmpty) {
-                                    _undoColor.value = Colors.white;
+                                    _undoColor.value = Colors.grey.shade800;
                                   }
                                   _undoList
                                       .add(_bodyTextEditingController.text);
@@ -280,6 +287,9 @@ class _NewJournalPage extends State<NewJournalPage> {
                           onPressed: () {
                             if (rateIndex != -1) {
                               DateTime now = DateTime.now();
+                              if (widget.title == 'Title (optional)') {
+                                widget.title = 'Dear Diary';
+                              }
                               JournalObject noteObject = JournalObject(
                                   id: widget.id,
                                   title: widget.title,
@@ -349,19 +359,11 @@ class _NewJournalPage extends State<NewJournalPage> {
                       fontFamily: 'Roboto-Medium',
                       fontSize: 28,
                       fontWeight: FontWeight.w700,
-                      color: ValueListenableBuilder(
-                        valueListenable: titleColor,
-                        builder:
-                            (BuildContext context, Color color, Widget? child) {
-                          return Container(
-                            color: titleColor.value,
-                          );
-                        },
-                      ).valueListenable.value,
+                      color: colorScheme.onPrimary,
                     ),
                     cursorColor: colorScheme.onPrimary,
                     backgroundCursorColor: Colors.black,
-                    onChanged: _onTitleTextChanged,
+                    onChanged: _onTitleChanged,
                   )),
             ),
             // ---------------------------------------------------------------------------
@@ -464,13 +466,13 @@ class _NewJournalPage extends State<NewJournalPage> {
                             RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0))),
                         backgroundColor: MaterialStateColor.resolveWith(
-                            (states) => rateButtonsColors[0]),
+                            (states) => _rateButtonsColors[0]),
                       ),
                       onPressed: () {
-                        for (var i = 0; i < rateButtonsColors.length; i++) {
-                          rateButtonsColors[i] = colorScheme.primary;
+                        for (var i = 0; i < _rateButtonsColors.length; i++) {
+                          _rateButtonsColors[i] = colorScheme.primary;
                         }
-                        rateButtonsColors[0] = Colors.lightBlue.shade100;
+                        _rateButtonsColors[0] = Colors.lightBlue.shade100;
                         rateIndex = 0;
                         widget.dayRating = rateIndex;
                         setState(() {
@@ -491,7 +493,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                       child: Text(
                         "Terrible\n (╥_╥)",
                         style: TextStyle(
-                            color: (rateButtonsColors[0] == colorScheme.primary)
+                            color: (colorScheme.primary == Colors.black)
                                 ? Colors.white
                                 : Colors.black,
                             fontSize: 12),
@@ -506,13 +508,13 @@ class _NewJournalPage extends State<NewJournalPage> {
                             RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0))),
                         backgroundColor: MaterialStateColor.resolveWith(
-                            (states) => rateButtonsColors[1]),
+                            (states) => _rateButtonsColors[1]),
                       ),
                       onPressed: () {
-                        for (var i = 0; i < rateButtonsColors.length; i++) {
-                          rateButtonsColors[i] = colorScheme.primary;
+                        for (var i = 0; i < _rateButtonsColors.length; i++) {
+                          _rateButtonsColors[i] = colorScheme.primary;
                         }
-                        rateButtonsColors[1] = Colors.lightBlue.shade100;
+                        _rateButtonsColors[1] = Colors.lightBlue.shade100;
                         rateIndex = 1;
                         widget.dayRating = rateIndex;
                         setState(() {
@@ -533,7 +535,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                       child: Text(
                         "Not so good\n ┐(´～｀)┌",
                         style: TextStyle(
-                          color: (rateButtonsColors[1] == colorScheme.primary)
+                          color: (colorScheme.primary == Colors.black)
                               ? Colors.white
                               : Colors.black,
                           fontSize: 12,
@@ -549,13 +551,13 @@ class _NewJournalPage extends State<NewJournalPage> {
                             RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0))),
                         backgroundColor: MaterialStateColor.resolveWith(
-                            (states) => rateButtonsColors[2]),
+                            (states) => _rateButtonsColors[2]),
                       ),
                       onPressed: () {
-                        for (var i = 0; i < rateButtonsColors.length; i++) {
-                          rateButtonsColors[i] = colorScheme.primary;
+                        for (var i = 0; i < _rateButtonsColors.length; i++) {
+                          _rateButtonsColors[i] = colorScheme.primary;
                         }
-                        rateButtonsColors[2] = Colors.lightBlue.shade100;
+                        _rateButtonsColors[2] = Colors.lightBlue.shade100;
                         rateIndex = 2;
                         widget.dayRating = rateIndex;
                         setState(() {
@@ -576,7 +578,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                       child: Text(
                         "Normal\n  ( ﾟｰﾟ)",
                         style: TextStyle(
-                          color: (rateButtonsColors[2] == colorScheme.primary)
+                          color: (colorScheme.primary == Colors.black)
                               ? Colors.white
                               : Colors.black,
                           fontSize: 12,
@@ -597,13 +599,13 @@ class _NewJournalPage extends State<NewJournalPage> {
                             RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0))),
                         backgroundColor: MaterialStateColor.resolveWith(
-                            (states) => rateButtonsColors[3]),
+                            (states) => _rateButtonsColors[3]),
                       ),
                       onPressed: () {
-                        for (var i = 0; i < rateButtonsColors.length; i++) {
-                          rateButtonsColors[i] = colorScheme.primary;
+                        for (var i = 0; i < _rateButtonsColors.length; i++) {
+                          _rateButtonsColors[i] = colorScheme.primary;
                         }
-                        rateButtonsColors[3] = Colors.lightBlue.shade100;
+                        _rateButtonsColors[3] = Colors.lightBlue.shade100;
                         rateIndex = 3;
                         widget.dayRating = rateIndex;
                         setState(() {
@@ -624,7 +626,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                       child: Text(
                         "     Good!\n （＾ｖ＾）",
                         style: TextStyle(
-                          color: (rateButtonsColors[3] == colorScheme.primary)
+                          color: (colorScheme.primary == Colors.black)
                               ? Colors.white
                               : Colors.black,
                           fontSize: 12,
@@ -640,13 +642,13 @@ class _NewJournalPage extends State<NewJournalPage> {
                             RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0))),
                         backgroundColor: MaterialStateColor.resolveWith(
-                            (states) => rateButtonsColors[4]),
+                            (states) => _rateButtonsColors[4]),
                       ),
                       onPressed: () {
-                        for (var i = 0; i < rateButtonsColors.length; i++) {
-                          rateButtonsColors[i] = colorScheme.primary;
+                        for (var i = 0; i < _rateButtonsColors.length; i++) {
+                          _rateButtonsColors[i] = colorScheme.primary;
                         }
-                        rateButtonsColors[4] = Colors.lightBlue.shade100;
+                        _rateButtonsColors[4] = Colors.lightBlue.shade100;
                         rateIndex = 4;
                         widget.dayRating = rateIndex;
                         setState(() {
@@ -667,7 +669,7 @@ class _NewJournalPage extends State<NewJournalPage> {
                       child: Text(
                         " Very good!\n˖✧◝(⁰▿⁰)◜✧˖",
                         style: TextStyle(
-                          color: (rateButtonsColors[4] == colorScheme.primary)
+                          color: (colorScheme.primary == Colors.black)
                               ? Colors.white
                               : Colors.black,
                           fontSize: 12,
@@ -724,7 +726,11 @@ class _NewJournalPage extends State<NewJournalPage> {
           TextPosition(offset: _bodyTextInputFormatter.getCursorOffset()));
     }
     if (_autoSave) {
-      _undoColor.value = Colors.white;
+      if (widget.title == 'Title (optional)') {
+        widget.title = 'Dear Diary';
+      }
+      _undoColor.value =
+          (_settingsService.getTheme()) ? Colors.white : Colors.black;
       JournalObject journalObject = JournalObject(
         id: widget.id,
         title: widget.title,
@@ -742,22 +748,20 @@ class _NewJournalPage extends State<NewJournalPage> {
     }
   }
 
-  void _onTitleTextChanged(String text) {
-    if (!isTitleWhite) {
+  void _onTitleChanged(String text) {
+    if (isTitleWhite == false) {
       if (!text.contains("Title (optional)")) {
-        titleColor.value = Colors.white;
-        titleTextColor = Colors.white;
+        _titleColor.value =
+            (_settingsService.getTheme()) ? Colors.white : Colors.black;
+        _titleTextColor =
+            (_settingsService.getTheme()) ? Colors.white : Colors.black;
         isTitleWhite = true;
-        setState(() {});
+        //setState(() {});
       }
     }
 
     if (text != widget.title) {
-      _titleTextEditingController.text = text;
       widget.title = text;
-
-      _titleTextEditingController.selection = TextSelection.fromPosition(
-          TextPosition(offset: _tTIF.getCursorOffset()));
     }
 
     if (_autoSave) {
@@ -780,9 +784,9 @@ class _NewJournalPage extends State<NewJournalPage> {
   }
 
   void _onJournalsUpdate(Map<int, JournalObject> event) {
-    setState(() {
+    /* setState(() {
       _journalMap = event;
-    });
+    }); */
   }
 
   void _activate(MenuEntry selection) {

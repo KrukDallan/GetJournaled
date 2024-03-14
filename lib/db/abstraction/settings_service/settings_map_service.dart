@@ -17,6 +17,8 @@ Future<SettingsObject?> get(int id);
 
 int getUniqueId();
 
+bool getTheme();
+
 // Initialize the service
 Future<void> open();
 

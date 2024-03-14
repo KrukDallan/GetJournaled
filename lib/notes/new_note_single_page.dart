@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
+import 'package:getjournaled/db/abstraction/settings_service/settings_map_service.dart';
 import 'package:getjournaled/notes/note_object.dart';
 import 'package:getjournaled/shared.dart';
+import 'package:getjournaled/settings/settings_object.dart';
 
 class NewNoteSinglePage extends StatefulWidget {
   late String title;
@@ -28,11 +30,30 @@ class NewNoteSinglePage extends StatefulWidget {
 }
 
 class _NewSingleNotePage extends State<NewNoteSinglePage> {
+  final NoteService _notesService = GetIt.I<NoteService>();
+
+  SettingsService _settingsService = GetIt.I<SettingsService>();
+
+  Map<int, NoteObject> _notesMap = {};
+
+  StreamSubscription? _notesSub;
+
+  StreamSubscription? _settingsSub;
+
   TextEditingController _bodyTextEditingController = TextEditingController();
   final MyTextInputFormatter _bodyTextInputFormatter = MyTextInputFormatter();
   final FocusNode _bodyFocusNode = FocusNode();
 
-  DateTime _lDateOfCreation = DateTime(0);
+  //
+  // Autosave data structures
+  //
+  bool _autoSave = false;
+
+  List<String> _undoList = <String>[];
+  ValueNotifier<Color> _undoColor = ValueNotifier(Colors.grey.shade800);
+  List<String> _redoList = <String>[];
+  ValueNotifier<Color> _redoColor = ValueNotifier(Colors.grey.shade800);
+  late Color _activeUndoRedoColor;
 
   Color get boxColor => _boxColor;
   Color _boxColor = Colors.deepOrange.shade200;
@@ -47,23 +68,11 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
   late String _oldTitle;
   late String _oldBody;
 
-  final NoteService _notesService = GetIt.I<NoteService>();
-
-  Map<int, NoteObject> _notesMap = {};
-
-  StreamSubscription? _notesSub;
+  DateTime _lDateOfCreation = DateTime(0);
 
   final FocusNode _buttonFocusNode = FocusNode(debugLabel: 'Menu Button');
   final MenuController _menuController = MenuController();
   bool _menuWasEnabled = false;
-
-  Future<void> _disableContextMenu() async {}
-
-  void _reenableContextMenu() {
-    if (_menuWasEnabled && !BrowserContextMenu.enabled) {
-      BrowserContextMenu.enableContextMenu();
-    }
-  }
 
   @override
   void dispose() {
@@ -79,7 +88,13 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
     _notesService.getAllNotes().then((value) => setState(() {
           _notesMap = value;
         }));
+    _settingsService.get(0).then((value) => setState(() {}));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
+    _settingsSub = _settingsService.stream.listen(_onSettingsUpdate);
+    _settingsService.get(0).then((value) => _autoSave = value!.getAutoSave());
+
+    _bodyTextEditingController.addListener(() {});
+
     _oldTitle = widget.title;
     _oldBody = widget.body;
   }
@@ -87,7 +102,18 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
-
+    _activeUndoRedoColor = colorScheme.onPrimary;
+    _bodyTextEditingController = TextEditingController(text: widget.body);
+    setState(() {
+      final String text = _bodyTextEditingController.text;
+      _bodyTextEditingController.value =
+          _bodyTextEditingController.value.copyWith(
+        text: text,
+        selection:
+            TextSelection(baseOffset: text.length, extentOffset: text.length),
+        composing: TextRange.collapsed(text.length),
+      );
+    });
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(
@@ -104,7 +130,9 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                   padding: const EdgeInsets.only(top: 4.0, left: 12.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade800,
+                      color: (colorScheme.primary == Colors.black)
+                          ? Colors.grey.shade800
+                          : Colors.lightBlue.shade100,
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     child: SizedBox(
@@ -114,97 +142,173 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                           iconSize: 15.0,
                           padding: const EdgeInsets.only(bottom: 1.0),
                           onPressed: () {
-                            if ( (widget.title != _oldTitle) || (widget.body != _oldBody) ) {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text('Exit?'),
-                                      content: const Text(
-                                          'You have unsaved changes, if you leave now they will be lost.'),
-                                      actions: [
-                                        TextButton(
-                                          child: const Text(
-                                            'Cancel',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pop(context, 'Cancel');
-                                          },
-                                        ),
-                                        TextButton(
+                            if (_autoSave == false) {
+                              if ((widget.title != _oldTitle) ||
+                                  (widget.body != _oldBody)) {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Exit?'),
+                                        content: const Text(
+                                            'You have unsaved changes, if you leave now they will be lost.'),
+                                        actions: [
+                                          TextButton(
                                             child: const Text(
-                                              'Leave',
+                                              'Cancel',
                                               style: TextStyle(
                                                 color: Colors.white,
                                               ),
                                             ),
                                             onPressed: () {
-                                              Navigator.pop(context, 'Ok');
-                                              Navigator.pop(context);
-                                            }),
-                                      ],
-                                    );
-                                  });
-                            }
-                            else{
+                                              Navigator.pop(context, 'Cancel');
+                                            },
+                                          ),
+                                          TextButton(
+                                              child: const Text(
+                                                'Leave',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(context, 'Ok');
+                                                Navigator.pop(context);
+                                              }),
+                                        ],
+                                      );
+                                    });
+                              } else {
+                                Navigator.pop(context);
+                              }
+                            } else {
                               Navigator.pop(context);
                             }
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.arrow_back_ios_rounded,
-                            color: Colors.white,
+                            color: colorScheme.onPrimary,
                           )),
                     ),
                   ),
                 ),
                 const Expanded(child: Text('')),
-                //
-                // Save button
-                //
-                Padding(
-                  padding: const EdgeInsets.only(top: 4.0, right: 15.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade800,
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child: SizedBox(
-                      width: 35,
-                      height: 35,
-                      child: IconButton(
-                        padding: const EdgeInsets.only(bottom: 0.0),
-                        highlightColor: Colors.teal.shade200,
-                        onPressed: () {
-                          DateTime now = DateTime.now();
-                          NoteObject noteObject = NoteObject(
-                              id: widget.id,
-                              title: widget.title,
-                              body: widget.body,
-                              dateOfCreation:
-                                  DateTime(now.year, now.month, now.day),
-                              dateOfLastEdit:
-                                  DateTime(now.year, now.month, now.day),
-                              cardColor: boxColor);
-                          _notesService.add(noteObject);
-                          _notesMap.addAll({widget.id: noteObject});
-                          _oldBody = widget.body;
-                          _oldTitle = widget.title;
-
-                          //var mySnackBar = customSnackBar('Note saved!');
-                          //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
+                if (_autoSave) ...{
+                  //
+                  // Undo & Redo
+                  //
+                  Padding(
+                      padding: const EdgeInsets.only(right: 4.0),
+                      child: ValueListenableBuilder(
+                        valueListenable: _undoColor,
+                        builder:
+                            (BuildContext context, Color color, Widget? child) {
+                          return IconButton(
+                            onPressed: () {
+                              if (_undoList.isNotEmpty) {
+                                if (_redoList.isEmpty) {
+                                  _redoColor.value = colorScheme.onPrimary;
+                                }
+                                _redoList.add(_bodyTextEditingController.text);
+                                _bodyTextEditingController.text =
+                                    _undoList.removeLast();
+                                widget.body = _bodyTextEditingController.text;
+                                if (_undoList.isEmpty) {
+                                  _undoColor.value =
+                                      (colorScheme.primary == Colors.black)
+                                          ? Colors.grey.shade800
+                                          : Colors.grey.shade400;
+                                }
+                                setState(() {});
+                              }
+                            },
+                            icon: Icon(
+                              Icons.undo_rounded,
+                              color: color, // make color dynamic
+                            ),
+                          );
                         },
-                        icon: const Icon(
-                          Icons.save_sharp,
-                          size: 18.0,
-                          color: Colors.white,
+                      )),
+                  Padding(
+                      padding: const EdgeInsets.only(right: 4.0, left: 4.0),
+                      child: ValueListenableBuilder(
+                          valueListenable: _redoColor,
+                          builder: (BuildContext context, Color color,
+                              Widget? child) {
+                            return IconButton(
+                              onPressed: () {
+                                if (_redoList.isNotEmpty) {
+                                  if (_undoList.isEmpty) {
+                                    _undoColor.value = colorScheme.onPrimary;
+                                  }
+                                  _undoList
+                                      .add(_bodyTextEditingController.text);
+                                  _bodyTextEditingController.text =
+                                      _redoList.removeLast();
+                                  widget.body = _bodyTextEditingController.text;
+                                  if (_redoList.isEmpty) {
+                                    _redoColor.value =
+                                        (colorScheme.primary == Colors.black)
+                                            ? Colors.grey.shade800
+                                            : Colors.grey.shade400;
+                                  }
+                                  setState(() {});
+                                }
+                              },
+                              icon: Icon(
+                                Icons.redo_rounded,
+                                color: color,
+                              ),
+                            );
+                          })),
+                },
+                if (_autoSave == false) ...{
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0, right: 15.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade800,
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                      ),
+                      child: SizedBox(
+                        width: 35,
+                        height: 35,
+                        child: IconButton(
+                          padding: const EdgeInsets.only(bottom: 0.0),
+                          highlightColor: Colors.teal.shade200,
+                          onPressed: () {
+                            DateTime now = DateTime.now();
+                            NoteObject noteObject = NoteObject(
+                                id: widget.id,
+                                title: widget.title,
+                                body: widget.body,
+                                dateOfCreation:
+                                    DateTime(now.year, now.month, now.day),
+                                dateOfLastEdit:
+                                    DateTime(now.year, now.month, now.day),
+                                cardColor: boxColor);
+                            _notesService.add(noteObject);
+                            _notesMap.addAll({widget.id: noteObject});
+                            _oldBody = widget.body;
+                            _oldTitle = widget.title;
+
+                            //var mySnackBar = customSnackBar('Note saved!');
+                            //ScaffoldMessenger.of(context).showSnackBar(mySnackBar);
+                          },
+                          icon: const Icon(
+                            Icons.save_sharp,
+                            size: 18.0,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                },
+                //
+                // Save button
+                //
               ],
             ),
             //
@@ -216,22 +320,19 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
               child: Material(
                 type: MaterialType.transparency,
                 child: EditableText(
-                  autofocus: true,
                   showCursor: true,
                   controller: TextEditingController(
                     text: widget.title,
                   ),
                   focusNode: FocusNode(),
                   style: TextStyle(
-                      fontFamily: 'Roboto',
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Roboto-Medium',
+                      fontSize: 28,
+                      fontWeight: FontWeight.w700,
                       color: colorScheme.onPrimary),
-                  cursorColor: Colors.white,
+                  cursorColor: colorScheme.onPrimary,
                   backgroundCursorColor: Colors.black,
-                  onChanged: (String value) {
-                    widget.title = value;
-                  },
+                  onChanged: _onTitleChanged,
                 ),
               ),
             ),
@@ -246,7 +347,7 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                     _menuController.open(position: pos.localPosition);
                   },
                   child: Padding(
-                    padding: EdgeInsets.only(top: 8.0, left: 22.0),
+                    padding: const EdgeInsets.only(top: 8.0, left: 22.0),
                     child: Container(
                       color: Colors.white,
                       child: SizedBox(
@@ -360,7 +461,7 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
                 showSelectionHandles: true,
                 cursorColor: Colors.white,
                 backgroundCursorColor: const Color.fromARGB(255, 68, 67, 67),
-                onChanged: _onTextChanged,
+                onChanged: _onBodyChanged,
                 readOnly: false,
                 selectionColor: Colors.lightBlue.shade300,
               ),
@@ -371,21 +472,61 @@ class _NewSingleNotePage extends State<NewNoteSinglePage> {
     );
   }
 
-  void _onTextChanged(String text) {
+  void _onBodyChanged(String text) {
     if (text != widget.body) {
+      _undoList.add(widget.body);
       _bodyTextEditingController.text = text;
       widget.body = _bodyTextEditingController.text;
 
       _bodyTextEditingController.selection = TextSelection.fromPosition(
           TextPosition(offset: _bodyTextInputFormatter.getCursorOffset()));
+
+      if (_autoSave) {
+        _undoColor.value = _activeUndoRedoColor;
+        DateTime now = DateTime.now();
+        NoteObject noteObject = NoteObject(
+            id: widget.id,
+            title: widget.title,
+            body: widget.body,
+            dateOfCreation: widget.lDateOfCreation,
+            dateOfLastEdit: DateTime(now.year, now.month, now.day),
+            cardColor: widget.cardColor);
+        _notesService.update(noteObject);
+        // check if the note is already present in the map
+        _notesMap.addAll({widget.id: noteObject});
+      }
+    }
+  }
+  void _onTitleChanged(String text) {
+    if (text != widget.title) {
+      widget.title = text;
+
+      if (_autoSave) {
+        _undoColor.value = _activeUndoRedoColor;
+        DateTime now = DateTime.now();
+        NoteObject noteObject = NoteObject(
+            id: widget.id,
+            title: widget.title,
+            body: widget.body,
+            dateOfCreation: widget.lDateOfCreation,
+            dateOfLastEdit: DateTime(now.year, now.month, now.day),
+            cardColor: widget.cardColor);
+        _notesService.update(noteObject);
+        // check if the note is already present in the map
+        _notesMap.addAll({widget.id: noteObject});
+      }
     }
   }
 
   // business logic
   void _onNotesUpdate(Map<int, NoteObject> event) {
-    setState(() {
+    /* setState(() {
       _notesMap = event;
-    });
+    }); */
+  }
+
+  void _onSettingsUpdate(Map<int, SettingsObject> event) {
+    setState(() {});
   }
 
   void _activate(MenuEntry selection) {

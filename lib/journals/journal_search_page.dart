@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
 import 'package:getjournaled/journals/journal_object.dart';
-import 'package:getjournaled/shared.dart';
+
 import 'package:getjournaled/journals/journal_card.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/scheduler.dart';
@@ -57,7 +57,7 @@ class _JournalSearchPage extends State<JournalSearchPage> {
     var colorScheme = Theme.of(context).colorScheme;
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+        backgroundColor: colorScheme.primary,
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -118,7 +118,7 @@ class _JournalSearchPage extends State<JournalSearchPage> {
               // Row where journals are shown
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                reverse: true,
+                reverse: false,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -161,12 +161,12 @@ class _JournalSearchPage extends State<JournalSearchPage> {
       return;
     }
 
-    final _text = text.toLowerCase();
+    final lcText = text.toLowerCase();
     _searchMathces.clear();
     for (var j in _journalMap.entries) {
       var tmp = j.value;
-      if (tmp.getTitle().toLowerCase().contains(_text) ||
-          tmp.getBody().toString().toLowerCase().contains(_text)) {
+      if (tmp.getTitle().toLowerCase().contains(lcText) ||
+          tmp.getBody().toString().toLowerCase().contains(lcText)) {
         _searchMathces.addAll({j.key: j.value});
       }
     }
@@ -175,9 +175,9 @@ class _JournalSearchPage extends State<JournalSearchPage> {
   }
 
   void _onJournalsUpdate(Map<int, JournalObject> event) {
-    setState(() {
+    /* setState(() {
       _journalMap = event;
-    });
+    }); */
   }
 }
 

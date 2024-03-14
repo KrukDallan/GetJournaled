@@ -8,10 +8,11 @@ class NotesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var colorScheme = Theme.of(context).colorScheme;
     return SafeArea(
         child: Container(
-      decoration: const BoxDecoration(
-        color: Colors.black,
+      decoration: BoxDecoration(
+        color: colorScheme.primary,
           ),
       child: const Notes(),
     ));

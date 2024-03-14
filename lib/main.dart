@@ -1,4 +1,5 @@
-import 'dart:io';
+
+
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -6,10 +7,9 @@ import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 import 'package:getjournaled/db/abstraction/settings_service/settings_map_service.dart';
 import 'package:getjournaled/db/bindings.dart';
-import 'package:getjournaled/notes/note_main_page.dart';
+import 'package:getjournaled/notes/note_view.dart';
 import 'package:getjournaled/settings/settings.dart';
 import 'package:provider/provider.dart';
-
 
 import 'package:getjournaled/welcome.dart';
 import 'package:getjournaled/journals/drawer_main_page.dart';
@@ -21,6 +21,8 @@ void main() async {
   await GetIt.I<JournalService>().open();
   await GetIt.I<SettingsService>().open();
   runApp(const MyApp());
+
+
 }
 
 class MyApp extends StatefulWidget {
@@ -36,21 +38,21 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   //final ThemeMode _themeMode = ThemeMode.system;
-  ThemeMode _themeMode = ThemeMode.dark;
+  ThemeMode _themeMode = (GetIt.I<SettingsService>().getTheme())? ThemeMode.dark : ThemeMode.light;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
         create: (context) => MyAppState(),
         child: MaterialApp(
-          routes: {'NotesPage': (context) => const NotesPage()},
+          routes: {'NotesPage': (context) => const Notes()},
           title: 'GetClocked',
           theme: ThemeData(
               useMaterial3: true,
               fontFamily: 'Roboto',
               colorScheme: const ColorScheme(
                   brightness: Brightness.light,
-                  primary: Color.fromARGB(255, 237, 242, 243),
+                  primary: Color.fromARGB(255, 234, 244, 247),
                   onPrimary: Colors.black,
                   secondary: Colors.white,
                   onSecondary: Colors.black,
@@ -86,8 +88,8 @@ class _MyAppState extends State<MyApp> {
         ));
   }
 
-  void changeTheme(ThemeMode themeMode){
-    setState((){
+  void changeTheme(ThemeMode themeMode) {
+    setState(() {
       _themeMode = themeMode;
     });
   }
@@ -131,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
       case 1:
         page = const DrawerPage();
       case 2:
-        page = const NotesPage();
+        page = const Notes();
       case 3:
         page = Settings();
       default:
@@ -145,7 +147,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: page,
       ),
     );
-    var navBarColor = (colorScheme.primary == Colors.black)? Colors.grey.shade800 : Colors.lightBlue.shade100;
+    var navBarColor = (colorScheme.primary == Colors.black)
+        ? Colors.grey.shade800
+        : Colors.lightBlue.shade100;
     return Scaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {

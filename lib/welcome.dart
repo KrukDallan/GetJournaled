@@ -5,6 +5,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
 import 'package:getjournaled/db/abstraction/settings_service/settings_map_service.dart';
 import 'package:getjournaled/journals/new_journal_page.dart';
+import 'package:getjournaled/main.dart';
 import 'package:getjournaled/notes/new_note_single_page.dart';
 import 'package:getjournaled/settings/settings_object.dart';
 import 'package:getjournaled/shared.dart';
@@ -34,6 +35,8 @@ class _WelcomePage extends State<WelcomePage> with TickerProviderStateMixin {
 
   double opacity = 1.0;
 
+  var _darkTheme = true;
+
   @override
   void dispose() {
     _notesSub?.cancel();
@@ -44,15 +47,18 @@ class _WelcomePage extends State<WelcomePage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-        _settingsSub = _settingsService.stream.listen(_onSettingsUpdate);
-    _settingsService.get(0).then((value) => value);
+    _settingsSub = _settingsService.stream.listen(_onSettingsUpdate);
+    _settingsService.get(0).then((value) => _darkTheme = value!.getDarkMode());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
-    var welcomeColor = (colorScheme.primary == Colors.black)? Colors.amber.shade50 : Colors.deepPurple.shade400;
+    var welcomeColor = (colorScheme.primary == Colors.black)
+        ? Colors.amber.shade50
+        : Colors.lightBlue.shade200;
+    //_settingsService.get(0).then((value) => _darkTheme = value?.getDarkMode());
     return SafeArea(
         child: Container(
       decoration: BoxDecoration(
@@ -103,7 +109,7 @@ class _WelcomePage extends State<WelcomePage> with TickerProviderStateMixin {
                               body: '',
                               dateOfCreation:
                                   DateTime(now.year, now.month, now.day),
-                              cardColor: Colors.deepOrange.shade200,
+                              cardColor: Colors.lightBlue.shade100,
                               dayRating: 0,
                               highlight: '',
                               lowlight: '',
@@ -143,7 +149,7 @@ class _WelcomePage extends State<WelcomePage> with TickerProviderStateMixin {
                               id: _notesService.getUniqueId(),
                               lDateOfCreation:
                                   DateTime(now.year, now.month, now.day),
-                              cardColor: Colors.deepOrange.shade200,
+                              cardColor: Colors.lightBlue.shade100,
                             )));
               },
               child: Text(
@@ -160,9 +166,7 @@ class _WelcomePage extends State<WelcomePage> with TickerProviderStateMixin {
     ));
   }
 
-  void _onSettingsUpdate(Map<int, SettingsObject> event){
-    setState(() {
-      
-    });
+  void _onSettingsUpdate(Map<int, SettingsObject> event) {
+    setState(() {});
   }
 }

@@ -94,7 +94,9 @@ class MyTextInputFormatter extends TextInputFormatter {
     String textToReturn = newValue.text;
     _cursorOffset = newValue.selection.extentOffset;
 
-    if ((newValue.text.endsWith('\n-') || (oldValue.text.isEmpty && newValue.text.endsWith('-')  )) && _makingList == false) {
+    if ((newValue.text.endsWith('\n-') ||
+            (oldValue.text.isEmpty && newValue.text.endsWith('-'))) &&
+        _makingList == false) {
       _makingList = true;
       textToReturn = textToReturn.replaceRange(
           textToReturn.length - 1, textToReturn.length, ' • ');
@@ -108,8 +110,7 @@ class MyTextInputFormatter extends TextInputFormatter {
       } else if (_makingList == true && textToReturn.endsWith('\n')) {
         textToReturn += ' • ';
         _cursorOffset += 3;
-      }
-      else if(oldValue.text.endsWith('•') && !newValue.text.endsWith('•')){
+      } else if (oldValue.text.endsWith('•') && !newValue.text.endsWith('•')) {
         _makingList = false;
         textToReturn = newValue.text;
         _cursorOffset = newValue.selection.extentOffset;
@@ -133,24 +134,29 @@ class MyTextInputFormatter extends TextInputFormatter {
 }
 
 class TitleTextInputFormatter extends TextInputFormatter {
-  bool _makingList = false;
   int _cursorOffset = 0;
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
     String textToReturn = newValue.text;
     _cursorOffset = newValue.selection.extentOffset;
-    if(newValue.text == 'Title (optional)'){
-
+  if (oldValue.text.contains('Title (optional)')) {
+      if (oldValue.text.length > newValue.text.length) {
+        textToReturn = '';
+        _cursorOffset = 1;
+      } else {
+        for (var i = 0; i < oldValue.text.length; i++) {
+          if (oldValue.text.codeUnitAt(i) != newValue.text.codeUnitAt(i)) {
+            textToReturn = String.fromCharCode(newValue.text.codeUnitAt(i));
+            _cursorOffset = 1;
+            break;
+          }
+        }
+      }
     }
-    else if(newValue.text.contains('Title (optional)')) {
-      textToReturn = textToReturn.replaceAll('Title (optional)', '');
-      _cursorOffset = 1;
-    } 
 
     return TextEditingValue(text: textToReturn);
   }
-
 
   int getCursorOffset() {
     return _cursorOffset;

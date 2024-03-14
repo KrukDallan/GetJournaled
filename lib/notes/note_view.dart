@@ -10,6 +10,8 @@ import 'package:getjournaled/notes/note_search_page.dart';
 import 'package:getjournaled/shared.dart';
 
 import 'package:getjournaled/notes/note_card.dart';
+import 'package:getjournaled/settings/settings_object.dart';
+import 'package:getjournaled/db/abstraction/settings_service/settings_map_service.dart';
 
 class Notes extends StatefulWidget {
   const Notes({super.key});
@@ -21,13 +23,20 @@ class Notes extends StatefulWidget {
 class _Notes extends State<Notes> {
   final NoteService _notesService = GetIt.I<NoteService>();
 
+  final SettingsService _settingsService = GetIt.I<SettingsService>();
+
   Map<int, NoteObject> _notesMap = {};
 
   StreamSubscription? _notesSub;
 
+  StreamSubscription? _settingsSub;
+
+  bool _darkTheme = true;
+
   @override
   void dispose() {
     _notesSub?.cancel();
+    _settingsSub?.cancel();
     super.dispose();
   }
 
@@ -39,6 +48,8 @@ class _Notes extends State<Notes> {
           _notesMap = value;
         }));
     _notesSub = _notesService.stream.listen(_onNotesUpdate);
+    _settingsSub = _settingsService.stream.listen(_onSettingsUpdate);
+    _settingsService.get(0).then((value) => _darkTheme = value!.getDarkMode());
 
     //
     // Display the alert dialog
@@ -60,10 +71,10 @@ class _Notes extends State<Notes> {
             ' • Single tap on a note to open it\n • Double tap to delete it\n • Hold to customize it\n • Your notes are automatically saved as you type'),
         actions: [
           TextButton(
-            child: const Text(
+            child: Text(
               'Ok',
               style: TextStyle(
-                color: Colors.white,
+                color: (_darkTheme) ? Colors.white : Colors.black,
               ),
             ),
             onPressed: () => Navigator.pop(context, 'Ok'),
@@ -74,10 +85,10 @@ class _Notes extends State<Notes> {
               _notesService.updateHiveTutorial(htn);
               Navigator.pop(context, 'Dismiss');
             },
-            child: const Text(
+            child: Text(
               'Dismiss',
               style: TextStyle(
-                color: Colors.white,
+                color: (_darkTheme) ? Colors.white : Colors.black,
               ),
             ),
           ),
@@ -95,14 +106,19 @@ class _Notes extends State<Notes> {
 
   @override
   Widget build(BuildContext context) {
+    var colorScheme = Theme.of(context).colorScheme;
+    var _notes = <NoteObject>[];
+    for (var entry in _notesMap.entries) {
+      _notes.add(entry.value);
+    }
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+        backgroundColor: colorScheme.primary,
         body: SingleChildScrollView(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(padding: customTopPadding(0.025)),
+              const Padding(padding: EdgeInsets.only(top: 24)),
               // ---------------------------------------------------------------------------
               // Title and search bar
               Row(
@@ -118,7 +134,7 @@ class _Notes extends State<Notes> {
                         fontFamily: 'Roboto',
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
-                        color: Colors.amber.shade50,
+                        color: colorScheme.onPrimary,
                       ),
                     ),
                   ),
@@ -138,14 +154,14 @@ class _Notes extends State<Notes> {
                                   builder: (context) =>
                                       const NoteSearchPage()));
                         },
-                        child: const Row(
+                        child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.search_outlined,
                               size: 20,
-                              color: Colors.white,
+                              color: colorScheme.onPrimary,
                             ),
                           ],
                         ),
@@ -157,72 +173,142 @@ class _Notes extends State<Notes> {
               const Padding(padding: EdgeInsets.only(bottom: 24)),
               // ---------------------------------------------------------------------------
               // Grid where notes are shown
-              GridView(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 1.0,
-                  crossAxisSpacing: 2.0,
+              SingleChildScrollView(
+                child:  Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  
+                  children: [
+                    for (var i = 0; i < _notes.length; i += 2) ...[
+                      Row(
+                        mainAxisAlignment: (_notes.length%2==0)? MainAxisAlignment.spaceEvenly : MainAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 4.0),
+                            child: GestureDetector(
+                              onDoubleTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Delete note'),
+                                        content: const Text(
+                                            'Are you sure you want to delete this note?'),
+                                        actions: [
+                                          TextButton(
+                                            child: Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                color: colorScheme.onPrimary,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.pop(context, 'Cancel');
+                                            },
+                                          ),
+                                          TextButton(
+                                              child: Text(
+                                                'Delete',
+                                                style: TextStyle(
+                                                  color: colorScheme.onPrimary,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                setState(() {
+                                                  _notesService.remove(_notesMap
+                                                      .entries
+                                                      .firstWhere((element) =>
+                                                          element.value ==
+                                                          _notes[i])
+                                                      .key);
+                                                  leftPadding = 2;
+                                                });
+                                                Navigator.pop(context, 'Ok');
+                                              }),
+                                        ],
+                                      );
+                                    });
+                              },
+                              child: NoteCard(
+                                title: _notes[i].getTitle(),
+                                body: _notes[i].getBody(),
+                                id: _notes[i].getId(),
+                                dateOfCreation: _notes[i].getDateOfCreation(),
+                                dateOfLastEdit: _notes[i].getDateOfLastEdit(),
+                                cardColor: _notes[i].getCardColor(),
+                              ),
+                            ),
+                          ),
+                          if (i + 1 != _notes.length) ...{
+                            Padding(
+                              padding: const EdgeInsets.only(right: 4.0),
+                              child: GestureDetector(
+                                onDoubleTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('Delete note'),
+                                          content: const Text(
+                                              'Are you sure you want to delete this note?'),
+                                          actions: [
+                                            TextButton(
+                                              child: Text(
+                                                'Cancel',
+                                                style: TextStyle(
+                                                  color: colorScheme.onPrimary,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.pop(
+                                                    context, 'Cancel');
+                                              },
+                                            ),
+                                            TextButton(
+                                                child: Text(
+                                                  'Delete',
+                                                  style: TextStyle(
+                                                    color:
+                                                        colorScheme.onPrimary,
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  setState(() {
+                                                    _notesService.remove(
+                                                        _notesMap.entries
+                                                            .firstWhere(
+                                                                (element) =>
+                                                                    element
+                                                                        .value ==
+                                                                    _notes[
+                                                                        i + 1])
+                                                            .key);
+                                                    leftPadding = 2;
+                                                  });
+                                                  Navigator.pop(context, 'Ok');
+                                                }),
+                                          ],
+                                        );
+                                      });
+                                },
+                                child: NoteCard(
+                                  title: _notes[i + 1].getTitle(),
+                                  body: _notes[i + 1].getBody(),
+                                  id: _notes[i + 1].getId(),
+                                  dateOfCreation:
+                                      _notes[i + 1].getDateOfCreation(),
+                                  dateOfLastEdit:
+                                      _notes[i + 1].getDateOfLastEdit(),
+                                  cardColor: _notes[i + 1].getCardColor(),
+                                ),
+                              ),
+                            )
+                          }
+                        ],
+                      )
+                    ],
+                  ],
                 ),
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  for (var entry in _notesMap.entries) ...[
-                    GestureDetector(
-                      onDoubleTap: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('Delete note'),
-                                content: const Text(
-                                    'Are you sure you want to delete this note?'),
-                                actions: [
-                                  TextButton(
-                                    child: const Text(
-                                      'Cancel',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pop(context, 'Cancel');
-                                    },
-                                  ),
-                                  TextButton(
-                                      child: const Text(
-                                        'Delete',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _notesService.remove(entry.key);
-                                          leftPadding = 2;
-                                        });
-                                        Navigator.pop(context, 'Ok');
-                                      }),
-                                ],
-                              );
-                            });
-                      },
-                      child: Padding(
-                        padding: (leftPadding++ % 2 == 0)
-                            ? const EdgeInsets.only(left: 10)
-                            : const EdgeInsets.only(right: 10),
-                        child: NoteCard(
-                          title: entry.value.getTitle(),
-                          body: entry.value.getBody(),
-                          id: entry.value.getId(),
-                          dateOfCreation: entry.value.getDateOfCreation(),
-                          dateOfLastEdit: entry.value.getDateOfLastEdit(),
-                          cardColor: entry.value.getCardColor(),
-                        ),
-                      ),
-                    ),
-                  ]
-                ],
-              ),
+              )
             ],
           ),
         ),
@@ -236,5 +322,9 @@ class _Notes extends State<Notes> {
       _notesMap = event;
       leftPadding = 2;
     });
+  }
+
+  void _onSettingsUpdate(Map<int, SettingsObject> event) {
+    setState(() {});
   }
 }

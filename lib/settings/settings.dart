@@ -38,13 +38,12 @@ class _Settings extends State<Settings> {
           _darkMode = _settingsMap[0]!.getDarkMode();
         }));
     _settingsSub = _settingsService.stream.listen(_onSettingsUpdate);
-    print(_settingsMap.isEmpty);
   }
 
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
-    var settingsCardColor = (_darkMode)? Colors.grey.shade900 : Color.fromARGB(255, 231, 240, 243);
+    var settingsCardColor = (_darkMode)? Colors.grey.shade900 : const Color.fromARGB(255, 231, 240, 243);
     return SafeArea(
         child: Scaffold(
       backgroundColor: colorScheme.primary,

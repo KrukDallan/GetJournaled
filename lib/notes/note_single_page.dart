@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 import 'package:getjournaled/db/abstraction/settings_service/settings_map_service.dart';
@@ -59,7 +59,7 @@ class _SingleNotePage extends State<SingleNotePage> {
   ValueNotifier<Color> _undoColor = ValueNotifier(Colors.grey.shade800);
   List<String> _redoList = <String>[];
   ValueNotifier<Color> _redoColor = ValueNotifier(Colors.grey.shade800);
-
+  late Color _activeUndoRedoColor;
   //
   // colored box
   //
@@ -112,6 +112,7 @@ class _SingleNotePage extends State<SingleNotePage> {
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
+    _activeUndoRedoColor = colorScheme.onPrimary;
     _bodyTextEditingController = TextEditingController(text: widget.body);
     setState(() {
       final String text = _bodyTextEditingController.text;
@@ -139,7 +140,9 @@ class _SingleNotePage extends State<SingleNotePage> {
                   padding: const EdgeInsets.only(top: 4.0, left: 12.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade800,
+                      color: (colorScheme.primary == Colors.black)
+                          ? Colors.grey.shade800
+                          : Colors.lightBlue.shade100,
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     child: SizedBox(
@@ -161,10 +164,10 @@ class _SingleNotePage extends State<SingleNotePage> {
                                             'You have unsaved changes, if you leave now they will be lost.'),
                                         actions: [
                                           TextButton(
-                                            child: const Text(
+                                            child: Text(
                                               'Cancel',
                                               style: TextStyle(
-                                                color: Colors.white,
+                                                color: colorScheme.onPrimary,
                                               ),
                                             ),
                                             onPressed: () {
@@ -172,10 +175,10 @@ class _SingleNotePage extends State<SingleNotePage> {
                                             },
                                           ),
                                           TextButton(
-                                              child: const Text(
+                                              child: Text(
                                                 'Leave',
                                                 style: TextStyle(
-                                                  color: Colors.white,
+                                                  color: colorScheme.onPrimary,
                                                 ),
                                               ),
                                               onPressed: () {
@@ -192,9 +195,9 @@ class _SingleNotePage extends State<SingleNotePage> {
                               Navigator.pop(context);
                             }
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.arrow_back_ios_rounded,
-                            color: Colors.white,
+                            color: colorScheme.onPrimary,
                           )),
                     ),
                   ),
@@ -214,14 +217,14 @@ class _SingleNotePage extends State<SingleNotePage> {
                             onPressed: () {
                               if (_undoList.isNotEmpty) {
                                 if (_redoList.isEmpty) {
-                                  _redoColor.value = Colors.white;
+                                  _redoColor.value = colorScheme.onPrimary;
                                 }
                                 _redoList.add(_bodyTextEditingController.text);
                                 _bodyTextEditingController.text =
                                     _undoList.removeLast();
                                 widget.body = _bodyTextEditingController.text;
                                 if (_undoList.isEmpty) {
-                                  _undoColor.value = Colors.grey.shade800;
+                                  _undoColor.value = (colorScheme.primary == Colors.black)? Colors.grey.shade800 : Colors.grey.shade400;
                                 }
                                 setState(() {});
                               }
@@ -243,7 +246,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                               onPressed: () {
                                 if (_redoList.isNotEmpty) {
                                   if (_undoList.isEmpty) {
-                                    _undoColor.value = Colors.white;
+                                    _undoColor.value = colorScheme.onPrimary;
                                   }
                                   _undoList
                                       .add(_bodyTextEditingController.text);
@@ -251,7 +254,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                                       _redoList.removeLast();
                                   widget.body = _bodyTextEditingController.text;
                                   if (_redoList.isEmpty) {
-                                    _redoColor.value = Colors.grey.shade800;
+                                    _redoColor.value =(colorScheme.primary == Colors.black)? Colors.grey.shade800 : Colors.grey.shade400;
                                   }
                                   setState(() {});
                                 }
@@ -271,7 +274,9 @@ class _SingleNotePage extends State<SingleNotePage> {
                     padding: const EdgeInsets.only(top: 4.0, right: 15.0),
                     child: Container(
                       decoration: BoxDecoration(
-                          color: Colors.grey.shade800,
+                          color: (colorScheme.primary == Colors.black)
+                              ? Colors.grey.shade800
+                              : Colors.lightBlue.shade100,
                           borderRadius:
                               const BorderRadius.all(Radius.circular(10))),
                       child: SizedBox(
@@ -314,9 +319,9 @@ class _SingleNotePage extends State<SingleNotePage> {
                                 _redoList.clear();
                               });
                             },
-                            icon: const Text(
+                            icon: Text(
                               'Save',
-                              style: TextStyle(color: Colors.white),
+                              style: TextStyle(color: (colorScheme.primary == Colors.black)? Colors.white : Colors.black),
                             )),
                       ),
                     ),
@@ -344,7 +349,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                     fontWeight: FontWeight.w700,
                     color: colorScheme.onPrimary,
                   ),
-                  cursorColor: Colors.white,
+                  cursorColor: colorScheme.onPrimary,
                   backgroundCursorColor: Colors.black,
                   onChanged: _onTitleChanged,
                 ),
@@ -361,7 +366,7 @@ class _SingleNotePage extends State<SingleNotePage> {
                     _menuController.open(position: pos.localPosition);
                   },
                   child: Padding(
-                    padding: EdgeInsets.only(top: 8.0, left: 22.0),
+                    padding: const EdgeInsets.only(top: 8.0, left: 22.0),
                     child: Container(
                       color: Colors.white,
                       child: SizedBox(
@@ -497,7 +502,7 @@ class _SingleNotePage extends State<SingleNotePage> {
           TextPosition(offset: _bodyTextInputFormatter.getCursorOffset()));
 
       if (_autoSave) {
-        _undoColor.value = Colors.white;
+        _undoColor.value = _activeUndoRedoColor;
         DateTime now = DateTime.now();
         NoteObject noteObject = NoteObject(
             id: widget.id,
@@ -514,12 +519,12 @@ class _SingleNotePage extends State<SingleNotePage> {
     }
   }
 
-  void _onTitleChanged(String text){
+  void _onTitleChanged(String text) {
     if (text != widget.title) {
       widget.title = text;
 
       if (_autoSave) {
-        _undoColor.value = Colors.white;
+        _undoColor.value = _activeUndoRedoColor;
         DateTime now = DateTime.now();
         NoteObject noteObject = NoteObject(
             id: widget.id,

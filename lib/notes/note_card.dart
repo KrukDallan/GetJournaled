@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:getjournaled/notes/note_object.dart';
-
+import 'dart:math';
 import 'package:getjournaled/notes/note_single_page.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
-
 
 class NoteCard extends StatefulWidget {
   late String title;
@@ -106,44 +105,40 @@ class _NoteCardState extends State<NoteCard> {
             child: const Text('Background Color'),
           ),
         ],
-        child: Card(
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(10))),
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * 0.4,
-            height: MediaQuery.of(context).size.height * 0.4,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(20)),
-                color: widget.cardColor,
-              ),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      widget.title,
-                      style: TextStyle(
-                        color: colorScheme.primary,
-                        fontFamily: 'Roboto',
-                        fontSize: 16,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20, bottom: 10),
-                      child: Text(
-                        widget.dateOfLastEdit
-                            .toString()
-                            .replaceAll('00:00:00.000', ''),
-                        style: TextStyle(
-                          color: Colors.grey.shade800,
-                          fontSize: 12.0,
+        child: 
+            Card(
+              color: widget.cardColor,
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(20))),
+              child: SizedBox(
+                width: 155,
+                height: 250,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.title,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'Roboto',
+                          fontSize: 16,
                         ),
                       ),
-                    )
-                  ]),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20, bottom: 10),
+                        child: Text(
+                          widget.dateOfLastEdit
+                              .toString()
+                              .replaceAll('00:00:00.000', ''),
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 12.0,
+                          ),
+                        ),
+                      )
+                    ]),
+              ),
             ),
-          ),
-        ),
       ),
     );
   }
@@ -177,7 +172,6 @@ class _NoteCardState extends State<NoteCard> {
       _notesService.update(noteObject);
     });
   }
-
 }
 
 enum MenuEntry {

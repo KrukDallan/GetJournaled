@@ -15,9 +15,9 @@ class NoteSearchPage extends StatefulWidget {
 }
 
 class _NoteSearchPage extends State<NoteSearchPage> {
-  final NoteService _noteService = GetIt.I<NoteService>();
+  final NoteService _notesService = GetIt.I<NoteService>();
 
-  Map<int, NoteObject> _noteMap = {};
+  Map<int, NoteObject> _notesMap = {};
 
   final Map<int, NoteObject> _searchMathces = {};
 
@@ -38,10 +38,10 @@ class _NoteSearchPage extends State<NoteSearchPage> {
   void initState() {
     super.initState();
 
-    _noteService.getAllNotes().then((value) => setState(() {
-          _noteMap = value;
+    _notesService.getAllNotes().then((value) => setState(() {
+          _notesMap = value;
         }));
-    _noteSub = _noteService.stream.listen(_onNotesUpdate);
+    _noteSub = _notesService.stream.listen(_onNotesUpdate);
 
     //
     // Display the alert dialog
@@ -54,9 +54,13 @@ class _NoteSearchPage extends State<NoteSearchPage> {
   @override
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
+    var _notes = <NoteObject>[];
+    for (var entry in _notesMap.entries) {
+      _notes.add(entry.value);
+    }
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(0, 0, 0, 0),
+        backgroundColor: colorScheme.primary,
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -81,7 +85,7 @@ class _NoteSearchPage extends State<NoteSearchPage> {
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           padding: const EdgeInsets.only(
-                              top: 5.0, right: 4.0, left: 4.0, bottom:5.0),
+                              top: 5.0, right: 4.0, left: 4.0, bottom: 5.0),
                           child: EditableText(
                             autofocus: true,
                             showCursor: true,
@@ -113,26 +117,60 @@ class _NoteSearchPage extends State<NoteSearchPage> {
               ),
               const Padding(padding: EdgeInsets.only(bottom: 24)),
               // ---------------------------------------------------------------------------
-              // Row where journals are shown
+              // Grid where notes are shown
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                reverse: true,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     for (var entry in _searchMathces.entries) ...[
-                      GestureDetector(
-                        onTap: () {},
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              top: 4.0, right: 6.0, left: 0.0),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: GestureDetector(
+                          onDoubleTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text('Delete note'),
+                                    content: const Text(
+                                        'Are you sure you want to delete this note?'),
+                                    actions: [
+                                      TextButton(
+                                        child: Text(
+                                          'Cancel',
+                                          style: TextStyle(
+                                            color: colorScheme.onPrimary,
+                                          ),
+                                        ),
+                                        onPressed: () {
+                                          Navigator.pop(context, 'Cancel');
+                                        },
+                                      ),
+                                      TextButton(
+                                          child: Text(
+                                            'Delete',
+                                            style: TextStyle(
+                                              color: colorScheme.onPrimary,
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              _notesService.remove(entry.key);
+                                            });
+                                            Navigator.pop(context, 'Ok');
+                                          }),
+                                    ],
+                                  );
+                                });
+                          },
                           child: NoteCard(
                             title: entry.value.getTitle(),
                             body: entry.value.getBody(),
                             id: entry.value.getId(),
                             dateOfCreation: entry.value.getDateOfCreation(),
-                            cardColor: entry.value.getCardColor(),
-                            dateOfLastEdit: entry.value.getDateOfLastEdit(),
+                            dateOfLastEdit:entry.value.getDateOfLastEdit(),
+                            cardColor:entry.value.getCardColor(),
                           ),
                         ),
                       ),
@@ -154,16 +192,12 @@ class _NoteSearchPage extends State<NoteSearchPage> {
       return;
     }
 
-    final _text = text.toLowerCase();
+    final lcText = text.toLowerCase();
     _searchMathces.clear();
-    for (var j in _noteMap.entries) {
+    for (var j in _notesMap.entries) {
       var tmp = j.value;
-      if (tmp
-              .getTitle()
-              .toString()
-              .toLowerCase()
-              .contains(_text) ||
-          tmp.getBody().toString().toLowerCase().contains(_text)) {
+      if (tmp.getTitle().toLowerCase().contains(lcText) ||
+          tmp.getBody().toString().toLowerCase().contains(lcText)) {
         _searchMathces.addAll({j.key: j.value});
       }
     }
@@ -171,9 +205,9 @@ class _NoteSearchPage extends State<NoteSearchPage> {
   }
 
   void _onNotesUpdate(Map<int, NoteObject> event) {
-    setState(() {
-      _noteMap = event;
-    });
+    /* setState(() {
+      _notesMap = event;
+    }); */
   }
 }
 

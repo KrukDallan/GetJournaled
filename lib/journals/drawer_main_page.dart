@@ -6,7 +6,6 @@ import 'package:getjournaled/journals/journal_object.dart';
 import 'package:getjournaled/journals/journal_search_page.dart';
 import 'package:getjournaled/journals/journal_card.dart';
 import 'package:get_it/get_it.dart';
-import 'package:getjournaled/main.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class Drawer extends StatefulWidget {
@@ -53,7 +52,6 @@ class _Drawer extends State<Drawer> {
       _graphList.add(tmp);
     }
     var colorScheme = Theme.of(context).colorScheme;
-    
     return SafeArea(
       child: Scaffold(
         backgroundColor: colorScheme.primary,
@@ -80,7 +78,7 @@ class _Drawer extends State<Drawer> {
                           fontFamily: 'Roboto',
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
-                          color: Colors.amber.shade50,
+                          color: colorScheme.onPrimary,
                         ),
                       ),
                     ),
@@ -100,14 +98,14 @@ class _Drawer extends State<Drawer> {
                                 MaterialPageRoute(
                                     builder: (context) => const JournalSearchPage()));
                           },
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Icon(
                                 Icons.search_outlined,
                                 size: 20,
-                                color: Colors.white,
+                                color: colorScheme.onPrimary,
                               ),
                             ],
                           ),
@@ -138,10 +136,10 @@ class _Drawer extends State<Drawer> {
                                       'Are you sure you want to delete this page?'),
                                   actions: [
                                     TextButton(
-                                      child: const Text(
+                                      child: Text(
                                         'Cancel',
                                         style: TextStyle(
-                                          color: Colors.white,
+                                          color: colorScheme.onPrimary,
                                         ),
                                       ),
                                       onPressed: () {
@@ -149,10 +147,10 @@ class _Drawer extends State<Drawer> {
                                       },
                                     ),
                                     TextButton(
-                                        child: const Text(
+                                        child: Text(
                                           'Delete',
                                           style: TextStyle(
-                                            color: Colors.white,
+                                            color: colorScheme.onPrimary,
                                           ),
                                         ),
                                         onPressed: () {

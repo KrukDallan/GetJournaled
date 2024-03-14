@@ -66,10 +66,10 @@ class _DrawerCardState extends State<DrawerCard> {
     var colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: () {
-        print(
+/*         print(
             "Screen width: " + (MediaQuery.of(context).size.width).toString());
         print("Screen height: " +
-            (MediaQuery.of(context).size.height).toString());
+            (MediaQuery.of(context).size.height).toString()); */
         Navigator.push(
             context,
             MaterialPageRoute(

@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:getjournaled/db/abstraction/settings_service/settings_map_service.dart';
 import 'package:getjournaled/hive/hive_unique_id.dart';
 import 'package:getjournaled/hive/settings/hive_settings.dart';
+import 'package:getjournaled/main.dart';
 import 'package:getjournaled/settings/settings_object.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -16,6 +18,10 @@ class LocalSettingsMapService extends SettingsService{
       return _cacheMap[id];
   }
 
+  @override
+  bool getTheme(){
+    return _cacheMap.entries.first.value.getDarkMode();
+  }
 
   @override
   int getUniqueId() {
@@ -88,6 +94,7 @@ class LocalSettingsMapService extends SettingsService{
           );
           _cacheMap.addAll({hs.id : settingsObject});
       }
+      
     }
   }
 
