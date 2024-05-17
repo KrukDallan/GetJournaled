@@ -7,7 +7,6 @@ import 'package:getjournaled/db/abstraction/note_service/note_map_service.dart';
 import 'package:getjournaled/hive/notes/hive_tutorial_notes.dart';
 import 'package:getjournaled/notes/note_object.dart';
 import 'package:getjournaled/notes/note_search_page.dart';
-import 'package:getjournaled/shared.dart';
 
 import 'package:getjournaled/notes/note_card.dart';
 import 'package:getjournaled/settings/settings_object.dart';
@@ -174,13 +173,14 @@ class _Notes extends State<Notes> {
               // ---------------------------------------------------------------------------
               // Grid where notes are shown
               SingleChildScrollView(
-                child:  Column(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  
                   children: [
                     for (var i = 0; i < _notes.length; i += 2) ...[
                       Row(
-                        mainAxisAlignment: (_notes.length%2==0)? MainAxisAlignment.spaceEvenly : MainAxisAlignment.start,
+                        mainAxisAlignment: (_notes.length % 2 == 0)
+                            ? MainAxisAlignment.spaceEvenly
+                            : MainAxisAlignment.start,
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 4.0),

@@ -1,8 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/src/foundation/change_notifier.dart';
 
 const EdgeInsets topPadding = EdgeInsets.only(top: 800 * 0.5 * 0.75);
 
@@ -140,7 +137,7 @@ class TitleTextInputFormatter extends TextInputFormatter {
       TextEditingValue oldValue, TextEditingValue newValue) {
     String textToReturn = newValue.text;
     _cursorOffset = newValue.selection.extentOffset;
-  if (oldValue.text.contains('Title (optional)')) {
+    if (oldValue.text.contains('Title (optional)')) {
       if (oldValue.text.length > newValue.text.length) {
         textToReturn = '';
         _cursorOffset = 1;

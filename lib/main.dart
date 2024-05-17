@@ -1,6 +1,3 @@
-
-
-
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:getjournaled/db/abstraction/journal_service/journal_map_service.dart';
@@ -21,8 +18,6 @@ void main() async {
   await GetIt.I<JournalService>().open();
   await GetIt.I<SettingsService>().open();
   runApp(const MyApp());
-
-
 }
 
 class MyApp extends StatefulWidget {
@@ -38,7 +33,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   //final ThemeMode _themeMode = ThemeMode.system;
-  ThemeMode _themeMode = (GetIt.I<SettingsService>().getTheme())? ThemeMode.dark : ThemeMode.light;
+  ThemeMode _themeMode = (GetIt.I<SettingsService>().getTheme())
+      ? ThemeMode.dark
+      : ThemeMode.light;
 
   @override
   Widget build(BuildContext context) {

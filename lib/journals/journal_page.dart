@@ -1,6 +1,3 @@
-// TODO: una volta che l'utente ha compilato i campi, pusha le info nell'hive
-// box, e prendile in "drawer.dart" o la classe che poi gestirà questo.
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -51,7 +48,8 @@ class _NewJournalPage extends State<JournalPage> {
   StreamSubscription? _settingsSub;
 
   TextEditingController _bodyTextEditingController = TextEditingController();
-  final TextEditingController _titleTextEditingController = TextEditingController();
+  final TextEditingController _titleTextEditingController =
+      TextEditingController();
   final MyTextInputFormatter _bTIF = MyTextInputFormatter();
 
   FocusNode myFocusNode = FocusNode();
@@ -133,14 +131,14 @@ class _NewJournalPage extends State<JournalPage> {
   Widget build(BuildContext context) {
     var colorScheme = Theme.of(context).colorScheme;
     _activeUndoRedoColor = colorScheme.onPrimary;
-    if(colorScheme.primary != Colors.black){
-rateButtonsColors = [
-    Colors.white,
-    Colors.white,
-    Colors.white,
-    Colors.white,
-    Colors.white
-  ];
+    if (colorScheme.primary != Colors.black) {
+      rateButtonsColors = [
+        Colors.white,
+        Colors.white,
+        Colors.white,
+        Colors.white,
+        Colors.white
+      ];
     }
     _bodyTextEditingController = TextEditingController(text: widget.body);
     setState(() {
@@ -169,7 +167,9 @@ rateButtonsColors = [
                   padding: const EdgeInsets.only(top: 4.0, left: 12.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: (colorScheme.primary == Colors.black)? Colors.grey.shade800 : Colors.lightBlue.shade100,
+                      color: (colorScheme.primary == Colors.black)
+                          ? Colors.grey.shade800
+                          : Colors.lightBlue.shade100,
                       borderRadius: const BorderRadius.all(Radius.circular(10)),
                     ),
                     child: SizedBox(
@@ -224,7 +224,7 @@ rateButtonsColors = [
                           },
                           icon: Icon(
                             Icons.arrow_back_ios_rounded,
-                            color: colorScheme.onPrimary, 
+                            color: colorScheme.onPrimary,
                           )),
                     ),
                   ),
@@ -251,7 +251,10 @@ rateButtonsColors = [
                                     _undoList.removeLast();
                                 widget.body = _bodyTextEditingController.text;
                                 if (_undoList.isEmpty) {
-                                  _undoColor.value = (colorScheme.primary == Colors.black)? Colors.grey.shade800 : Colors.grey.shade400;
+                                  _undoColor.value =
+                                      (colorScheme.primary == Colors.black)
+                                          ? Colors.grey.shade800
+                                          : Colors.grey.shade400;
                                 }
                                 setState(() {});
                               }
@@ -281,7 +284,10 @@ rateButtonsColors = [
                                       _redoList.removeLast();
                                   widget.body = _bodyTextEditingController.text;
                                   if (_redoList.isEmpty) {
-                                    _redoColor.value = (colorScheme.primary == Colors.black)? Colors.grey.shade800 : Colors.grey.shade400;
+                                    _redoColor.value =
+                                        (colorScheme.primary == Colors.black)
+                                            ? Colors.grey.shade800
+                                            : Colors.grey.shade400;
                                   }
                                   setState(() {});
                                 }
@@ -301,7 +307,9 @@ rateButtonsColors = [
                     padding: const EdgeInsets.only(top: 4.0, right: 15.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: (colorScheme.primary == Colors.black)? Colors.grey.shade800 : Colors.lightBlue.shade100,
+                        color: (colorScheme.primary == Colors.black)
+                            ? Colors.grey.shade800
+                            : Colors.lightBlue.shade100,
                         borderRadius:
                             const BorderRadius.all(Radius.circular(10)),
                       ),
@@ -332,7 +340,9 @@ rateButtonsColors = [
                           icon: Icon(
                             Icons.save_sharp,
                             size: 18.0,
-                            color: (colorScheme.primary == Colors.black)? Colors.white : Colors.black,
+                            color: (colorScheme.primary == Colors.black)
+                                ? Colors.white
+                                : Colors.black,
                           ),
                         ),
                       ),

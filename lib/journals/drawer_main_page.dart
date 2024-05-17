@@ -96,7 +96,8 @@ class _Drawer extends State<Drawer> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const JournalSearchPage()));
+                                    builder: (context) =>
+                                        const JournalSearchPage()));
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -190,7 +191,8 @@ class _Drawer extends State<Drawer> {
                 series: <CartesianSeries<_DayRatingsData, String>>[
                   LineSeries<_DayRatingsData, String>(
                     dataSource: _graphList,
-                    xValueMapper: (_DayRatingsData ratings, _) => ratings.date.replaceAll('00:00:00.000', ''),
+                    xValueMapper: (_DayRatingsData ratings, _) =>
+                        ratings.date.replaceAll('00:00:00.000', ''),
                     yValueMapper: (_DayRatingsData ratings, _) =>
                         ratings.rating,
                     name: 'Ratings',

@@ -25,7 +25,8 @@ class _JournalSearchPage extends State<JournalSearchPage> {
 
   StreamSubscription? _journalSub;
 
-  final TextEditingController _titleTextEditingController = TextEditingController();
+  final TextEditingController _titleTextEditingController =
+      TextEditingController();
 
   final FocusNode _myFocusNode = FocusNode();
 
@@ -77,28 +78,27 @@ class _JournalSearchPage extends State<JournalSearchPage> {
                         duration: const Duration(milliseconds: 580),
                         curve: Curves.easeOutQuint,
                         child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: colorScheme.onPrimary),
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                            padding:
-                                const EdgeInsets.only(top: 5.0, right: 4.0, left: 4.0, bottom: 5.0),
-                            child: EditableText(
-                              autofocus: true,
-                              showCursor: true,
-                              controller: _titleTextEditingController,
-                              focusNode: _myFocusNode,
-                              style: TextStyle(
-                                fontFamily: 'Roboto',
-                                fontSize: 20,
-                                color: colorScheme.onPrimary,
-                              ),
-                              cursorColor: colorScheme.onPrimary,
-                              backgroundCursorColor: Colors.black,
-                              onChanged: _onSearchBar,
-                            ),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: colorScheme.onPrimary),
+                            borderRadius: BorderRadius.circular(12.0),
                           ),
-                        
+                          padding: const EdgeInsets.only(
+                              top: 5.0, right: 4.0, left: 4.0, bottom: 5.0),
+                          child: EditableText(
+                            autofocus: true,
+                            showCursor: true,
+                            controller: _titleTextEditingController,
+                            focusNode: _myFocusNode,
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              fontSize: 20,
+                              color: colorScheme.onPrimary,
+                            ),
+                            cursorColor: colorScheme.onPrimary,
+                            backgroundCursorColor: Colors.black,
+                            onChanged: _onSearchBar,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -153,11 +153,9 @@ class _JournalSearchPage extends State<JournalSearchPage> {
   }
 
   void _onSearchBar(String text) {
-    if(text == "" || text == " "){
+    if (text == "" || text == " ") {
       _searchMathces.clear();
-      setState(() {
-        
-      });
+      setState(() {});
       return;
     }
 

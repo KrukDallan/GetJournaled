@@ -224,7 +224,10 @@ class _SingleNotePage extends State<SingleNotePage> {
                                     _undoList.removeLast();
                                 widget.body = _bodyTextEditingController.text;
                                 if (_undoList.isEmpty) {
-                                  _undoColor.value = (colorScheme.primary == Colors.black)? Colors.grey.shade800 : Colors.grey.shade400;
+                                  _undoColor.value =
+                                      (colorScheme.primary == Colors.black)
+                                          ? Colors.grey.shade800
+                                          : Colors.grey.shade400;
                                 }
                                 setState(() {});
                               }
@@ -254,7 +257,10 @@ class _SingleNotePage extends State<SingleNotePage> {
                                       _redoList.removeLast();
                                   widget.body = _bodyTextEditingController.text;
                                   if (_redoList.isEmpty) {
-                                    _redoColor.value =(colorScheme.primary == Colors.black)? Colors.grey.shade800 : Colors.grey.shade400;
+                                    _redoColor.value =
+                                        (colorScheme.primary == Colors.black)
+                                            ? Colors.grey.shade800
+                                            : Colors.grey.shade400;
                                   }
                                   setState(() {});
                                 }
@@ -321,7 +327,10 @@ class _SingleNotePage extends State<SingleNotePage> {
                             },
                             icon: Text(
                               'Save',
-                              style: TextStyle(color: (colorScheme.primary == Colors.black)? Colors.white : Colors.black),
+                              style: TextStyle(
+                                  color: (colorScheme.primary == Colors.black)
+                                      ? Colors.white
+                                      : Colors.black),
                             )),
                       ),
                     ),
