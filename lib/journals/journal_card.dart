@@ -132,7 +132,7 @@ class _DrawerCardState extends State<DrawerCard> {
                   shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20))),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Padding(padding: customTopPadding(0.02)),
                       Center(
